@@ -7,7 +7,7 @@ public class Qube extends Shape3D {
 
     @Override
     public double calculateVolume() {
-        return Math.pow(edgeSize , 3);
+        return Math.pow(super.getEdgeSize() , 3);
     }
 
     @Override

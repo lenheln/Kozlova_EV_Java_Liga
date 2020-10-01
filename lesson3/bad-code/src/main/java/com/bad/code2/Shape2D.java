@@ -7,15 +7,15 @@ public abstract class Shape2D {
     /**
      *  Координата по оси x
      */
-    double x;
+    private double x;
     /**
      *  Координата по оси y
      */
-    double y;
+    private double y;
     /**
      *  Длина стороны многоугольника
      */
-    double edgeSize;
+    private double edgeSize;
 
     /**
      *  Возвращает площадь многоугольника

@@ -7,7 +7,7 @@ public class Square extends Shape2D {
 
     @Override
     public double calculateArea() {
-        return Math.pow(edgeSize, 2);
+        return Math.pow(super.getEdgeSize(), 2);
     }
 
     @Override

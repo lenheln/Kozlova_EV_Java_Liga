@@ -6,19 +6,19 @@ public abstract class Shape3D {
     /**
      *  Координата по оси x
      */
-    double x;
+    private double x;
     /**
      *  Координата по оси y
      */
-    double y;
+    private double y;
     /**
      *  Координата по оси z
      */
-    double z;
+    private double z;
     /**
      *  Длина ребра
      */
-    double edgeSize;
+    private double edgeSize;
 
     /**
      *  Возвращает объем многогранника
