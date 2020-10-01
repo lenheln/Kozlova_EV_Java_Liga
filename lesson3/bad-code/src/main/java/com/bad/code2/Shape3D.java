@@ -1,5 +1,6 @@
 package com.bad.code2;
 
+//Описание интерфейса
 public interface Shape3D {
     Double getX();
     Double getY();

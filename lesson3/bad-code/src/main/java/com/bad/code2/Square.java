@@ -1,5 +1,7 @@
 package com.bad.code2;
 
+//TODO: квадрат - не трехмерный. Можно сделать класс фигура, и расширения на него трехмерная и двумерная
+//Описание класса
 public class Square implements Shape3D {
     private Double x;
     private Double y;
@@ -20,11 +22,13 @@ public class Square implements Shape3D {
         return y;
     }
 
+    //YAGNI
     @Override
     public Double getZ() {
         return null;
     }
 
+    //YAGNI
     @Override
     public Double getVolume() {
         return null;

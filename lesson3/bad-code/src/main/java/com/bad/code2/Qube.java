@@ -1,5 +1,6 @@
 package com.bad.code2;
 
+//Описание класса
 public class Qube implements Shape3D {
     private Double x;
     private Double y;
