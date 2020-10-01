@@ -73,8 +73,8 @@ public class FourMillions {
    * @param args арг-ты командной строки
    */
   public static void main(String[] args) {
-    Counter counter = new Counter();
 
+      Counter counter = new Counter();
     ExecutorService executorService = Executors.newFixedThreadPool(N_THREADS);
 
     // создаём java.Util.Stream для интов от 0 до 4 (искл.)
@@ -92,6 +92,7 @@ public class FourMillions {
       executorService.shutdown();
     });
   }
+
 
   /**
    * Запускает миллион инкрементов счётчика в отдельном потоке
