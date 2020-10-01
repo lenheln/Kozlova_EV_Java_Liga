@@ -1,8 +1,9 @@
 package com.bad.code2;
+
 /**
- *  Описывает правильный многогранник
+ *  Описывает правильный многоугольник
  */
-public abstract class Shape3D {
+public abstract class Shape2D {
     /**
      *  Координата по оси x
      */
@@ -12,30 +13,25 @@ public abstract class Shape3D {
      */
     double y;
     /**
-     *  Координата по оси z
-     */
-    double z;
-    /**
-     *  Длина ребра
+     *  Длина стороны многоугольника
      */
     double edgeSize;
 
     /**
-     *  Возвращает объем многогранника
+     *  Возвращает площадь многоугольника
      *
-     * @return площадь многогранника
+     * @return площадь многоугольника
      */
-    public abstract double calculateVolume();
+    public abstract double calculateArea();
 
     /**
-     *  Выводит в консоль объем многогранника
+     *  Выводит в консоль площадь многоугольника
      */
-    public abstract void printVolume();
+    public abstract void printArea();
 
-    public Shape3D(double x, double y, double z, double edgeSize) {
+    public Shape2D(double x, double y, double edgeSize) {
         this.x = x;
         this.y = y;
-        this.z = z;
         this.edgeSize = edgeSize;
     }
 
@@ -55,14 +51,6 @@ public abstract class Shape3D {
         this.y = y;
     }
 
-    public double getZ() {
-        return z;
-    }
-
-    public void setZ(double z) {
-        this.z = z;
-    }
-
     public double getEdgeSize() {
         return edgeSize;
     }
@@ -70,4 +58,5 @@ public abstract class Shape3D {
     public void setEdgeSize(double edgeSize) {
         this.edgeSize = edgeSize;
     }
+
 }
