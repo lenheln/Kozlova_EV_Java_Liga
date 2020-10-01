@@ -2,11 +2,17 @@ package com.bad.code2;
 
 public class BadCode2 {
     public static void main(String... args) {
-        Qube qube = new Qube(1d, 1d, 1d, 10d);
-        System.out.println("Qube volume: " + qube.getVolume());
 
+        /**
+         *  Создаем куб и выводим в консоль его объем
+         */
+        Qube qube = new Qube(1d, 1d, 1d, 9.5d);
+        qube.printVolume();
+
+        /**
+         *  Создаем квадрат и выводим в консоль его площадь
+         */
         Square square = new Square(1d, 1d, 5d);
-        System.out.println("Square perimeter: " + square.getPerimeter());
+        square.printArea();
     }
-
 }

@@ -1,40 +1,21 @@
 package com.bad.code2;
 
-//TODO: квадрат - не трехмерный. Можно сделать класс фигура, и расширения на него трехмерная и двумерная
-//Описание класса
-public class Square implements Shape3D {
-    private Double x;
-    private Double y;
-    private Double edgeSize;
-    public Square(Double x, Double y, Double edgeSize) {
-        this.x = x;
-        this.y = y;
-        this.edgeSize = edgeSize;
+/**
+ *  Описывает квадрат
+ */
+public class Square extends Shape2D {
+
+    @Override
+    public double calculateArea() {
+        return Math.pow(edgeSize, 2);
     }
 
     @Override
-    public Double getX() {
-        return x;
+    public void printArea() {
+        System.out.printf("Square area: %.2f%n ", this.calculateArea());
     }
 
-    @Override
-    public Double getY() {
-        return y;
-    }
-
-    //YAGNI
-    @Override
-    public Double getZ() {
-        return null;
-    }
-
-    //YAGNI
-    @Override
-    public Double getVolume() {
-        return null;
-    }
-
-    public Double getPerimeter() {
-        return edgeSize * edgeSize;
+    public Square(double x, double y, double edgeSize) {
+        super(x, y, edgeSize);
     }
 }
