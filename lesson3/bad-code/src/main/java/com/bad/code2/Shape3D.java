@@ -23,7 +23,7 @@ public abstract class Shape3D {
     /**
      *  Возвращает объем многогранника
      *
-     * @return площадь многогранника
+     * @return объем многогранника
      */
     public abstract double calculateVolume();
 
