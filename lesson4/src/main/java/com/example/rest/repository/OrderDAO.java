@@ -5,10 +5,11 @@ import com.example.rest.utils.OrderRowMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
-
-import java.sql.*;
 import java.util.List;
 
 @Repository
@@ -20,44 +21,32 @@ public class OrderDAO implements IOrderDAO {
     @Autowired
     CustomerDAO customerDAO;
 
+    public void setCustomerDAO(CustomerDAO customerDAO) {
+        this.customerDAO = customerDAO;
+    }
+
     /**
      * Сохранение заказа в базе данных
      *
-     * @param order заказ
-     * @return id заказа
+     * @param order /заказ
+     * @return order /заказ с указанным id заказа и id клиента, выполнившего заказ
      */
 
-    //TODO надо украсить как-то эту функцию, а то совсем страшно
     @Override
     public Order insertOrder(Order order){
-        String sql = "INSERT INTO Orders (NAME, PRICE, CUSTOMER_ID ) Values (?, ?, ?)";
-//        jdbcTemplate.update(sql, order.getName(), order.getPrice(), customerDAO.getCurrentCustomerId());
-//        int id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
-//        return id;
-
-
-        int id = 0;
+        String sql = "INSERT INTO Orders (NAME, PRICE, CUSTOMER_ID) " +
+                "VALUES (:name, :price, :customer_id)";
         int currentCustomerId = customerDAO.getCurrentCustomerId();
-        try {
-            Connection connection = jdbcTemplate.getDataSource().getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            statement.setString(1, order.getName());
-            statement.setInt(2, order.getPrice());
-            statement.setInt(3, currentCustomerId);
-            statement.executeUpdate();
-
-            order.setCustomerId(currentCustomerId);
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                id = generatedKeys.getInt(1);
-                order.setId(id);
-            }
-            else {
-                throw new SQLException("Creating order failed");
-            }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
+        NamedParameterJdbcTemplate namedTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        MapSqlParameterSource sqlParameterSource = new MapSqlParameterSource();
+        sqlParameterSource.addValue("name", order.getName());
+        sqlParameterSource.addValue("price",order.getPrice());
+        sqlParameterSource.addValue("customer_id", currentCustomerId);
+        namedTemplate.update(sql, sqlParameterSource, keyHolder);
+        int orderId = (int) keyHolder.getKey();
+        order.setId(orderId);
+        order.setCustomerId(currentCustomerId);
         return order;
     }
 

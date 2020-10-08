@@ -33,7 +33,7 @@ class OrderControllerUnitTest {
     }
 
     @Test
-    void createOrder() {
+    void createOrder() throws Exception {
         Order order = new Order("car", 100);
         Mockito.when(orderService.createOrder(order)).thenReturn(order);
         Assertions.assertEquals(order, orderController.createOrder(order));

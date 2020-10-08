@@ -18,7 +18,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping("/createOrder")
-    public Order createOrder(@RequestBody Order order) {
+    public Order createOrder(@RequestBody Order order) throws Exception {
         return orderService.createOrder(order);
     }
 

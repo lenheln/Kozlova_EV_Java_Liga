@@ -1,7 +1,5 @@
 package com.example.rest.entity;
 
-//TODO: write comments everywhere
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

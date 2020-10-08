@@ -13,9 +13,20 @@ public class OrderService {
 
     private final OrderDAO orderDAO;
 
-    //TODO: проверка что прайс больше 0 например
-    public Order createOrder(Order order) {
-        return orderDAO.insertOrder(order);
+    /**
+     * Проверяет, что параметр цена / price больше 0
+     * В случае успеха сохраняет заказ в базе данных
+     *
+     * @param order
+     * @return
+     * @throws Exception
+     */
+
+    public Order createOrder(Order order) throws Exception {
+        if(order.getPrice() > 0) {
+            return orderDAO.insertOrder(order);
+        }
+        else throw new Exception("Стоимость должна быть больше 0");
     }
 
     public List<Order> getAllOrders() {
