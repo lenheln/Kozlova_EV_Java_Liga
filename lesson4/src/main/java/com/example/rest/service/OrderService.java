@@ -13,13 +13,12 @@ public class OrderService {
 
     private final OrderDAO orderDAO;
 
-    //TODO: судя по диаграмме сервис должен проверять валидность процедуры
+    //TODO: судя по диаграмме сервис должен как-то проверять валидность процедуры
     public int createOrder(Order order) {
-        return orderDAO.saveOrder(order);
+        return orderDAO.insertOrder(order);
     }
 
     public List<Order> getAllOrders() {
         return orderDAO.getAllOrders();
     }
-
 }
