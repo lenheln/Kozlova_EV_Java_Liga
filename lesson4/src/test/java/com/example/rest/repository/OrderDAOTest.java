@@ -18,11 +18,8 @@ public class OrderDAOTest {
     @Mock
     JdbcTemplate jdbcTemplate;
 
-    @Mock
-    KeyHolder keyHolder;
-
-    @Mock
-    NamedParameterJdbcTemplate namedTemplate;
+//    @Mock
+//    NamedParameterJdbcTemplate namedTemplate;
 
     @Mock
     CustomerDAO customerDAO;
@@ -32,24 +29,24 @@ public class OrderDAOTest {
         MockitoAnnotations.initMocks(this);
         orderDAO = new OrderDAO(jdbcTemplate);
         orderDAO.setCustomerDAO(customerDAO);
-        namedTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+//        namedTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
     }
 
-    //TODO непонятно как протестировать, если в методе у нас изменяется состояние
-    // объекта KeyHolder
+    /*
+        TODO непонятно как написать тест, если в методе insertOrder
+         объект KeyHolder объявляется, а затем меняет состояние
+     */
 
     @Test
     @DisplayName("Сохранение в базе данных нового заказа")
     void insertOrder() {
         Order order = new Order("Porshe", 10000);
-
         Mockito.when(customerDAO.getCurrentCustomerId()).thenReturn(1);
-        Mockito.when(keyHolder.getKey()).thenReturn(1);
-        order.setId(1);
+        Order returnOrder = orderDAO.insertOrder(order);
         order.setCustomerId(1);
-        Assertions.assertEquals(order, orderDAO.insertOrder(order));
+        order.setId(1);
+        Assertions.assertEquals(order, returnOrder);
     }
-
 
     @Test
     void getAllOrders_ShouldReturn_EmptyList() {
