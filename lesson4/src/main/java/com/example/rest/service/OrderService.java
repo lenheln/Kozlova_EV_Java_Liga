@@ -13,8 +13,8 @@ public class OrderService {
 
     private final OrderDAO orderDAO;
 
-    //TODO: судя по диаграмме сервис должен как-то проверять валидность процедуры
-    public int createOrder(Order order) {
+    //TODO: проверка что прайс больше 0 например
+    public Order createOrder(Order order) {
         return orderDAO.insertOrder(order);
     }
 

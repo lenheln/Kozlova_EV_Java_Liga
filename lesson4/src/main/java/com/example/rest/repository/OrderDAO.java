@@ -5,6 +5,7 @@ import com.example.rest.utils.OrderRowMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -19,25 +20,33 @@ public class OrderDAO implements IOrderDAO {
     @Autowired
     CustomerDAO customerDAO;
 
-    /*
-        Сохранение заказа в базе данных
-
-        @param order заказ
-        @return id заказа
+    /**
+     * Сохранение заказа в базе данных
+     *
+     * @param order заказ
+     * @return id заказа
      */
 
+    //TODO надо украсить как-то эту функцию, а то совсем страшно
     @Override
-    public int insertOrder(Order order){
+    public Order insertOrder(Order order){
         String sql = "INSERT INTO Orders (NAME, PRICE, CUSTOMER_ID ) Values (?, ?, ?)";
-        int id = -1;
+//        jdbcTemplate.update(sql, order.getName(), order.getPrice(), customerDAO.getCurrentCustomerId());
+//        int id = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
+//        return id;
+
+
+        int id = 0;
+        int currentCustomerId = customerDAO.getCurrentCustomerId();
         try {
             Connection connection = jdbcTemplate.getDataSource().getConnection();
             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, order.getName());
             statement.setInt(2, order.getPrice());
-            statement.setInt(3, customerDAO.getCurrentCustomerId());
+            statement.setInt(3, currentCustomerId);
             statement.executeUpdate();
 
+            order.setCustomerId(currentCustomerId);
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 id = generatedKeys.getInt(1);
@@ -49,14 +58,14 @@ public class OrderDAO implements IOrderDAO {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return id;
+        return order;
     }
 
-/*
-    Возвращает список всех заказов из базы данных
+    /**
+     * Возвращает список всех заказов из базы данных
+     * @return список заказов
+     */
 
-    @return список заказов
- */
     @Override
     public List<Order> getAllOrders(){
         String sql = "SELECT * FROM Orders";

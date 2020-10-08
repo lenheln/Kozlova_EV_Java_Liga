@@ -9,9 +9,9 @@ public class CustomerDAO {
 
     private final JdbcTemplate jdbcTemplate;
 
-    /*
-        Возвращает id клиента, который сейчас подключен
-        Сейчас здесь просто заглушка. Всегда возвращается id = 1;
+    /**
+     * Возвращает id клиента, который сейчас подключен
+     * Сейчас здесь просто заглушка. Всегда возвращается id = 1;
      */
 
     public int getCurrentCustomerId(){

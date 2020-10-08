@@ -6,8 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/*
-    Описывает сущность Customer / Клиент
+/**
+ * Описывает сущность Customer / Клиент
  */
 
 @Data

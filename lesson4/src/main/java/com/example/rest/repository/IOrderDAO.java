@@ -5,6 +5,6 @@ import java.util.List;
 
 public interface IOrderDAO {
 
-    public int insertOrder(Order order);
+    public Order insertOrder(Order order);
     public List<Order> getAllOrders();
 }

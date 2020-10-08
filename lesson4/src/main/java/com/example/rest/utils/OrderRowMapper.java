@@ -6,7 +6,9 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-
+/**
+ *  Сериализация данных из базы данных в объект
+ */
 public class OrderRowMapper implements RowMapper<Order> {
 
     @Override

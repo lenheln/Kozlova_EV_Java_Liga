@@ -3,8 +3,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/*
-    Описывает сущность Order / Продукт
+/**
+ * Описывает сущность Order / Продукт
  */
 
 @Data

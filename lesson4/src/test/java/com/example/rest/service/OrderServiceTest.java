@@ -22,11 +22,11 @@ public class OrderServiceTest {
         this.orderService = new OrderService(orderDAO);
     }
 
-    @Test
-    public void createOrder_Should_Return_OrderId(){
-
-        Order order = new Order("Porshe", 10000);
-        Mockito.when(orderDAO.insertOrder(order)).thenReturn(2);
-        Assertions.assertEquals(2, orderService.createOrder(order));
-    }
+//    @Test
+//    public void createOrder_Should_Return_OrderId(){
+//
+//        Order order = new Order("Porshe", 10000);
+//        Mockito.when(orderDAO.insertOrder(order)).thenReturn(2);
+//        Assertions.assertEquals(2, orderService.createOrder(order));
+//    }
 }

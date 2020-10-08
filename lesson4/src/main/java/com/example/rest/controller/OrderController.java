@@ -6,19 +6,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
-/*
-    Контроллер для работы с сущностью Order / Продукт
+/**
+ * Контроллер для работы с сущностью Order / Продукт
  */
 
-@RequestMapping("/api/v1/order")
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/v1/order")
 public class OrderController {
 
     private final OrderService orderService;
 
     @PostMapping("/createOrder")
-    public int createOrder(@RequestBody Order order) {
+    public Order createOrder(@RequestBody Order order) {
         return orderService.createOrder(order);
     }
 
