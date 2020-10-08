@@ -44,9 +44,9 @@ public class OrderDAO implements IOrderDAO {
         sqlParameterSource.addValue("price",order.getPrice());
         sqlParameterSource.addValue("customer_id", currentCustomerId);
         namedTemplate.update(sql, sqlParameterSource, keyHolder);
-//        int orderId = (int) keyHolder.getKey();
-//        order.setId(orderId);
-//        order.setCustomerId(currentCustomerId);
+        int orderId = (int) keyHolder.getKey();
+        order.setId(orderId);
+        order.setCustomerId(currentCustomerId);
         return order;
     }
 
