@@ -5,6 +5,7 @@ import com.example.rest.repository.OrderDAO;
 import com.example.rest.service.OrderService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -33,14 +34,16 @@ class OrderControllerUnitTest {
     }
 
     @Test
-    void createOrder() throws Exception {
+    @DisplayName("Создание заказа")
+    void createOrder_ShouldReturn_InputOrder() throws Exception {
         Order order = new Order("car", 100);
         Mockito.when(orderService.createOrder(order)).thenReturn(order);
         Assertions.assertEquals(order, orderController.createOrder(order));
     }
 
     @Test
-    void getAllOrders() {
+    @DisplayName("Список всех заказов")
+    void getAllOrders_ShouldReturn_EntyList() {
         Mockito.when(orderService.getAllOrders()).thenReturn(List.of());
         Assertions.assertEquals(List.of(), orderController.getAllOrders());
 

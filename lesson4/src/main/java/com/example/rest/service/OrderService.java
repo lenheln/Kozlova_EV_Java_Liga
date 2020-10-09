@@ -21,7 +21,6 @@ public class OrderService {
      * @return
      * @throws Exception
      */
-
     public Order createOrder(Order order) throws Exception {
         if(order.getPrice() > 0) {
             return orderDAO.insertOrder(order);

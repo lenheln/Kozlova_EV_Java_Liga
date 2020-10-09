@@ -18,9 +18,6 @@ public class OrderDAOTest {
     @Mock
     JdbcTemplate jdbcTemplate;
 
-//    @Mock
-//    NamedParameterJdbcTemplate namedTemplate;
-
     @Mock
     CustomerDAO customerDAO;
 
@@ -29,7 +26,6 @@ public class OrderDAOTest {
         MockitoAnnotations.initMocks(this);
         orderDAO = new OrderDAO(jdbcTemplate);
         orderDAO.setCustomerDAO(customerDAO);
-//        namedTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
     }
 
     /*
@@ -42,13 +38,16 @@ public class OrderDAOTest {
     void insertOrder() {
         Order order = new Order("Porshe", 10000);
         Mockito.when(customerDAO.getCurrentCustomerId()).thenReturn(1);
-        Order returnOrder = orderDAO.insertOrder(order);
-        order.setCustomerId(1);
-        order.setId(1);
-        Assertions.assertEquals(order, returnOrder);
+        KeyHolder keyHolder = Mockito.mock(KeyHolder.class);
+        Mockito.when(keyHolder.getKey()).thenReturn(1);
+//        Order returnOrder = orderDAO.insertOrder(order);
+//        order.setCustomerId(1);
+//        order.setId(1);
+        Assertions.assertEquals(order, orderDAO.insertOrder(order));
     }
 
     @Test
+    @DisplayName("Список всех заказов")
     void getAllOrders_ShouldReturn_EmptyList() {
         Mockito.when(jdbcTemplate
                 .query(Mockito.anyString(), Mockito.any(OrderRowMapper.class)))
