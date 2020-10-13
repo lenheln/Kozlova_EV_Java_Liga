@@ -1,13 +1,13 @@
 package com.example.rest.repository;
 
 import com.example.rest.entity.Order;
+import com.example.rest.utils.KeyHolderFactory;
 import com.example.rest.utils.OrderRowMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import java.util.List;
@@ -20,6 +20,9 @@ public class OrderDAO implements IOrderDAO {
 
     @Autowired
     CustomerDAO customerDAO;
+
+    @Autowired
+    KeyHolderFactory keyHolderFactory;
 
     public void setCustomerDAO(CustomerDAO customerDAO) {
         this.customerDAO = customerDAO;
@@ -38,8 +41,9 @@ public class OrderDAO implements IOrderDAO {
                 "VALUES (:name, :price, :customer_id)";
         int currentCustomerId = customerDAO.getCurrentCustomerId();
         NamedParameterJdbcTemplate namedTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
-        KeyHolder keyHolder = new GeneratedKeyHolder();
         MapSqlParameterSource sqlParameterSource = new MapSqlParameterSource();
+        KeyHolder keyHolder = keyHolderFactory.newKeyHolder();
+
         sqlParameterSource.addValue("name", order.getName());
         sqlParameterSource.addValue("price",order.getPrice());
         sqlParameterSource.addValue("customer_id", currentCustomerId);
@@ -60,5 +64,9 @@ public class OrderDAO implements IOrderDAO {
         String sql = "SELECT * FROM Orders";
         List<Order> orderList = jdbcTemplate.query(sql, new OrderRowMapper());
         return orderList;
+    }
+
+    public void setKeyHolderFactory(KeyHolderFactory keyHolderFactory) {
+        this.keyHolderFactory = keyHolderFactory;
     }
 }
