@@ -1,0 +1,36 @@
+plugins {
+    id 'java'
+//    id "at.comm_unity.gradle.plugins.jpamodelgen" version "1.1.4"
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.4.22.Final'
+    implementation group: 'org.hibernate', name: 'hibernate-jcache', version: '5.4.22.Final'
+//    implementation group: 'org.ehcache', name: 'ehcache', version: '3.1.1'
+
+    compileOnly 'org.projectlombok:lombok:1.18.16'
+    annotationProcessor 'org.projectlombok:lombok:1.18.16'
+
+//    annotationProcessor 'org.hibernate:hibernate-jpamodelgen:4.3.8'
+
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.16'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.16'
+
+//    implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.17'
+    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.44'
+    runtime "mysql:mysql-connector-java:5.1.44"
+
+    implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.2"
+    implementation "org.glassfish.jaxb:jaxb-runtime:2.3.2"
+
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.13.3'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
