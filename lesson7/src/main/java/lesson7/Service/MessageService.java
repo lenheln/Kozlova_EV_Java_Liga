@@ -7,8 +7,11 @@ public class MessageService {
 
     private MessageDao messageDao;
 
+    public MessageService(MessageDao messageDao) {
+        this.messageDao = new MessageDao();
+    }
+
     public Message sentMessage(Message message){
-        messageDao = new MessageDao();
-        return messageDao.save(message);
+        return messageDao.saveOrUpdate(message);
     }
 }

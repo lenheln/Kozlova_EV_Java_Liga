@@ -30,4 +30,9 @@ public class User {
     @Column(name = "info")
     private String info;
 
+    public User(String name, String surname, String info) {
+        this.name = name;
+        this.surname = surname;
+        this.info = info;
+    }
 }
