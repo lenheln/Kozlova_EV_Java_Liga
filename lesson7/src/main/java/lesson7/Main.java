@@ -25,21 +25,26 @@ public class Main {
             List<User> users = new ArrayList<>();
             users.add(new User("Bob", "Dilan", "Love music"));
             users.add(new User("Nick", "Cave", "Love music too"));
-            users.add(new User("Bob", "Marley", "Love raggie"));
-
+            User user = new User("Bob", "Marley", "Love raggie");
+            users.add(user);
             saveOrUpdateUsers(users);
 
             List<Message> messageList = new ArrayList<>();
-            messageList.add(new Message("Hello!", users.get(0), users.get(1)));
-            messageList.add(new Message("Hi!", users.get(1), users.get(0)));
+            messageList.add(new Message("Hello!", users.get(0), users.get(2)));
+            messageList.add(new Message("Hi!", users.get(2), users.get(0)));
             messageList.add(new Message("No woman no cry!", users.get(2), users.get(1)));
             messageList.add(new Message("Yo whats'up!", users.get(2), users.get(0)));
-            messageList.add(new Message("Bye", users.get(0), users.get(1)));
+            Message message = new Message("Bye", users.get(0), users.get(1));
+            messageList.add(message);
+//            messageList.add(new Message("Bye", users.get(0), users.get(1)));
             saveOrUpdateMsg(messageList);
+            userDao.findDialogsByUser(user);
+//            System.out.println("**********\n" + userDao.getUsersBySurnameStartsWith("Mar"));
+ //           System.out.println(messageDao.get(message));
 
             //        userDao.findDialogsByUser(user2);
-            userDao.findUsersByNameAndSurname("Elena", "Cave");
-            userDao.findMessagesByUsers(users.get(0), users.get(1));
+//            userDao.findUsersByNameAndSurname("Elena", "Cave");
+//            userDao.findMessagesByUsers(users.get(0), users.get(1));
 
         } finally {
             JpaConfig.getEntityManagerFactory().close();
