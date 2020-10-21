@@ -1,3 +1,4 @@
+-- Создание таблицы клиентов
 CREATE TABLE IF NOT EXISTS Customers
 (
     ID INT PRIMARY KEY AUTO_INCREMENT,
@@ -5,6 +6,7 @@ CREATE TABLE IF NOT EXISTS Customers
     EMAIL VARCHAR(255)
 );
 
+-- Создание таблицы заказов
 CREATE TABLE IF NOT EXISTS Orders
 (
     ID INT PRIMARY KEY AUTO_INCREMENT,
