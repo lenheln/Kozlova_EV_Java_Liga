@@ -7,6 +7,7 @@ import org.hibernate.sql.Select;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Tuple;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.util.HashSet;
 import java.util.List;
@@ -126,15 +127,16 @@ public class UserDao {
             Predicate userAuthor = cb.equal(messageRoot.get("authorId"), user);
             Predicate userReciever = cb.equal(messageRoot.get("recieverId"), user);
 
-            //Находит все диалоги с данным пользователем, но не распознает дубликаты диалогов типа
-            // Author - user1 Reciever user2 и
-            // Author - user2 Reciever user1
-
-//            query.select(cb.tuple(messageRoot.get("authorId"), messageRoot.get("recieverId")))
-//                    .where(cb.or(userAuthor, userReciever))
-//                    .distinct(true);
-//            List<Tuple> userList = entityManager.createQuery(query).getResultList();
-
+            /**
+             *      157 - id for example
+             *
+             *     select distinct
+             * 		case
+             * 			when message.authorId in (157) then message.recieverId
+             *             else message.authorId
+             *             end
+             *  	from message where message.authorId in (157) or message.recieverId in (157);
+             */
             query.select(
                     cb.<User>selectCase()
                     .when(cb.equal(messageRoot.get("authorId"), user), messageRoot.get("recieverId"))
@@ -142,19 +144,6 @@ public class UserDao {
             ).where(cb.or(userAuthor, userReciever))
             .distinct(true);
             resultList = entityManager.createQuery(query).getResultList();
-            for (User u: resultList) {
-                System.out.println(u.toString());
-            }
-
-            System.out.println("ok");
-
-//            // Через сет убираем дубляжи и получаем сет юзеров с которыми есть диалог у текущего юзера
-//            userList.forEach(tuple -> {
-//                userSet.add ((User) (tuple.get(0)));
-//                userSet.add ((User) (tuple.get(1)));
-//            });
-//            userSet.remove(user);
-
         } catch (Exception e){
             entityManager.getTransaction().rollback();
         } finally {
