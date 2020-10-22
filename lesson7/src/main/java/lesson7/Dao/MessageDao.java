@@ -9,10 +9,7 @@ public class MessageDao {
     public Message saveOrUpdate(Message message){
         EntityManager entityManager = JpaConfig.getEntityManagerFactory().createEntityManager();
         try {
-            // start the transaction
             entityManager.getTransaction().begin();
-
-            // save a object
             if (message.getId() == null) {
                 entityManager.persist(message);
             } else {

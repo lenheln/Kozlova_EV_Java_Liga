@@ -3,16 +3,9 @@ package lesson7.Dao;
 import lesson7.Config.JpaConfig;
 import lesson7.Entity.Message;
 import lesson7.Entity.User;
-import org.hibernate.sql.Select;
-
 import javax.persistence.EntityManager;
-import javax.persistence.Tuple;
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
 
 public class UserDao {
 
@@ -67,7 +60,13 @@ public class UserDao {
     }
 
 
-    public List<User> getUsersBySurnameStartsWith(String startSurname) {
+    /**
+     * Ищет пользователей по части фамилии
+     *
+     * @param partOfSurname
+     * @return список пользователей в фамилии которых есть такая часть
+     */
+    public List<User> getUsersByPartOfSurname(String partOfSurname) {
         EntityManager entityManager = JpaConfig.getEntityManagerFactory().createEntityManager();
         List<User> userList = null;
         try {
@@ -75,7 +74,7 @@ public class UserDao {
             CriteriaBuilder cb = entityManager.getCriteriaBuilder();
             CriteriaQuery<User> query = cb.createQuery(User.class);
             Root<User> root = query.from(User.class);
-            query.select(root).where(cb.like(root.get("surname"), startSurname + "%"));
+            query.select(root).where(cb.like(root.get("surname"), "%"+ partOfSurname + "%"));
             userList = entityManager.createQuery(query).getResultList();
         } catch (Exception e){
             entityManager.getTransaction().rollback();
@@ -130,12 +129,13 @@ public class UserDao {
             /**
              *      157 - id for example
              *
-             *     select distinct
-             * 		case
-             * 			when message.authorId in (157) then message.recieverId
-             *             else message.authorId
-             *             end
-             *  	from message where message.authorId in (157) or message.recieverId in (157);
+             *     SELECT DISTINCT
+             * 	   CASE
+             * 			WHEN message.authorId IN (157) THEN message.recieverId
+             *          ELSE message.authorId
+             *          END
+             *  	FROM message
+             *  	WHERE message.authorId IN (157) OR message.recieverId IN (157);
              */
             
             query.select(

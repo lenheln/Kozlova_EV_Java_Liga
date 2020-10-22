@@ -40,8 +40,8 @@ public class Main {
             messageList.add(message);
 //            messageList.add(new Message("Bye", users.get(0), users.get(1)));
             saveOrUpdateMsg(messageList);
-            userDao.findDialogsByUser(user);
-//            System.out.println("**********\n" + userDao.getUsersBySurnameStartsWith("Mar"));
+//            userDao.findDialogsByUser(user);
+            System.out.println("**********\n" + userDao.getUsersByPartOfSurname("Marl"));
  //           System.out.println(messageDao.get(message));
 
             //        userDao.findDialogsByUser(user2);
