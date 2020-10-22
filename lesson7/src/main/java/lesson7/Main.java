@@ -25,15 +25,17 @@ public class Main {
             List<User> users = new ArrayList<>();
             users.add(new User("Bob", "Dilan", "Love music"));
             users.add(new User("Nick", "Cave", "Love music too"));
+            users.add(new User("Ozzy", "Osborne", "Arrr"));
             User user = new User("Bob", "Marley", "Love raggie");
             users.add(user);
             saveOrUpdateUsers(users);
 
             List<Message> messageList = new ArrayList<>();
-            messageList.add(new Message("Hello!", users.get(0), users.get(2)));
+            messageList.add(new Message("Hello!", users.get(0), users.get(3)));
             messageList.add(new Message("Hi!", users.get(2), users.get(0)));
             messageList.add(new Message("No woman no cry!", users.get(2), users.get(1)));
             messageList.add(new Message("Yo whats'up!", users.get(2), users.get(0)));
+            messageList.add(new Message("RRR", users.get(3), users.get(2)));
             Message message = new Message("Bye", users.get(0), users.get(1));
             messageList.add(message);
 //            messageList.add(new Message("Bye", users.get(0), users.get(1)));

@@ -3,11 +3,11 @@ package lesson7.Dao;
 import lesson7.Config.JpaConfig;
 import lesson7.Entity.Message;
 import lesson7.Entity.User;
+import org.hibernate.sql.Select;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Tuple;
 import javax.persistence.criteria.*;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,32 +26,28 @@ public class UserDao {
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
+        } finally {
             entityManager.close();
-            throw e;
         }
         return user;
     }
 
-    public User get(User user) throws Exception {
+    public User get(Long id) {
         EntityManager entityManager = JpaConfig.getEntityManagerFactory().createEntityManager();
-        User userFromDB = null;
+        User user = null;
         try {
             entityManager.getTransaction().begin();
-            if (user.getId() == null) {
-                throw new Exception("Couldn't find user in DB");
-            } else {
-                userFromDB = entityManager.find(User.class, user.getId());
-            }
+            user = entityManager.find(User.class, id);
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
+        } finally {
             entityManager.close();
-            throw e;
         }
-        return userFromDB;
+        return user;
     }
 
-    public void delete(User user) throws Exception {
+    public void delete(User user) {
         EntityManager entityManager = JpaConfig.getEntityManagerFactory().createEntityManager();
         try {
             entityManager.getTransaction().begin();
@@ -62,10 +58,10 @@ public class UserDao {
             }
             entityManager.remove(user);
             entityManager.getTransaction().commit();
-        } catch (Exception e){
+        } catch (Exception e) {
             entityManager.getTransaction().rollback();
+        } finally {
             entityManager.close();
-            throw e;
         }
     }
 
@@ -118,13 +114,13 @@ public class UserDao {
      * @param user
      * @return сет пользователей
      */
-    public Set<User> findDialogsByUser(User user){
+    public List<User> findDialogsByUser(User user){
         EntityManager entityManager = JpaConfig.getEntityManagerFactory().createEntityManager();
-        Set<User> userSet = new HashSet<>();
+        List<User> resultList = null;
         try {
             entityManager.getTransaction().begin();
             CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-            CriteriaQuery<Tuple> query = cb.createQuery(Tuple.class);
+            CriteriaQuery<User> query = cb.createQuery(User.class);
             Root<Message> messageRoot = query.from(Message.class);
 
             Predicate userAuthor = cb.equal(messageRoot.get("authorId"), user);
@@ -133,40 +129,38 @@ public class UserDao {
             //Находит все диалоги с данным пользователем, но не распознает дубликаты диалогов типа
             // Author - user1 Reciever user2 и
             // Author - user2 Reciever user1
-            query.select(cb.tuple(messageRoot.get("authorId"), messageRoot.get("recieverId")))
-                    .where(cb.or(userAuthor, userReciever))
-                    .distinct(true).having();
-            List<Tuple> userList = entityManager.createQuery(query).getResultList();
 
-            // Через сет убираем дубляжи и получаем сет юзеров с которыми есть диалог у текущего юзера
-            userList.forEach(tuple -> {
-                userSet.add ((User) (tuple.get(0)));
-                userSet.add ((User) (tuple.get(1)));
-            });
-            userSet.remove(user);
+//            query.select(cb.tuple(messageRoot.get("authorId"), messageRoot.get("recieverId")))
+//                    .where(cb.or(userAuthor, userReciever))
+//                    .distinct(true);
+//            List<Tuple> userList = entityManager.createQuery(query).getResultList();
+
+            query.select(
+                    cb.<User>selectCase()
+                    .when(cb.equal(messageRoot.get("authorId"), user), messageRoot.get("recieverId"))
+                    .otherwise(messageRoot.get("authorId"))
+            ).where(cb.or(userAuthor, userReciever))
+            .distinct(true);
+            resultList = entityManager.createQuery(query).getResultList();
+            for (User u: resultList) {
+                System.out.println(u.toString());
+            }
+
+            System.out.println("ok");
+
+//            // Через сет убираем дубляжи и получаем сет юзеров с которыми есть диалог у текущего юзера
+//            userList.forEach(tuple -> {
+//                userSet.add ((User) (tuple.get(0)));
+//                userSet.add ((User) (tuple.get(1)));
+//            });
+//            userSet.remove(user);
 
         } catch (Exception e){
             entityManager.getTransaction().rollback();
         } finally {
             entityManager.close();
         }
-        return userSet;
-
-        /**
-         * Старая версия реализации
-         */
-//        //Сет в котором будут храниться искомые юзеры
-//        Set<User> userSet = new HashSet<>();
-//
-//        //select authorId from message where recieverId In ('userId');
-//        query.select(messageRoot.get("authorId")).where(cb.equal(messageRoot.get("recieverId"),userId)).distinct(true);
-//        userSet.addAll(entityManager.createQuery(query).getResultList());
-//
-//        //select recieverId from message where authorId In ('userId')
-//        query.select(messageRoot.get("recieverId")).where(cb.equal(messageRoot.get("authorId"),userId)).distinct(true);
-//        userSet.addAll(entityManager.createQuery(query).getResultList());
-
-     //   return userSet;
+        return resultList;
     }
 
     /**

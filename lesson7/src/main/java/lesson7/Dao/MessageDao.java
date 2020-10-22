@@ -18,19 +18,17 @@ public class MessageDao {
             } else {
                 message = entityManager.merge(message);
             }
-
-            // commit transction
             entityManager.getTransaction().commit();
 
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
+        } finally {
             entityManager.close();
-            throw e;
         }
         return message;
     }
 
-    public void delete(Message message) throws Exception {
+    public void delete(Message message) {
         EntityManager entityManager = JpaConfig.getEntityManagerFactory().createEntityManager();
         try {
             entityManager.getTransaction().begin();
@@ -43,32 +41,28 @@ public class MessageDao {
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
+        } finally {
             entityManager.close();
-            throw e;
         }
     }
 
     /**
      * Получает сообщение из базы данных
-     * @param message
+     * @param id
      * @return инстанс сообщение из БД
      * @throws Exception
      */
-    public Message get(Message message) throws Exception {
+    public Message get(Long id) {
         EntityManager entityManager = JpaConfig.getEntityManagerFactory().createEntityManager();
         Message msg = null;
         try {
             entityManager.getTransaction().begin();
-            if (message.getId() == null) {
-                throw new Exception("Couldn't find message in DB");
-            } else {
-                msg = entityManager.find(Message.class, message.getId());
-            }
+            msg = entityManager.find(Message.class, id);
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
+        } finally {
             entityManager.close();
-            throw e;
         }
         return msg;
     }
