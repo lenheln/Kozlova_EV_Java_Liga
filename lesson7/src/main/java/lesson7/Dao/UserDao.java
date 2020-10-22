@@ -137,6 +137,7 @@ public class UserDao {
              *             end
              *  	from message where message.authorId in (157) or message.recieverId in (157);
              */
+            
             query.select(
                     cb.<User>selectCase()
                     .when(cb.equal(messageRoot.get("authorId"), user), messageRoot.get("recieverId"))
