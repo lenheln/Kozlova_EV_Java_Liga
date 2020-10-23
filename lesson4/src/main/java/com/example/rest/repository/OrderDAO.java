@@ -3,13 +3,11 @@ package com.example.rest.repository;
 import com.example.rest.domain.Order;
 import com.example.rest.utils.OrderRowMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
-
-import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.List;
 
@@ -34,9 +32,10 @@ public class OrderDAO {
      * @return order /заказ с указанным id заказа и id клиента, выполнившего заказ
      */
 
-    public Order insertOrder(Order order){
+    public Order insertOrder(Order order) throws Exception {
         Integer currentCustomerId = customerDAO.getCurrentCustomerId();
-        jdbcTemplate.update(
+
+        int resultSet = jdbcTemplate.update(
                 connection -> {
             PreparedStatement ps = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, order.getName());
@@ -44,10 +43,15 @@ public class OrderDAO {
             ps.setInt(3, currentCustomerId);
             return ps;
         }, keyHolder);
-        Integer orderId = keyHolder.getKey().intValue();
-        order.setId(orderId);
-        order.setCustomerId(currentCustomerId);
-        return order;
+
+        if(resultSet == 0){
+            throw new Exception("Не удалось создать новый заказ");
+        } else {
+            Integer orderId = keyHolder.getKey().intValue();
+            order.setId(orderId);
+            order.setCustomerId(currentCustomerId);
+            return order;
+        }
     }
 
     /**

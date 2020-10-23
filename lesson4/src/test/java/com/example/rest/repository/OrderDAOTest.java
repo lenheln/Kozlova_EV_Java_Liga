@@ -6,6 +6,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.KeyHolder;
@@ -19,12 +20,9 @@ public class OrderDAOTest {
     @Mock
     JdbcTemplate jdbcTemplate;
     @Mock
-    NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    @Mock
     CustomerDAO customerDAO;
     @Mock
     KeyHolder keyHolder;
-
 
     @BeforeEach
     public void init(){
@@ -34,12 +32,11 @@ public class OrderDAOTest {
 
     @Test
     @DisplayName("Сохранение в базе данных нового заказа")
-    void insertOrder() {
+    public void insertOrder_ShouldReturn_OrderWithId() throws Exception {
         Mockito.when(customerDAO.getCurrentCustomerId()).thenReturn(1);
         Mockito.when(keyHolder.getKey()).thenReturn(1);
-        Mockito.when(namedParameterJdbcTemplate.update(
-                                Mockito.any(String.class),
-                                Mockito.any(MapSqlParameterSource.class),
+        Mockito.when(jdbcTemplate.update(
+                                Mockito.any(PreparedStatementCreator.class),
                                 Mockito.any(KeyHolder.class)
                         )).thenReturn(1);
 
@@ -49,8 +46,23 @@ public class OrderDAOTest {
     }
 
     @Test
-    @DisplayName("Список всех заказов")
-    void getAllOrders_ShouldReturn_EmptyList() {
+    @DisplayName("Ошибка при сохранении заказа")
+    public void insertOrder_ShouldReturn_Exception() throws Exception {
+        Mockito.when(customerDAO.getCurrentCustomerId()).thenReturn(1);
+        Mockito.when(keyHolder.getKey()).thenReturn(1);
+        Mockito.when(jdbcTemplate.update(
+                Mockito.any(PreparedStatementCreator.class),
+                Mockito.any(KeyHolder.class)
+        )).thenReturn(0);
+        Order order = Order.builder().name("Car").price(100).customerId(1).build();
+        Exception exception = Assertions.assertThrows(Exception.class, () -> orderDAO.insertOrder(order));
+        String expectedException = "Не удалось создать новый заказ";
+        Assertions.assertEquals(expectedException, exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Получение списка всех заказов")
+    public void getAllOrders_ShouldReturn_EmptyList() {
         Mockito.when(jdbcTemplate
                 .query(Mockito.anyString(), Mockito.any(OrderRowMapper.class)))
                 .thenReturn(List.of());
