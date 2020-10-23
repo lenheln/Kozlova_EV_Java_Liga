@@ -3,6 +3,7 @@ package com.example.rest.repository;
 import com.example.rest.domain.Order;
 import com.example.rest.utils.OrderRowMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class OrderDAO {
 
     private static final String
@@ -45,11 +47,13 @@ public class OrderDAO {
         }, keyHolder);
 
         if(resultSet == 0){
+            log.error("Couldn't save order by user #{}", currentCustomerId);
             throw new Exception("Не удалось создать новый заказ");
         } else {
             Integer orderId = keyHolder.getKey().intValue();
             order.setId(orderId);
             order.setCustomerId(currentCustomerId);
+            log.info("Order #{} has saved successfully", orderId);
             return order;
         }
     }
