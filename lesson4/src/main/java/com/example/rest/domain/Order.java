@@ -20,9 +20,4 @@ public class Order {
     private Integer price;
     @NonNull
     private Integer customerId;
-
-//    public Order(String name, int price) {
-//        this.name = name;
-//        this.price = price;
-//    }
 }

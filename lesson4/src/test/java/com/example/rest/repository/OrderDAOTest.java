@@ -29,8 +29,7 @@ public class OrderDAOTest {
     @BeforeEach
     public void init(){
         MockitoAnnotations.initMocks(this);
-        orderDAO = new OrderDAO(jdbcTemplate, keyHolder);
-        orderDAO.setCustomerDAO(customerDAO);
+        orderDAO = new OrderDAO(jdbcTemplate, keyHolder, customerDAO);
     }
 
     @Test

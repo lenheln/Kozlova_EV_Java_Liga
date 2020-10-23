@@ -5,31 +5,27 @@ import com.example.rest.utils.OrderRowMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
 public class OrderDAO {
 
-    private final JdbcTemplate jdbcTemplate;
     private static final String
-            INSERT = "INSERT INTO Orders (NAME, PRICE, CUSTOMER_ID) VALUES (:name, :price, :customer_id)";
+            INSERT = "INSERT INTO Orders (NAME, PRICE, CUSTOMER_ID) VALUES (? , ? , ?)";
 
     private static final String
             SELECT = "SELECT * FROM Orders";
 
+    private final JdbcTemplate jdbcTemplate;
     private final KeyHolder keyHolder;
-
-    @Autowired
-    private CustomerDAO customerDAO;
-
-    public void setCustomerDAO(CustomerDAO customerDAO) {
-        this.customerDAO = customerDAO;
-    }
+    private final CustomerDAO customerDAO;
 
     /**
      * Сохранение заказа в базе данных
@@ -40,13 +36,15 @@ public class OrderDAO {
 
     public Order insertOrder(Order order){
         Integer currentCustomerId = customerDAO.getCurrentCustomerId();
-        NamedParameterJdbcTemplate namedTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
-        MapSqlParameterSource sqlParameterSource = new MapSqlParameterSource();
-        sqlParameterSource.addValue("name", order.getName());
-        sqlParameterSource.addValue("price",order.getPrice());
-        sqlParameterSource.addValue("customer_id", currentCustomerId);
-        namedTemplate.update(INSERT, sqlParameterSource, keyHolder);
-        Integer orderId = (Integer) keyHolder.getKey();
+        jdbcTemplate.update(
+                connection -> {
+            PreparedStatement ps = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, order.getName());
+            ps.setInt(2, order.getPrice());
+            ps.setInt(3, currentCustomerId);
+            return ps;
+        }, keyHolder);
+        Integer orderId = keyHolder.getKey().intValue();
         order.setId(orderId);
         order.setCustomerId(currentCustomerId);
         return order;
