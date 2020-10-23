@@ -29,7 +29,7 @@ public class OrderServiceTest {
     @Test
     @DisplayName("Создание заказа")
     public void createOrder_Should_Return_Order() throws Exception {
-        Order order = new Order("Porshe", 10000);
+        Order order = Order.builder().name("Porcshe").price(10000).build();
         Mockito.when(orderDAO.insertOrder(order)).thenReturn(order);
         Assertions.assertEquals(order, orderService.createOrder(order));
     }
@@ -37,7 +37,7 @@ public class OrderServiceTest {
     @Test
     @DisplayName("Создание заказа")
     public void createOrder_Should_Throw_Exception() throws Exception {
-        Order order = new Order("Porshe", -100);
+        Order order = Order.builder().name("Porcshe").price(-10000).build();
         Mockito.when(orderDAO.insertOrder(order)).thenReturn(order);
         Exception exception = Assertions.assertThrows(Exception.class, () -> {
             orderService.createOrder(order);

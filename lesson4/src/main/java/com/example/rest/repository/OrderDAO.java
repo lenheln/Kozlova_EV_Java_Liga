@@ -1,7 +1,6 @@
 package com.example.rest.repository;
 
 import com.example.rest.domain.Order;
-import com.example.rest.utils.KeyHolderFactory;
 import com.example.rest.utils.OrderRowMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +22,10 @@ public class OrderDAO {
     private static final String
             SELECT = "SELECT * FROM Orders";
 
-    @Autowired
-    CustomerDAO customerDAO;
+    private final KeyHolder keyHolder;
 
     @Autowired
-    KeyHolderFactory keyHolderFactory;
+    private CustomerDAO customerDAO;
 
     public void setCustomerDAO(CustomerDAO customerDAO) {
         this.customerDAO = customerDAO;
@@ -44,8 +42,6 @@ public class OrderDAO {
         Integer currentCustomerId = customerDAO.getCurrentCustomerId();
         NamedParameterJdbcTemplate namedTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
         MapSqlParameterSource sqlParameterSource = new MapSqlParameterSource();
-        KeyHolder keyHolder = keyHolderFactory.newKeyHolder();
-
         sqlParameterSource.addValue("name", order.getName());
         sqlParameterSource.addValue("price",order.getPrice());
         sqlParameterSource.addValue("customer_id", currentCustomerId);
@@ -63,9 +59,5 @@ public class OrderDAO {
     public List<Order> getAllOrders(){
         List<Order> orderList = jdbcTemplate.query(SELECT, new OrderRowMapper());
         return orderList;
-    }
-
-    public void setKeyHolderFactory(KeyHolderFactory keyHolderFactory) {
-        this.keyHolderFactory = keyHolderFactory;
     }
 }

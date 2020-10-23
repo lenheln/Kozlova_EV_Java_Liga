@@ -1,6 +1,5 @@
 package com.example.rest.repository;
 import com.example.rest.domain.Order;
-import com.example.rest.utils.KeyHolderFactory;
 import com.example.rest.utils.OrderRowMapper;
 import org.junit.jupiter.api.*;
 import org.mockito.Mock;
@@ -23,12 +22,14 @@ public class OrderDAOTest {
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     @Mock
     CustomerDAO customerDAO;
+    @Mock
+    KeyHolder keyHolder;
 
 
     @BeforeEach
     public void init(){
         MockitoAnnotations.initMocks(this);
-        orderDAO = new OrderDAO(jdbcTemplate);
+        orderDAO = new OrderDAO(jdbcTemplate, keyHolder);
         orderDAO.setCustomerDAO(customerDAO);
     }
 
@@ -36,23 +37,16 @@ public class OrderDAOTest {
     @DisplayName("Сохранение в базе данных нового заказа")
     void insertOrder() {
         Mockito.when(customerDAO.getCurrentCustomerId()).thenReturn(1);
-        KeyHolder keyHolderMock = Mockito.mock(KeyHolder.class);
-        KeyHolderFactory keyHolderFactory = Mockito.mock(KeyHolderFactory.class);
-        Mockito.when(keyHolderFactory.newKeyHolder()).thenReturn(keyHolderMock);
-        Mockito.when(keyHolderMock.getKey()).thenReturn(1);
-
-        orderDAO.setKeyHolderFactory(keyHolderFactory);
-
+        Mockito.when(keyHolder.getKey()).thenReturn(1);
         Mockito.when(namedParameterJdbcTemplate.update(
                                 Mockito.any(String.class),
                                 Mockito.any(MapSqlParameterSource.class),
                                 Mockito.any(KeyHolder.class)
                         )).thenReturn(1);
 
-        Order orderExpected = new Order(1, "Porshe", 10000, 1 );
-
-        Order inputOrder = Order.builder().name("Porshe").price(10000).build();
-        Assertions.assertEquals(orderExpected, orderDAO.insertOrder(inputOrder));
+        Order expectedOrder = new Order(1, "Porshe", 10000, 1 );
+        Order inputOrder = Order.builder().name("Porshe").price(10000).customerId(0).build();
+        Assertions.assertEquals(expectedOrder, orderDAO.insertOrder(inputOrder));
     }
 
     @Test

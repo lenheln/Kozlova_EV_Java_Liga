@@ -32,7 +32,7 @@ class OrderControllerUnitTest {
     @Test
     @DisplayName("Создание заказа")
     void createOrder_ShouldReturn_InputOrder() throws Exception {
-        Order order = new Order("car", 100);
+        Order order = Order.builder().name("car").price(100).build();
         Mockito.when(orderService.createOrder(order)).thenReturn(order);
         Assertions.assertEquals(order, orderController.createOrder(order));
     }

@@ -31,8 +31,7 @@ public class OrderControllerIntegrationTest {
     @Test
     @DisplayName("Создание нового заказа")
     void createOrder_Should_Return_Json() throws Exception {
-        Order order = new Order("car", 100);
-
+        Order order = Order.builder().name("car").price(100).build();
         mockMvc.perform(post("/api/v1/order/createOrder")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(order)))
