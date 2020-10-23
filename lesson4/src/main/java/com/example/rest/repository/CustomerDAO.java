@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class CustomerDAO implements  ICustomerDAO{
+public class CustomerDAO{
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -13,8 +13,7 @@ public class CustomerDAO implements  ICustomerDAO{
      * Возвращает id клиента, который сейчас подключен
      * Сейчас здесь просто заглушка. Всегда возвращается id = 1;
      */
-    @Override
-    public int getCurrentCustomerId(){
+    public Integer getCurrentCustomerId(){
         return 1;
     }
 }

@@ -1,6 +1,6 @@
 package com.example.rest.controller;
 
-import com.example.rest.entity.Order;
+import com.example.rest.domain.Order;
 import com.example.rest.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

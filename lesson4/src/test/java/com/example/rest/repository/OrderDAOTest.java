@@ -1,9 +1,8 @@
 package com.example.rest.repository;
-import com.example.rest.entity.Order;
+import com.example.rest.domain.Order;
 import com.example.rest.utils.KeyHolderFactory;
 import com.example.rest.utils.OrderRowMapper;
 import org.junit.jupiter.api.*;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -11,10 +10,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.KeyHolder;
-
 import java.util.List;
 
-import static org.mockito.Mockito.mock;
 
 public class OrderDAOTest {
 
@@ -35,11 +32,6 @@ public class OrderDAOTest {
         orderDAO.setCustomerDAO(customerDAO);
     }
 
-    /*
-        TODO непонятно как написать тест, если в методе insertOrder
-         объект KeyHolder объявляется, а затем меняет состояние
-     */
-
     @Test
     @DisplayName("Сохранение в базе данных нового заказа")
     void insertOrder() {
@@ -58,8 +50,9 @@ public class OrderDAOTest {
                         )).thenReturn(1);
 
         Order orderExpected = new Order(1, "Porshe", 10000, 1 );
-        Order orderInput = new Order("Porshe", 10000 );
-        Assertions.assertEquals(orderExpected, orderDAO.insertOrder(orderInput));
+
+        Order inputOrder = Order.builder().name("Porshe").price(10000).build();
+        Assertions.assertEquals(orderExpected, orderDAO.insertOrder(inputOrder));
     }
 
     @Test

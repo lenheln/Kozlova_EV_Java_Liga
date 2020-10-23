@@ -1,6 +1,6 @@
 package com.example.rest.utils;
 
-import com.example.rest.entity.Order;
+import com.example.rest.domain.Order;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;

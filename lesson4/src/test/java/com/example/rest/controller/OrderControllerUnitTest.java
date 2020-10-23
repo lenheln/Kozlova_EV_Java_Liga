@@ -1,7 +1,6 @@
 package com.example.rest.controller;
 
-import com.example.rest.entity.Order;
-import com.example.rest.repository.OrderDAO;
+import com.example.rest.domain.Order;
 import com.example.rest.service.OrderService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,11 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *  Unit - тесты для контроллера

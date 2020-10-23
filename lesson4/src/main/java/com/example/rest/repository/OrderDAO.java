@@ -1,6 +1,6 @@
 package com.example.rest.repository;
 
-import com.example.rest.entity.Order;
+import com.example.rest.domain.Order;
 import com.example.rest.utils.KeyHolderFactory;
 import com.example.rest.utils.OrderRowMapper;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +14,14 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class OrderDAO implements IOrderDAO {
+public class OrderDAO {
 
     private final JdbcTemplate jdbcTemplate;
+    private static final String
+            INSERT = "INSERT INTO Orders (NAME, PRICE, CUSTOMER_ID) VALUES (:name, :price, :customer_id)";
+
+    private static final String
+            SELECT = "SELECT * FROM Orders";
 
     @Autowired
     CustomerDAO customerDAO;
@@ -35,11 +40,8 @@ public class OrderDAO implements IOrderDAO {
      * @return order /заказ с указанным id заказа и id клиента, выполнившего заказ
      */
 
-    @Override
     public Order insertOrder(Order order){
-        String sql = "INSERT INTO Orders (NAME, PRICE, CUSTOMER_ID) " +
-                "VALUES (:name, :price, :customer_id)";
-        int currentCustomerId = customerDAO.getCurrentCustomerId();
+        Integer currentCustomerId = customerDAO.getCurrentCustomerId();
         NamedParameterJdbcTemplate namedTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
         MapSqlParameterSource sqlParameterSource = new MapSqlParameterSource();
         KeyHolder keyHolder = keyHolderFactory.newKeyHolder();
@@ -47,8 +49,8 @@ public class OrderDAO implements IOrderDAO {
         sqlParameterSource.addValue("name", order.getName());
         sqlParameterSource.addValue("price",order.getPrice());
         sqlParameterSource.addValue("customer_id", currentCustomerId);
-        namedTemplate.update(sql, sqlParameterSource, keyHolder);
-        int orderId = (int) keyHolder.getKey();
+        namedTemplate.update(INSERT, sqlParameterSource, keyHolder);
+        Integer orderId = (Integer) keyHolder.getKey();
         order.setId(orderId);
         order.setCustomerId(currentCustomerId);
         return order;
@@ -58,11 +60,8 @@ public class OrderDAO implements IOrderDAO {
      * Возвращает список всех заказов из базы данных
      * @return список заказов
      */
-
-    @Override
     public List<Order> getAllOrders(){
-        String sql = "SELECT * FROM Orders";
-        List<Order> orderList = jdbcTemplate.query(sql, new OrderRowMapper());
+        List<Order> orderList = jdbcTemplate.query(SELECT, new OrderRowMapper());
         return orderList;
     }
 

@@ -1,4 +1,4 @@
-package com.example.rest.entity;
+package com.example.rest.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,7 +16,7 @@ import org.springframework.data.annotation.Id;
 public class Customer {
 
     @Id
-    private int id;
+    private Integer id;
     @NonNull
     private String name;
     @NonNull

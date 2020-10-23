@@ -1,9 +1,8 @@
 package com.example.rest.service;
 
-import com.example.rest.entity.Order;
+import com.example.rest.domain.Order;
 import com.example.rest.repository.OrderDAO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
