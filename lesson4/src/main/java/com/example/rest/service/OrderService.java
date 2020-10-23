@@ -22,7 +22,7 @@ public class OrderService {
      */
     public Order createOrder(Order order) throws Exception {
         if(order.getPrice() > 0) {
-            return orderDAO.insertOrder(order);
+            return orderDAO.createOrder(order);
         }
         else throw new Exception("Стоимость должна быть больше 0");
     }

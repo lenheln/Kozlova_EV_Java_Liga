@@ -7,8 +7,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.KeyHolder;
 import java.util.List;
 
@@ -42,7 +41,16 @@ public class OrderDAOTest {
 
         Order expectedOrder = new Order(1, "Porshe", 10000, 1 );
         Order inputOrder = Order.builder().name("Porshe").price(10000).customerId(0).build();
-        Assertions.assertEquals(expectedOrder, orderDAO.insertOrder(inputOrder));
+        Assertions.assertEquals(expectedOrder, orderDAO.createOrder(inputOrder));
+
+        Mockito.verify(customerDAO, Mockito.times(1)).getCurrentCustomerId();
+        Mockito.verify(keyHolder, Mockito.times(1)).getKey();
+        Mockito.verify(jdbcTemplate, Mockito.times(1)).update
+                (Mockito.any(PreparedStatementCreator.class), Mockito.any(KeyHolder.class));
+
+        Mockito.verifyNoMoreInteractions(customerDAO);
+        Mockito.verifyNoMoreInteractions(keyHolder);
+        Mockito.verifyNoMoreInteractions(jdbcTemplate);
     }
 
     @Test
@@ -55,9 +63,18 @@ public class OrderDAOTest {
                 Mockito.any(KeyHolder.class)
         )).thenReturn(0);
         Order order = Order.builder().name("Car").price(100).customerId(1).build();
-        Exception exception = Assertions.assertThrows(Exception.class, () -> orderDAO.insertOrder(order));
+        Exception exception = Assertions.assertThrows(Exception.class, () -> orderDAO.createOrder(order));
         String expectedException = "Не удалось создать новый заказ";
         Assertions.assertEquals(expectedException, exception.getMessage());
+
+        Mockito.verify(customerDAO, Mockito.times(1)).getCurrentCustomerId();
+        Mockito.verify(keyHolder, Mockito.never()).getKey();
+        Mockito.verify(jdbcTemplate, Mockito.times(1)).update
+                (Mockito.any(PreparedStatementCreator.class), Mockito.any(KeyHolder.class));
+
+        Mockito.verifyNoMoreInteractions(customerDAO);
+        Mockito.verifyNoMoreInteractions(keyHolder);
+        Mockito.verifyNoMoreInteractions(jdbcTemplate);
     }
 
     @Test
@@ -67,6 +84,9 @@ public class OrderDAOTest {
                 .query(Mockito.anyString(), Mockito.any(OrderRowMapper.class)))
                 .thenReturn(List.of());
         Assertions.assertEquals(List.of(), orderDAO.getAllOrders());
-    }
 
+        Mockito.verify(jdbcTemplate, Mockito.times(1)).query
+                (Mockito.any(String.class), Mockito.any(RowMapper.class));
+        Mockito.verifyNoMoreInteractions(jdbcTemplate);
+    }
 }

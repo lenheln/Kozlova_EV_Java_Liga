@@ -34,9 +34,8 @@ public class OrderDAO {
      * @return order /заказ с указанным id заказа и id клиента, выполнившего заказ
      */
 
-    public Order insertOrder(Order order) throws Exception {
+    public Order createOrder(Order order) throws Exception {
         Integer currentCustomerId = customerDAO.getCurrentCustomerId();
-
         int resultSet = jdbcTemplate.update(
                 connection -> {
             PreparedStatement ps = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);

@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.KeyHolder;
 
 import java.util.List;
 
@@ -34,6 +36,9 @@ class OrderControllerUnitTest {
         Order order = Order.builder().name("car").price(100).customerId(1).build();
         Mockito.when(orderService.createOrder(order)).thenReturn(order);
         Assertions.assertEquals(order, orderController.createOrder(order));
+
+        Mockito.verify(orderService, Mockito.times(1)).createOrder(Mockito.any(Order.class));
+        Mockito.verifyNoMoreInteractions(orderService);
     }
 
     @Test
@@ -42,5 +47,7 @@ class OrderControllerUnitTest {
         Mockito.when(orderService.getAllOrders()).thenReturn(List.of());
         Assertions.assertEquals(List.of(), orderController.getAllOrders());
 
+        Mockito.verify(orderService, Mockito.times(1)).getAllOrders();
+        Mockito.verifyNoMoreInteractions(orderService);
     }
 }
