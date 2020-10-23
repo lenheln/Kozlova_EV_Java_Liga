@@ -15,7 +15,6 @@ import java.util.List;
 /**
  *  Unit - тесты для контроллера
  */
-
 class OrderControllerUnitTest {
 
     private OrderController orderController;
@@ -32,7 +31,7 @@ class OrderControllerUnitTest {
     @Test
     @DisplayName("Создание заказа")
     void createOrder_ShouldReturn_InputOrder() throws Exception {
-        Order order = Order.builder().name("car").price(100).build();
+        Order order = Order.builder().name("car").price(100).customerId(1).build();
         Mockito.when(orderService.createOrder(order)).thenReturn(order);
         Assertions.assertEquals(order, orderController.createOrder(order));
     }

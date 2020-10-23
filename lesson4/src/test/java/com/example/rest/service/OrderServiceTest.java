@@ -9,8 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.ResponseEntity;
-
 import java.util.List;
 
 public class OrderServiceTest {
@@ -29,7 +27,7 @@ public class OrderServiceTest {
     @Test
     @DisplayName("Создание заказа")
     public void createOrder_Should_Return_Order() throws Exception {
-        Order order = Order.builder().name("Porcshe").price(10000).build();
+        Order order = Order.builder().name("Porcshe").price(10000).customerId(1).build();
         Mockito.when(orderDAO.insertOrder(order)).thenReturn(order);
         Assertions.assertEquals(order, orderService.createOrder(order));
     }
@@ -37,7 +35,7 @@ public class OrderServiceTest {
     @Test
     @DisplayName("Создание заказа")
     public void createOrder_Should_Throw_Exception() throws Exception {
-        Order order = Order.builder().name("Porcshe").price(-10000).build();
+        Order order = Order.builder().name("Porcshe").price(-10000).customerId(1).build();
         Mockito.when(orderDAO.insertOrder(order)).thenReturn(order);
         Exception exception = Assertions.assertThrows(Exception.class, () -> {
             orderService.createOrder(order);

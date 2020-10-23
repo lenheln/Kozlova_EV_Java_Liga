@@ -31,8 +31,8 @@ public class OrderControllerIntegrationTest {
     @Test
     @DisplayName("Создание нового заказа")
     void createOrder_Should_Return_Json() throws Exception {
-        Order order = Order.builder().name("car").price(100).build();
-        mockMvc.perform(post("/api/v1/order/createOrder")
+        Order order = Order.builder().name("car").price(100).customerId(1).build();
+        mockMvc.perform(post("/orders/createOrder")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(order)))
                 .andExpect(status().isOk())
@@ -42,7 +42,7 @@ public class OrderControllerIntegrationTest {
     @Test
     @DisplayName("Получение списка всех заказов")
     void getAllOrders_Should_Return_JSON_array_withOneOrder() throws Exception {
-        mockMvc.perform(get("/api/v1/order/"))
+        mockMvc.perform(get("/orders"))
                 .andExpect(status().isOk())
                 .andExpect(content().json("[{\"id\":1,\"name\":\"car\",\"price\":100,\"customerId\":1}]"));
     }
