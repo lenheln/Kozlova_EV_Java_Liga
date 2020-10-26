@@ -114,18 +114,28 @@ public class UserDao {
      * @param user
      * @return сет пользователей
      */
-    public List<User> findDialogsByUser(User user){
+    public List<String> findDialogsByUser(User user){
         EntityManager entityManager = JpaConfig.getEntityManagerFactory().createEntityManager();
-        List<User> resultList = null;
+        List<String> resultList = null;
         try {
             entityManager.getTransaction().begin();
             CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-            CriteriaQuery<User> query = cb.createQuery(User.class);
+            CriteriaQuery<String> query = cb.createQuery(String.class);
+
             Root<Message> messageRoot = query.from(Message.class);
+            Join<Message, User> authorJoin = messageRoot.join("authorId");
+            Join<Message, User> recieverJoin = messageRoot.join("recieverId");
 
             Predicate userAuthor = cb.equal(messageRoot.get("authorId"), user);
             Predicate userReciever = cb.equal(messageRoot.get("recieverId"), user);
 
+            query.select(
+                    cb.<String>selectCase()
+                            .when(cb.equal(messageRoot.get("authorId"), user), recieverJoin.get("surname"))
+                            .otherwise(authorJoin.get("surname"))
+            ).where(cb.or(userAuthor, userReciever))
+                    .distinct(true);
+            resultList = entityManager.createQuery(query).getResultList();
             /**
              *      157 - id for example
              *
@@ -138,13 +148,6 @@ public class UserDao {
              *  	WHERE message.authorId IN (157) OR message.recieverId IN (157);
              */
             
-            query.select(
-                    cb.<User>selectCase()
-                    .when(cb.equal(messageRoot.get("authorId"), user), messageRoot.get("recieverId"))
-                    .otherwise(messageRoot.get("authorId"))
-            ).where(cb.or(userAuthor, userReciever))
-            .distinct(true);
-            resultList = entityManager.createQuery(query).getResultList();
         } catch (Exception e){
             entityManager.getTransaction().rollback();
         } finally {

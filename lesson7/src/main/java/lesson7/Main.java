@@ -32,7 +32,7 @@ public class Main {
 
             List<Message> messageList = new ArrayList<>();
             messageList.add(new Message("Hello!", users.get(0), users.get(3)));
-            messageList.add(new Message("Hi!", users.get(2), users.get(0)));
+            messageList.add(new Message("Hi!", users.get(3), users.get(0)));
             messageList.add(new Message("No woman no cry!", users.get(2), users.get(1)));
             messageList.add(new Message("Yo whats'up!", users.get(2), users.get(0)));
             messageList.add(new Message("RRR", users.get(3), users.get(2)));
@@ -41,10 +41,11 @@ public class Main {
 //            messageList.add(new Message("Bye", users.get(0), users.get(1)));
             saveOrUpdateMsg(messageList);
 //            userDao.findDialogsByUser(user);
-            System.out.println("**********\n" + userDao.getUsersByPartOfSurname("Marl"));
+//            System.out.println("**********\n" + userDao.getUsersByPartOfSurname("Marl"));
  //           System.out.println(messageDao.get(message));
 
-            //        userDao.findDialogsByUser(user2);
+            List<String> userName = userDao.findDialogsByUser(user);
+            userName.forEach(user1 -> System.out.println(user1.toString()));
 //            userDao.findUsersByNameAndSurname("Elena", "Cave");
 //            userDao.findMessagesByUsers(users.get(0), users.get(1));
 
