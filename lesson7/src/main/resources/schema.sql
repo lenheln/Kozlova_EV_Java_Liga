@@ -1,57 +1,3 @@
-CREATE TABLE `lesson7`.`user` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(45) NOT NULL,
-  `surname` VARCHAR(45) NOT NULL,
-  `info` VARCHAR(45) NULL,
-  PRIMARY KEY (`id`));
-
-CREATE TABLE `lesson7`.`dialog` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`id`));
-
-
---Join Table of Users and Dialogs
-CREATE TABLE `lesson7`.`userDialog` (
-  `dialog_id` INT NOT NULL,
-  `user_id` INT NOT NULL,
-  PRIMARY KEY (`dialog_id`, `user_id`),
-  INDEX `user_fk_idx` (`user_id` ASC) VISIBLE,
-  CONSTRAINT `dialog_fk`
-    FOREIGN KEY (`dialog_id`)
-    REFERENCES `lesson7`.`dialog` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `user_fk`
-    FOREIGN KEY (`user_id`)
-    REFERENCES `lesson7`.`user` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE);
-
-    CREATE TABLE `lesson7`.`massage` (
-      `id` INT NOT NULL AUTO_INCREMENT,
-      `massage` VARCHAR(300) NOT NULL,
-      `authorId` INT NULL,
-      `recieverId` INT NULL,
-      `time` DATETIME,
-      `dialogId` INT NULL,
-      PRIMARY KEY (`id`),
-      CONSTRAINT `authorIdFk`
-        FOREIGN KEY (`id`)
-        REFERENCES `lesson7`.`user` (`id`)
-        ON DELETE NO ACTION
-        ON UPDATE NO ACTION,
-      CONSTRAINT `recieverIdFk`
-        FOREIGN KEY (`id`)
-        REFERENCES `lesson7`.`user` (`id`)
-        ON DELETE NO ACTION
-        ON UPDATE NO ACTION,
-      CONSTRAINT `dialogIdFk`
-        FOREIGN KEY (`id`)
-        REFERENCES `lesson7`.`dialog` (`id`)
-        ON DELETE NO ACTION
-        ON UPDATE NO ACTION);
-
-
 --*** USER - MSG ***--
 
 CREATE TABLE `lesson7`.`user` (
@@ -80,3 +26,20 @@ CREATE TABLE `lesson7`.`message` (
     REFERENCES `lesson7`.`user` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
+
+
+---- POSTGRES ----
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(45) NOT NULL,
+  surname VARCHAR(45) NOT NULL,
+  info VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE message (
+  id SERIAL PRIMARY KEY,
+  message VARCHAR(200) ,
+  authorId integer REFERENCES users (id),
+  recieverId integer REFERENCES users (id),
+  dateTime date
+);

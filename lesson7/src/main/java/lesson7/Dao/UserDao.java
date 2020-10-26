@@ -147,7 +147,7 @@ public class UserDao {
              *  	FROM message
              *  	WHERE message.authorId IN (157) OR message.recieverId IN (157);
              */
-            
+
         } catch (Exception e){
             entityManager.getTransaction().rollback();
         } finally {

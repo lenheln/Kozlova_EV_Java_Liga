@@ -29,7 +29,7 @@ public class Message {
     @JoinColumn(name = "recieverId")
     User recieverId;
 
-    @Column(name = "date")
+    @Column(name = "dateTime")
     Date date = new Date();
 
     public Message(String msg, User authorId, User recieverId) {
