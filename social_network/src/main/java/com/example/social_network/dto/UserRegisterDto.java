@@ -1,14 +1,18 @@
 package com.example.social_network.dto;
 
 import com.example.social_network.utils.Genders;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Dto для сущности User (пользователь) на страницу регистрации
  */
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserRegisterDto {
 
     private String name;
