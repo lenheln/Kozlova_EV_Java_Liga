@@ -1,6 +1,5 @@
 package com.example.social_network.controller;
-
-import com.example.social_network.domain.User;
+import com.example.social_network.dto.UserPageDto;
 import com.example.social_network.dto.UserRegisterDto;
 import com.example.social_network.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +26,8 @@ public class UserController {
      * @return пользователя
      */
     @PostMapping
-    public User registration(@RequestBody UserRegisterDto userDto){
-        log.info("Регистрация нового пользователя user={}", userDto.toString());
+    public Long registration(@RequestBody UserRegisterDto userDto){
+        log.info("Register new user={}", userDto.toString());
         return userService.save(userDto);
     }
 
@@ -38,10 +37,9 @@ public class UserController {
      * @return страницу пользователя с заданным id
      */
     @GetMapping("{id}")
-    //TODO Dto тут должно быть другое. Типа UserPageDto
     //TODO handler exception сделать
-    public UserRegisterDto getPersonalPage(@PathVariable Long id) {
-        log.info("Получение страницы пользователя с id={}", id);
+    public UserPageDto getPersonalPage(@PathVariable Long id) {
+        log.info("Get page of user with id={}", id);
         return userService.getUser(id);
     }
 
@@ -54,11 +52,11 @@ public class UserController {
      * Обновляет поля на странице пользователя
      * @param userDto данные пользователя
      * @param id пользователя
-     * @return обновленную страницу
+     * @return id пользователя
      */
     @PatchMapping("{id}")
-    public UserRegisterDto updatePage(@RequestBody UserRegisterDto userDto, @PathVariable Long id){
-        log.info("Изменение полей пользоватея {} с id={}", userDto,id);
+    public Long updatePage(@RequestBody UserRegisterDto userDto, @PathVariable Long id){
+        log.info("Update following info {} about user with id={}", userDto,id);
         return userService.updateUser(userDto,id);
     }
 
@@ -68,8 +66,7 @@ public class UserController {
      */
     @DeleteMapping("{id}")
     public void delete(@PathVariable Long id){
-        log.info("Удаление пользователя с id={}",id);
+        log.info("Delete user with id={}",id);
         userService.delete(id);
     }
-
 }

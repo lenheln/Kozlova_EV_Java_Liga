@@ -1,11 +1,14 @@
 package com.example.social_network.service;
 
 import com.example.social_network.domain.User;
+import com.example.social_network.dto.UserPageDto;
 import com.example.social_network.dto.UserRegisterDto;
 import com.example.social_network.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 /**
  * Сервисный слой для работы с сущностью User (пользователь)
@@ -22,37 +25,38 @@ public class UserService {
      * Создание учетной записи пользователя. Сохраняет пользователя в базе данных
      *
      * @param userDto
-     * @return сущность User (пользователь)
+     * @return id пользователя
      */
     //TODO можно ли сохранить сразу dto
-    public User save(UserRegisterDto userDto){
+    public Long save(UserRegisterDto userDto){
         User user = converterUserRegisterDtoToUser(userDto);
-        return userRepository.save(user);
+        userRepository.save(user);
+        return user.getId();
     }
 
     //TODO другую DTO на показ анкеты. Не UserRegisterDto
     /**
-     * Получение пользователя по его id
+     * Получение данных пользователя по его id
      *
      * @param id
      * @return страницу пользователя
      */
     @Transactional(readOnly = true)
-    public UserRegisterDto getUser(Long id) {
+    public UserPageDto getUser(Long id) {
         User user = userRepository.findById(id).get();
-        return convertToUserRegisterDto(user);
+        return convertToUserPageDto(user);
     }
-
 
     /**
      * Обновляет поля пользователя
      *
      * @param userDto
      * @param id
-     * @return пользователя с обновленными полями
+     * @return id пользователя с обновленными полями
      */
-    public UserRegisterDto updateUser(UserRegisterDto userDto, Long id){
-        User user = userRepository.findById(id).get();
+    public Long updateUser(UserRegisterDto userDto, Long id){
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+
         //TODO мы не знаем какие поля изменились поэтому все проверяем на null
         if(userDto.getName() != null) { user.setName(userDto.getName()); }
         if(userDto.getSurname() != null) { user.setSurname(userDto.getSurname()); }
@@ -61,7 +65,7 @@ public class UserService {
         if(userDto.getInterests() != null) { user.setInterests(userDto.getInterests()); }
         if(userDto.getCity() != null) { user.setCity(userDto.getCity()); }
         user = userRepository.save(user);
-        return convertToUserRegisterDto(user);
+        return user.getId();
     }
 
     /**
@@ -100,6 +104,15 @@ public class UserService {
         return UserRegisterDto.builder()
                 .name(user.getName())
                 .surname(user.getSurname())
+                .age(user.getAge())
+                .gender(user.getGender())
+                .interests(user.getInterests())
+                .city(user.getCity())
+                .build();
+    }
+    public UserPageDto convertToUserPageDto(User user){
+        return UserPageDto.builder()
+                .fio(String.format("%s %s", user.getName(), user.getSurname()))
                 .age(user.getAge())
                 .gender(user.getGender())
                 .interests(user.getInterests())
