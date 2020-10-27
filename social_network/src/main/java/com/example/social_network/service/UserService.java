@@ -6,13 +6,13 @@ import com.example.social_network.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * Сервисный слой для работы с сущностью User (пользователь)
  */
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserService {
 
     private final UserRepository userRepository;
@@ -20,6 +20,7 @@ public class UserService {
 
     /**
      * Создание учетной записи пользователя. Сохраняет пользователя в базе данных
+     *
      * @param userDto
      * @return сущность User (пользователь)
      */
@@ -32,18 +33,20 @@ public class UserService {
     //TODO другую DTO на показ анкеты. Не UserRegisterDto
     /**
      * Получение пользователя по его id
+     *
      * @param id
      * @return страницу пользователя
      */
     @Transactional(readOnly = true)
     public UserRegisterDto getUser(Long id) {
         User user = userRepository.findById(id).get();
-        return convertUserToUserRegisterDto(user);
+        return convertToUserRegisterDto(user);
     }
 
 
     /**
      * Обновляет поля пользователя
+     *
      * @param userDto
      * @param id
      * @return пользователя с обновленными полями
@@ -58,16 +61,21 @@ public class UserService {
         if(userDto.getInterests() != null) { user.setInterests(userDto.getInterests()); }
         if(userDto.getCity() != null) { user.setCity(userDto.getCity()); }
         user = userRepository.save(user);
-        return convertUserToUserRegisterDto(user);
+        return convertToUserRegisterDto(user);
     }
 
+    /**
+     * Удаляет страницу пользователя (пользователя из базы данных) с указанным id
+     *
+     * @param id
+     */
     public void delete(Long id){
         userRepository.deleteById(id);
     }
 
-    //TODO посмотреть названия и как они делаются эти конвертеры dto в примере Дениса
     /**
-     * Конвертирует сущность UserRegisterDto в сущность User
+     * Конвертирует сущность DTO {@UserRegisterDto } в сущность {@User}
+     *
      * @param userDto
      * @return User
      */
@@ -83,11 +91,12 @@ public class UserService {
     }
 
     /**
-     * Конвертирует сущность User в сущность UserToUserRegisterDto
+     * Конвертирует сущность {@link User} в сущность DTO {@link UserRegisterDto}
+     *
      * @param user
-     * @return UserToUserRegisterDto
+     * @return UserRegisterDto
      */
-    public UserRegisterDto convertUserToUserRegisterDto(User user){
+    public UserRegisterDto convertToUserRegisterDto(User user){
         return UserRegisterDto.builder()
                 .name(user.getName())
                 .surname(user.getSurname())
