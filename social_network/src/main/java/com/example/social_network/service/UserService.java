@@ -61,8 +61,8 @@ public class UserService {
         return convertUserToUserRegisterDto(user);
     }
 
-    public ResponseStatus delete(Long id){
-        
+    public void delete(Long id){
+        userRepository.deleteById(id);
     }
 
     //TODO посмотреть названия и как они делаются эти конвертеры dto в примере Дениса

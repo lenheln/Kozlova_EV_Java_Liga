@@ -56,9 +56,13 @@ public class UserController {
         return userService.updateUser(userDto,id);
     }
 
+    /**
+     * Удаляет страницу пользователя с указанным id
+     * @param id
+     */
     @DeleteMapping("{id}")
-    public ResponseStatus delete(@PathVariable Long id){
-
+    public void delete(@PathVariable Long id){
+        userService.delete(id);
     }
 
 }
