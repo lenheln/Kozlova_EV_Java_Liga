@@ -21,7 +21,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     /**
-     * Сохраняет сущность User (пользователь) в базе данных
+     * Создание учетной записи пользователя. Сохраняет пользователя в базе данных
      * @param userDto
      * @return сущность User (пользователь)
      */
@@ -31,6 +31,12 @@ public class UserService {
     }
 
     //TODO другую DTO на показ анкеты. Не UserRegisterDto
+    /**
+     * Получение страницы пользователя по его id
+     * @param id
+     * @return страницу пользователя UserRegisterDto
+     * @throws NoEntityException
+     */
     @Transactional(readOnly = true)
     public UserRegisterDto getUser(Long id) throws NoEntityException {
         User user = userRepository.findById(id).orElseThrow(() -> new NoEntityException(id));
@@ -45,14 +51,14 @@ public class UserService {
      * @return User
      */
     public User converterUserRegisterDtoToUser(UserRegisterDto userDto){
-        User user = new User();
-        user.setName(userDto.getName());
-        user.setSurname(userDto.getSurname());
-        user.setAge(userDto.getAge());
-        user.setGender(userDto.getGender());
-        user.setInterests(userDto.getInterests());
-        user.setCity(userDto.getCity());
-        return user;
+        return User.builder()
+                .name(userDto.getName())
+                .surname(userDto.getSurname())
+                .age(userDto.getAge())
+                .gender(userDto.getGender())
+                .interests(userDto.getInterests())
+                .city(userDto.getCity())
+                .build();
     }
 
     /**
@@ -61,13 +67,13 @@ public class UserService {
      * @return UserToUserRegisterDto
      */
     public UserRegisterDto convertUserToUserRegisterDto(User user){
-        UserRegisterDto userDto = new UserRegisterDto();
-        userDto.setName(user.getName());
-        userDto.setSurname(user.getSurname());
-        userDto.setAge(user.getAge());
-        userDto.setGender(user.getGender());
-        userDto.setInterests(user.getInterests());
-        userDto.setCity(user.getCity());
-        return userDto;
+        return UserRegisterDto.builder()
+                .name(user.getName())
+                .surname(user.getSurname())
+                .age(user.getAge())
+                .gender(user.getGender())
+                .interests(user.getInterests())
+                .city(user.getCity())
+                .build();
     }
 }

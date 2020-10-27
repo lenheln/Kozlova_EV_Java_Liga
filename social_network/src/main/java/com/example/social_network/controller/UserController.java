@@ -19,11 +19,23 @@ public class UserController {
     private final UserService userService;
 
     //TODO проверка есть ли юзер с таким именем
+
+    /**
+     * Создание учетной записи пользователя. Сохраняет пользователя в базе данных
+     * @param userDto
+     * @return пользователя
+     */
     @PostMapping
     public User registration(@RequestBody UserRegisterDto userDto){
         return userService.save(userDto);
     }
 
+    /**
+     * Получение страницы пользователя по его id
+     * @param id
+     * @return страницу пользователя UserRegisterDto
+     * @throws NoEntityException
+     */
     @GetMapping
     //TODO Dto тут должно быть другое. Типа UserPageDto
     //TODO handler exception сделать
