@@ -3,9 +3,7 @@ package com.example.social_network.controller;
 import com.example.social_network.domain.User;
 import com.example.social_network.dto.UserRegisterDto;
 import com.example.social_network.service.UserService;
-import com.example.social_network.utils.NoEntityException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -31,16 +29,36 @@ public class UserController {
     }
 
     /**
-     * Получение страницы пользователя по его id
+     * Получает страницу пользователя по его id
      * @param id
-     * @return страницу пользователя UserRegisterDto
-     * @throws NoEntityException
+     * @return страницу пользователя с заданным id
      */
-    @GetMapping
+    @GetMapping("{id}")
     //TODO Dto тут должно быть другое. Типа UserPageDto
     //TODO handler exception сделать
-    public UserRegisterDto getPersonalPage(@RequestParam Long id) throws NoEntityException {
+    public UserRegisterDto getPersonalPage(@PathVariable Long id) {
         return userService.getUser(id);
+    }
+
+    //TODO мы не знаем какое поле или поля будут обновляться. Значит нужно на каждое поле
+    //писать метод его обновления. Либо в сервисе проверять принятые поля от dto на null
+    // и копировать только те, что не null (сейчас последнее)
+    //А если пользовтель хочет удалить информацию об интересах ему придется "" вставить, чтоб не было null
+
+    /**
+     * Обновляет поля на странице пользователя
+     * @param userDto
+     * @param id
+     * @return обновленную страницу
+     */
+    @PatchMapping("{id}")
+    public UserRegisterDto updatePage(@RequestBody UserRegisterDto userDto, @PathVariable Long id){
+        return userService.updateUser(userDto,id);
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseStatus delete(@PathVariable Long id){
+
     }
 
 }

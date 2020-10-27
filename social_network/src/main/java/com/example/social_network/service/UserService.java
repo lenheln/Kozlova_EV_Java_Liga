@@ -3,13 +3,10 @@ package com.example.social_network.service;
 import com.example.social_network.domain.User;
 import com.example.social_network.dto.UserRegisterDto;
 import com.example.social_network.repository.UserRepository;
-import com.example.social_network.utils.NoEntityException;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.criterion.NotEmptyExpression;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * Сервисный слой для работы с сущностью User (пользователь)
@@ -19,12 +16,14 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private UserRegisterDto userDto;
 
     /**
      * Создание учетной записи пользователя. Сохраняет пользователя в базе данных
      * @param userDto
      * @return сущность User (пользователь)
      */
+    //TODO можно ли сохранить сразу dto
     public User save(UserRegisterDto userDto){
         User user = converterUserRegisterDtoToUser(userDto);
         return userRepository.save(user);
@@ -32,19 +31,41 @@ public class UserService {
 
     //TODO другую DTO на показ анкеты. Не UserRegisterDto
     /**
-     * Получение страницы пользователя по его id
+     * Получение пользователя по его id
      * @param id
-     * @return страницу пользователя UserRegisterDto
-     * @throws NoEntityException
+     * @return страницу пользователя
      */
     @Transactional(readOnly = true)
-    public UserRegisterDto getUser(Long id) throws NoEntityException {
-        User user = userRepository.findById(id).orElseThrow(() -> new NoEntityException(id));
+    public UserRegisterDto getUser(Long id) {
+        User user = userRepository.findById(id).get();
         return convertUserToUserRegisterDto(user);
     }
 
-    //TODO посмотреть названия и как они делаются эти конвертеры dto в примере Дениса
 
+    /**
+     * Обновляет поля пользователя
+     * @param userDto
+     * @param id
+     * @return пользователя с обновленными полями
+     */
+    public UserRegisterDto updateUser(UserRegisterDto userDto, Long id){
+        User user = userRepository.findById(id).get();
+        //TODO мы не знаем какие поля изменились поэтому все проверяем на null
+        if(userDto.getName() != null) { user.setName(userDto.getName()); }
+        if(userDto.getSurname() != null) { user.setSurname(userDto.getSurname()); }
+        if(userDto.getAge() != null) { user.setAge(userDto.getAge()); }
+        if(userDto.getGender() != null) { user.setGender(userDto.getGender()); }
+        if(userDto.getInterests() != null) { user.setInterests(userDto.getInterests()); }
+        if(userDto.getCity() != null) { user.setCity(userDto.getCity()); }
+        user = userRepository.save(user);
+        return convertUserToUserRegisterDto(user);
+    }
+
+    public ResponseStatus delete(Long id){
+        
+    }
+
+    //TODO посмотреть названия и как они делаются эти конвертеры dto в примере Дениса
     /**
      * Конвертирует сущность UserRegisterDto в сущность User
      * @param userDto
