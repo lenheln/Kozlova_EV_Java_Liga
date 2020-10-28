@@ -92,8 +92,8 @@ public class UserController {
      * @return список друзей
      */
     @GetMapping("/friends/{id}")
-    //TODO UserByList нужен
     public Set<UserByListDto> getFriends(@PathVariable Long id){
+        log.info("Get list of friends for user with id = {}", id);
         return userService.getFriends(id);
     }
 }

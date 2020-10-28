@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -37,7 +36,6 @@ public class UserService {
         return user.getId();
     }
 
-    //TODO другую DTO на показ анкеты. Не UserRegisterDto
     /**
      * Получение данных пользователя по его id
      *
@@ -60,7 +58,7 @@ public class UserService {
     public Long updateUser(UserRegisterDto userDto, Long id){
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
 
-        //TODO мы не знаем какие поля изменились поэтому все проверяем на null
+        //TODO мы не знаем какие поля изменились поэтому все проверяем на null.
         if(userDto.getName() != null) { user.setName(userDto.getName()); }
         if(userDto.getSurname() != null) { user.setSurname(userDto.getSurname()); }
         if(userDto.getAge() != null) { user.setAge(userDto.getAge()); }
