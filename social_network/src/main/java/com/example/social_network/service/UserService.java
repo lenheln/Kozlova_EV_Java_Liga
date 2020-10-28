@@ -1,6 +1,7 @@
 package com.example.social_network.service;
 
 import com.example.social_network.domain.User;
+import com.example.social_network.dto.UserByListDto;
 import com.example.social_network.dto.UserPageDto;
 import com.example.social_network.dto.UserRegisterDto;
 import com.example.social_network.repository.UserRepository;
@@ -8,7 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Сервисный слой для работы с сущностью User (пользователь)
@@ -78,6 +80,36 @@ public class UserService {
     }
 
     /**
+     * Получение списка всех друзей пользователя
+     *
+     * @param id пользователя
+     * @return сет друзей
+     */
+    public Set<UserByListDto> getFriends(Long id){
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        Set<UserByListDto> friends = new HashSet<>();
+        user.getMyFriends().forEach(user1 -> { friends.add(convertToUserByListDto(user1)); });
+        user.getFriendsOfMine().forEach(user1 -> {friends.add(convertToUserByListDto(user1));});
+        return friends;
+    }
+
+    /**
+     * Добавление друга пользователю с userId
+     *
+     * @param userId идентификатор пользователя
+     * @param friendId идентификатор друга
+     */
+    public void addFriendToUser(Long userId, Long friendId){
+        //TODO Проверять не дружат ли они уже
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        User friend = userRepository.findById(friendId).orElseThrow(() -> new RuntimeException("Friend not found"));
+
+        
+        user.getMyFriends().add(friend);
+        userRepository.save(user);
+    }
+
+    /**
      * Конвертирует сущность DTO {@UserRegisterDto } в сущность {@User}
      *
      * @param userDto
@@ -96,6 +128,7 @@ public class UserService {
 
     /**
      * Конвертирует сущность {@link User} в сущность DTO {@link UserRegisterDto}
+     * для отображения на форме регистрации
      *
      * @param user
      * @return UserRegisterDto
@@ -110,12 +143,35 @@ public class UserService {
                 .city(user.getCity())
                 .build();
     }
+
+    /**
+     * Конвертирует сущность {@link User} в сущность DTO {@link UserPageDto}
+     * для отображения на странице пользователя
+     *
+     * @param user
+     * @return UserPageDto
+     */
     public UserPageDto convertToUserPageDto(User user){
         return UserPageDto.builder()
                 .fio(String.format("%s %s", user.getName(), user.getSurname()))
                 .age(user.getAge())
                 .gender(user.getGender())
                 .interests(user.getInterests())
+                .city(user.getCity())
+                .build();
+    }
+
+    /**
+     * Конвертирует сущность {@link User} в сущность DTO {@link UserByListDto}
+     * для отображения в списке друзей
+     *
+     * @param user
+     * @return UserByListDto
+     */
+    public UserByListDto convertToUserByListDto(User user){
+        return UserByListDto.builder()
+                .fio(String.format("%s %s", user.getName(), user.getSurname()))
+                .gender(user.getGender())
                 .city(user.getCity())
                 .build();
     }

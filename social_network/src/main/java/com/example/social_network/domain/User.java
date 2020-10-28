@@ -4,13 +4,16 @@ import com.example.social_network.utils.Genders;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Сущность User (пользователь)
  */
-@Data
+
 @Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -46,5 +49,18 @@ public class User {
     @Column(name = "city")
     private String city;
 
-//    private List<User> friends;
+    @ManyToMany(cascade={CascadeType.ALL})
+    @JoinTable(name="friendship",
+            joinColumns={@JoinColumn(name="idUser")},
+            inverseJoinColumns={@JoinColumn(name="idFriend")})
+    private Set<User> myFriends = new HashSet<User>();
+
+    @ManyToMany(mappedBy = "myFriends")
+    private Set<User> friendsOfMine = new HashSet<User>();
+
+    @Override
+    public String toString(){
+        return String.format("%s, %s, %d, %s, %s, %s \n",
+                name, surname, age, gender, interests, city);
+    }
 }

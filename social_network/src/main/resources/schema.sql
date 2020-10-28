@@ -14,9 +14,9 @@ CREATE TABLE IF NOT EXISTS users
 );
 
 --Создание таблицы описывающей дружбу пользователей
-CREATE TABLE IF NOT EXISTS friends
+CREATE TABLE IF NOT EXISTS friendship
 (
-    idUser1 INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    idUser2 INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    PRIMARY KEY (idUser1, idUser2)
+    idUser INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    idFriend INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    PRIMARY KEY (idUser, idFriend)
 )

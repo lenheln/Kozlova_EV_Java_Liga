@@ -1,10 +1,14 @@
 package com.example.social_network.controller;
+import com.example.social_network.domain.User;
+import com.example.social_network.dto.UserByListDto;
 import com.example.social_network.dto.UserPageDto;
 import com.example.social_network.dto.UserRegisterDto;
 import com.example.social_network.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Set;
 
 /**
  * Контроллер для работы с сущностью User (пользователь)
@@ -68,5 +72,28 @@ public class UserController {
     public void delete(@PathVariable Long id){
         log.info("Delete user with id={}",id);
         userService.delete(id);
+    }
+
+    /**
+     * Добавляет друга пользователю с userId
+     *
+     * @param userId  идентификатор пользователя
+     * @param friendId идентификатор друга
+     */
+    @PutMapping("/friends/{userId}/{friendId}")
+    public void addFriend(@PathVariable Long userId, @PathVariable Long friendId){
+        log.info("Create friendship of users id = {} and id = {}", userId, friendId);
+        userService.addFriendToUser(userId,friendId);
+    }
+
+    /**
+     * Получение списка всех друзей пользователя
+     * @param id пользователя
+     * @return список друзей
+     */
+    @GetMapping("/friends/{id}")
+    //TODO UserByList нужен
+    public Set<UserByListDto> getFriends(@PathVariable Long id){
+        return userService.getFriends(id);
     }
 }
