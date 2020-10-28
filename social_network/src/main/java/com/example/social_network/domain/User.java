@@ -2,8 +2,12 @@ package com.example.social_network.domain;
 
 import com.example.social_network.utils.Genders;
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,27 +29,32 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NonNull
+    @NotNull
+    @Length(max = 45)
     @Column(name = "name")
     private String name;
 
-    @NonNull
+    @NotNull
+    @Length(max = 45)
     @Column(name = "surname")
     private String surname;
 
-    //TODO: добавить валиадцию что >0
-    @NonNull
+    @NotNull
+    @Positive
+    @Max(125)
     @Column(name = "age")
     private Integer age;
 
-    @NonNull
+    @NotNull
     @Column(name = "gender")
     private Genders gender;
 
+    @Length(max = 512)
     @Column(name = "interests")
     private String interests;
 
     //TODO: можно выпадающим списком. Перечисления или база данных какая-то городов
+    @Length(max = 45)
     @Column(name = "city")
     private String city;
 
@@ -60,7 +69,7 @@ public class User {
 
     @Override
     public String toString(){
-        return String.format("%s, %s, %d, %s, %s, %s \n",
+        return String.format("Name: %s, Surname: %s, Age: %d, Gender: %s, Interests: %s, City: %s \n",
                 name, surname, age, gender, interests, city);
     }
 }

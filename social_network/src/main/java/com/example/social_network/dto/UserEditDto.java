@@ -8,32 +8,27 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Max;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 /**
- * Dto для сущности User (пользователь) на страницу регистрации
+ * Dto для сущности User (пользователь) для обновления страницы
+ * Поля не проверяются на NotNull, так как обновлять можно не все поля
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRegisterDto {
-
-    @NotNull
+public class UserEditDto {
     @Length(max = 45)
     private String name;
 
-    @NotNull
     @Length(max = 45)
     private String surname;
 
-    @NotNull
     @Positive
     @Max(125)
     private Integer age;
 
-    @NotNull
     private Genders gender;
 
     @Length(max = 512)

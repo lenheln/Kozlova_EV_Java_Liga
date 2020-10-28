@@ -2,6 +2,7 @@ package com.example.social_network.service;
 
 import com.example.social_network.domain.User;
 import com.example.social_network.dto.UserByListDto;
+import com.example.social_network.dto.UserEditDto;
 import com.example.social_network.dto.UserPageDto;
 import com.example.social_network.dto.UserRegisterDto;
 import com.example.social_network.repository.UserRepository;
@@ -21,7 +22,6 @@ import java.util.Set;
 public class UserService {
 
     private final UserRepository userRepository;
-    private UserRegisterDto userDto;
 
     /**
      * Создание учетной записи пользователя. Сохраняет пользователя в базе данных
@@ -55,7 +55,7 @@ public class UserService {
      * @param id
      * @return id пользователя с обновленными полями
      */
-    public Long updateUser(UserRegisterDto userDto, Long id){
+    public Long updateUser(UserEditDto userDto, Long id){
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
 
         //TODO мы не знаем какие поля изменились поэтому все проверяем на null.

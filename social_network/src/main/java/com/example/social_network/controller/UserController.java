@@ -1,6 +1,7 @@
 package com.example.social_network.controller;
-import com.example.social_network.domain.User;
+
 import com.example.social_network.dto.UserByListDto;
+import com.example.social_network.dto.UserEditDto;
 import com.example.social_network.dto.UserPageDto;
 import com.example.social_network.dto.UserRegisterDto;
 import com.example.social_network.service.UserService;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Set;
 
 /**
@@ -30,7 +32,7 @@ public class UserController {
      * @return пользователя
      */
     @PostMapping
-    public Long registration(@RequestBody UserRegisterDto userDto){
+    public Long registration(@RequestBody @Valid UserRegisterDto userDto){
         log.info("Register new user={}", userDto.toString());
         return userService.save(userDto);
     }
@@ -58,8 +60,9 @@ public class UserController {
      * @param id пользователя
      * @return id пользователя
      */
+    //TODO validation???
     @PatchMapping("{id}")
-    public Long updatePage(@RequestBody UserRegisterDto userDto, @PathVariable Long id){
+    public Long updatePage(@RequestBody @Valid UserEditDto userDto, @PathVariable Long id){
         log.info("Update following info {} about user with id={}", userDto,id);
         return userService.updateUser(userDto,id);
     }
@@ -74,6 +77,7 @@ public class UserController {
         userService.delete(id);
     }
 
+    //TODO может все взаимодействие с френдами в отдельный контроллер выбросить?
     /**
      * Добавляет друга пользователю с userId
      *
