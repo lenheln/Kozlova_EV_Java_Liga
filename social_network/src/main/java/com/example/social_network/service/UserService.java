@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -100,13 +101,18 @@ public class UserService {
      * @param friendId идентификатор друга
      */
     public void addFriendToUser(Long userId, Long friendId){
-        //TODO Проверять не дружат ли они уже
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         User friend = userRepository.findById(friendId).orElseThrow(() -> new RuntimeException("Friend not found"));
 
-        
-        user.getMyFriends().add(friend);
-        userRepository.save(user);
+        Set<User> friends = new HashSet<>();
+        friends.addAll(user.getMyFriends());
+        friends.addAll(user.getFriendsOfMine());
+        if(friends.contains(friend)){
+            throw  new RuntimeException("Friend has already added");
+        } else {
+            user.getMyFriends().add(friend);
+            userRepository.save(user);
+        }
     }
 
     /**
@@ -133,6 +139,7 @@ public class UserService {
      * @param user
      * @return UserRegisterDto
      */
+    //TODO лишнее?
     public UserRegisterDto convertToUserRegisterDto(User user){
         return UserRegisterDto.builder()
                 .name(user.getName())
