@@ -46,6 +46,7 @@ public class User {
     private Integer age;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(name = "gender")
     private Genders gender;
 
@@ -53,10 +54,9 @@ public class User {
     @Column(name = "interests")
     private String interests;
 
-    //TODO: можно выпадающим списком. Перечисления или база данных какая-то городов
-    @Length(max = 45)
-    @Column(name = "city")
-    private String city;
+    @ManyToOne
+    @JoinColumn(name="cityid")
+    private City city;
 
     @ManyToMany(cascade={CascadeType.ALL})
     @JoinTable(name="friendship",

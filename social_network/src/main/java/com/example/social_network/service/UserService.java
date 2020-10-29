@@ -1,17 +1,18 @@
 package com.example.social_network.service;
 
+import com.example.social_network.domain.City;
 import com.example.social_network.domain.User;
 import com.example.social_network.dto.UserByListDto;
 import com.example.social_network.dto.UserEditDto;
 import com.example.social_network.dto.UserPageDto;
 import com.example.social_network.dto.UserRegisterDto;
+import com.example.social_network.repository.CityRepository;
 import com.example.social_network.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Сервисный слой для работы с сущностью User (пользователь)
@@ -22,6 +23,7 @@ import java.util.Set;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final CityRepository cityRepository;
 
     /**
      * Создание учетной записи пользователя. Сохраняет пользователя в базе данных
@@ -64,7 +66,7 @@ public class UserService {
         if(userDto.getAge() != null) { user.setAge(userDto.getAge()); }
         if(userDto.getGender() != null) { user.setGender(userDto.getGender()); }
         if(userDto.getInterests() != null) { user.setInterests(userDto.getInterests()); }
-        if(userDto.getCity() != null) { user.setCity(userDto.getCity()); }
+//        if(userDto.getCity() != null) { user.setCity(userDto.getCity()); }
         user = userRepository.save(user);
         return user.getId();
     }
@@ -113,6 +115,14 @@ public class UserService {
         }
     }
 
+    public List<UserByListDto> findUsersByCity(String cityName){
+        City city = cityRepository.findByName(cityName).get();
+        List<User> users = userRepository.findAllByCity(city);
+        List<UserByListDto> userByListDtos = new ArrayList<>();
+        users.forEach(user -> userByListDtos.add(convertToUserByListDto(user)));
+        return userByListDtos;
+    }
+
     /**
      * Конвертирует сущность DTO {@UserRegisterDto } в сущность {@User}
      *
@@ -126,7 +136,7 @@ public class UserService {
                 .age(userDto.getAge())
                 .gender(userDto.getGender())
                 .interests(userDto.getInterests())
-                .city(userDto.getCity())
+//                .city(userDto.getCity())
                 .build();
     }
 
@@ -145,7 +155,7 @@ public class UserService {
                 .age(user.getAge())
                 .gender(user.getGender())
                 .interests(user.getInterests())
-                .city(user.getCity())
+//                .city(user.getCity())
                 .build();
     }
 
@@ -162,7 +172,7 @@ public class UserService {
                 .age(user.getAge())
                 .gender(user.getGender())
                 .interests(user.getInterests())
-                .city(user.getCity())
+//                .city(user.getCity())
                 .build();
     }
 
@@ -177,7 +187,7 @@ public class UserService {
         return UserByListDto.builder()
                 .fio(String.format("%s %s", user.getName(), user.getSurname()))
                 .gender(user.getGender())
-                .city(user.getCity())
+  //              .city(user.getCity())
                 .build();
     }
 }

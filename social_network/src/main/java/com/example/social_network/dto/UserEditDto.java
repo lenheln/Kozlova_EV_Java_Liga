@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Positive;
 
@@ -29,6 +31,7 @@ public class UserEditDto {
     @Max(125)
     private Integer age;
 
+    @Enumerated(EnumType.STRING)
     private Genders gender;
 
     @Length(max = 512)

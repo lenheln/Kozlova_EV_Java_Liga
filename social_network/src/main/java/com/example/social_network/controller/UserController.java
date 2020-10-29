@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -60,7 +61,6 @@ public class UserController {
      * @param id пользователя
      * @return id пользователя
      */
-    //TODO validation???
     @PatchMapping("{id}")
     public Long updatePage(@RequestBody @Valid UserEditDto userDto, @PathVariable Long id){
         log.info("Update following info {} about user with id={}", userDto,id);
@@ -99,5 +99,11 @@ public class UserController {
     public Set<UserByListDto> getFriends(@PathVariable Long id){
         log.info("Get list of friends for user with id = {}", id);
         return userService.getFriends(id);
+    }
+
+    @GetMapping("/find/{city}")
+    public List<UserByListDto> findUsersByCity(@PathVariable String city){
+        log.info("Get list of users by cityname = {}", city);
+        return userService.findUsersByCity(city);
     }
 }

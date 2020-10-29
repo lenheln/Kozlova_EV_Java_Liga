@@ -1,0 +1,21 @@
+---- Создание таблицы Пользователей
+--CREATE TABLE IF NOT EXISTS users
+--(
+--  id        SERIAL              PRIMARY KEY,
+--  name      VARCHAR(45)         NOT NULL,
+--  surname   VARCHAR(45)         NOT NULL,
+--  age       INTEGER             NOT NULL,
+--  gender    VARCHAR(6)          NOT NULL,
+--  interests VARCHAR(512) ,
+--  city      VARCHAR(45)
+--);
+--COMMENT ON TABLE users IS 'Таблица пользователей';
+--
+----Создание таблицы описывающей дружбу пользователей
+--CREATE TABLE IF NOT EXISTS friendship
+--(
+--    idUser INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+--    idFriend INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+--    PRIMARY KEY (idUser, idFriend)
+--);
+--COMMENT ON TABLE friendship IS 'Таблица определяющая дружеские взаимоотношения';

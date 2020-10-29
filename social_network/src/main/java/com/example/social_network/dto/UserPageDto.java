@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
@@ -32,6 +34,7 @@ public class UserPageDto {
     private Integer age;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     private Genders gender;
 
     @Length(max = 512)
