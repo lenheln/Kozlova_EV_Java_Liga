@@ -5,6 +5,7 @@ import com.example.social_network.dto.UserEditDto;
 import com.example.social_network.dto.UserPageDto;
 import com.example.social_network.dto.UserRegisterDto;
 import com.example.social_network.service.UserService;
+import com.example.social_network.service.filters.UserFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,7 @@ public class UserController {
 
     //TODO проверка есть ли юзер с таким именем
     //TODO логи добавить
+    //TODO по разным контроллерам?
 
     /**
      * Создание учетной записи пользователя. Сохраняет пользователя в базе данных
@@ -101,9 +103,13 @@ public class UserController {
         return userService.getFriends(id);
     }
 
-    @GetMapping("/find/{city}")
-    public List<UserByListDto> findUsersByCity(@PathVariable String city){
-        log.info("Get list of users by cityname = {}", city);
-        return userService.findUsersByCity(city);
+    //TODO поиск по нескольким параметрам: город, пол, возраст, фамилия (часть)
+    //TODO добавить Pageable pageable (в параметры метода и в findAll)
+
+    @GetMapping("/find")
+    public List<UserByListDto> findAll(UserFilter filter) {
+        return userService.findAll(filter);
     }
+
+    //TODO поиск по всем по имени - фамилии
 }

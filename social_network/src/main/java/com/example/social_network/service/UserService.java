@@ -8,7 +8,10 @@ import com.example.social_network.dto.UserPageDto;
 import com.example.social_network.dto.UserRegisterDto;
 import com.example.social_network.repository.CityRepository;
 import com.example.social_network.repository.UserRepository;
+import com.example.social_network.service.filters.UserFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -120,6 +123,10 @@ public class UserService {
     public List<UserByListDto> findUsersByCity(String cityName){
         //TODO если в поиске забили город, а их несколько с таким именем, то тут будет эксепшн
         //TODO по идее тогда надо возвращать список этих городов с регионами и просить уточнить запрос
+        //TODO вместо проверки на isEmpty
+//        User entity = Optional.ofNullable(id)
+//                .flatMap(userRepository::findById)
+//                .orElseThrow(() -> new RuntimeException("User not found"));
         Optional<City> optionalCity = cityRepository.findByName(cityName);
         if(optionalCity.isEmpty()) {
             return null;
@@ -134,6 +141,13 @@ public class UserService {
 //        List<UserByListDto> list = new ArrayList<>();
 //        list.add(userByListDto);
 //        return list;
+    }
+
+    public List<UserByListDto> findAll(UserFilter filter) {
+        List<User> users = userRepository.findAll(filter.toSpecification());
+        List<UserByListDto> userByListDtos = new ArrayList<>();
+        users.forEach(user -> userByListDtos.add(convertToUserByListDto(user)));
+        return userByListDtos;
     }
 
     /**
@@ -210,7 +224,7 @@ public class UserService {
         return UserByListDto.builder()
                 .fio(String.format("%s %s", user.getName(), user.getSurname()))
                 .gender(user.getGender())
-                .city(user.getCity().getName())
+                .age(user.getAge())
                 .build();
     }
 }

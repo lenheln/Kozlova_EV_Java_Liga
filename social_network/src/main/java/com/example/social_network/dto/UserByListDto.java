@@ -17,5 +17,5 @@ public class UserByListDto {
 
     private String fio;
     private Genders gender;
-    private String city;
+    private Integer age;
 }

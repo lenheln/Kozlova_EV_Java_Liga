@@ -1,0 +1,35 @@
+/id - открыть страницу пользователя
+
+/friends
+все мои друзья
+
+/friends?id=92275864&section=all
+список всех друзей пользователя с id=92275864
+
+/friends?act=find
+поиск новых друзей
+
+Поиск новых друзей
+vk.com/friends?act=find
+&c%5Bcountry%5D=1 - меняем страну, меняется цифра
+&c%5Bname%5D=1
+&c%5Bper_page%5D=40
+&c%5Bphoto%5D=1
+&c%5Bsection%5D=people
+
+vk.com/friends?act=find
+&c%5Bcity%5D=2 - добавили город и он сюда в URI попал сразу
+&c%5Bcountry%5D=1
+&c%5Bname%5D=1
+&c%5Bper_page%5D=40
+&c%5Bphoto%5D=1
+&c%5Bsection%5D=people
+
+vk.com/friends?act=find
+&c%5Bage_from%5D=18 - добавили возраст и вот он
+&c%5Bcity%5D=2
+&c%5Bcountry%5D=1
+&c%5Bname%5D=1
+&c%5Bper_page%5D=40
+&c%5Bphoto%5D=
+1&c%5Bsection%5D=people
