@@ -33,3 +33,11 @@ vk.com/friends?act=find
 &c%5Bper_page%5D=40
 &c%5Bphoto%5D=
 1&c%5Bsection%5D=people
+
+vk.com/friends?act=find
+&c%5Bcity%5D=55
+&c%5Bcountry%5D=1
+&c%5Bname%5D=1
+&c%5Bper_page%5D=40
+&c%5Bphoto%5D=1
+&c%5Bsection%5D=people

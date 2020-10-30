@@ -106,6 +106,9 @@ public class UserController {
     //TODO поиск по нескольким параметрам: город, пол, возраст, фамилия (часть)
     //TODO добавить Pageable pageable (в параметры метода и в findAll)
 
+    //TODO список городов по частичному названию и их id
+    //А затем для поиска друга вводить уже этот  id в запросе в фильтре
+
     @GetMapping("/find")
     public List<UserByListDto> findAll(UserFilter filter) {
         return userService.findAll(filter);
