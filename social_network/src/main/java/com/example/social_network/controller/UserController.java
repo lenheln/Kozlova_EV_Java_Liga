@@ -33,7 +33,7 @@ public class UserController {
      * @return пользователя
      */
     @PostMapping
-    public Long registration(@RequestBody @Valid UserRegisterDto userDto){
+    public Long registration(@RequestBody @Valid UserRegisterDto userDto) throws Exception {
         log.info("Register new user={}", userDto.toString());
         return userService.save(userDto);
     }

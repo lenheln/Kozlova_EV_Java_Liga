@@ -1,5 +1,4 @@
 -- Создание таблицы Пользователей
---CREATE TABLE IF NOT EXISTS social_network.users
 CREATE TABLE IF NOT EXISTS users
 (
   id        SERIAL              PRIMARY KEY,

@@ -1,6 +1,6 @@
---Таблица городов
+-- Создание таблицы городов
 CREATE TABLE IF NOT EXISTS cities
 (
   id        SERIAL              PRIMARY KEY,
-  name      VARCHAR(45)         NOT NULL
+  name      VARCHAR(45)
 );

@@ -31,8 +31,10 @@ public class UserService {
      * @param userDto
      * @return id пользователя
      */
-    //TODO можно ли сохранить сразу dto
-    public Long save(UserRegisterDto userDto){
+    /*
+        TODO вот ввели тут какой-то город при регистрации, а его нет в базе, то что?
+     */
+    public Long save(UserRegisterDto userDto) throws Exception {
         User user = converterUserRegisterDtoToUser(userDto);
         userRepository.save(user);
         return user.getId();
@@ -116,11 +118,22 @@ public class UserService {
     }
 
     public List<UserByListDto> findUsersByCity(String cityName){
-        City city = cityRepository.findByName(cityName).get();
-        List<User> users = userRepository.findAllByCity(city);
-        List<UserByListDto> userByListDtos = new ArrayList<>();
-        users.forEach(user -> userByListDtos.add(convertToUserByListDto(user)));
-        return userByListDtos;
+        //TODO если в поиске забили город, а их несколько с таким именем, то тут будет эксепшн
+        //TODO по идее тогда надо возвращать список этих городов с регионами и просить уточнить запрос
+        Optional<City> optionalCity = cityRepository.findByName(cityName);
+        if(optionalCity.isEmpty()) {
+            return null;
+        } else {
+            City city = optionalCity.get();
+            List<User> users = userRepository.findAllByCity(city);
+            List<UserByListDto> userByListDtos = new ArrayList<>();
+            users.forEach(user -> userByListDtos.add(convertToUserByListDto(user)));
+            return userByListDtos;
+        }
+//        UserByListDto userByListDto = convertToUserByListDto(userRepository.findById(1L).get());
+//        List<UserByListDto> list = new ArrayList<>();
+//        list.add(userByListDto);
+//        return list;
     }
 
     /**
@@ -129,14 +142,24 @@ public class UserService {
      * @param userDto
      * @return User
      */
-    public User converterUserRegisterDtoToUser(UserRegisterDto userDto){
+    public User converterUserRegisterDtoToUser(UserRegisterDto userDto) throws Exception {
+        String cityName = userDto.getCity();
+        Optional<City> cityOptional = cityRepository.findByName(cityName);
+        //TODO: а если найдено наоборот несколько городов с таким именем, то что
+        //Может тогда поле регион тоже надо заполнять
+        City city = new City();
+        if(cityOptional.isEmpty()){
+            throw new Exception("Указанного города не существует");
+        } else {
+            city = cityOptional.get();
+        }
         return User.builder()
                 .name(userDto.getName())
                 .surname(userDto.getSurname())
                 .age(userDto.getAge())
                 .gender(userDto.getGender())
                 .interests(userDto.getInterests())
-//                .city(userDto.getCity())
+                .city(city)
                 .build();
     }
 
@@ -155,7 +178,7 @@ public class UserService {
                 .age(user.getAge())
                 .gender(user.getGender())
                 .interests(user.getInterests())
-//                .city(user.getCity())
+                .city(user.getCity().getName())
                 .build();
     }
 
@@ -172,7 +195,7 @@ public class UserService {
                 .age(user.getAge())
                 .gender(user.getGender())
                 .interests(user.getInterests())
-//                .city(user.getCity())
+                .city(user.getCity().getName())
                 .build();
     }
 
@@ -187,7 +210,7 @@ public class UserService {
         return UserByListDto.builder()
                 .fio(String.format("%s %s", user.getName(), user.getSurname()))
                 .gender(user.getGender())
-  //              .city(user.getCity())
+                .city(user.getCity().getName())
                 .build();
     }
 }
