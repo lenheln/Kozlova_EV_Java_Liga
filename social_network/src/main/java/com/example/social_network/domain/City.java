@@ -5,7 +5,6 @@ import lombok.Data;
 import javax.persistence.*;
 
 @Entity
-//@Table(name = "cities")
 @Table(name = "cities")
 @Data
 public class City {
@@ -20,6 +19,4 @@ public class City {
 //    @Column(name = "regionname")
 //    private String regionName;
 
-//    @OneToMany(mappedBy = "city")
-//    private Set<User> users;
 }

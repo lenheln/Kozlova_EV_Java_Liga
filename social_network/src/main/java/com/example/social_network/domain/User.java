@@ -60,8 +60,8 @@ public class User {
 
     @ManyToMany(cascade={CascadeType.ALL})
     @JoinTable(name="friendship",
-            joinColumns={@JoinColumn(name="idUser")},
-            inverseJoinColumns={@JoinColumn(name="idFriend")})
+            joinColumns={@JoinColumn(name="iduser")},
+            inverseJoinColumns={@JoinColumn(name="idfriend")})
     private Set<User> myFriends = new HashSet<User>();
 
     @ManyToMany(mappedBy = "myFriends")

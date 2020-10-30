@@ -5,6 +5,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.awt.print.Pageable;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,7 +14,7 @@ import java.util.Optional;
  */
 @Repository
 public interface UserRepository extends CrudRepository<User, Long> {
-    Optional<User> findById(Long id);
-    List<User> findAllByCity(City city);
-    List<User> findAll(Specification<Object> spec);
+ //   Optional<User> findById(Long id);
+//    List<User> findAllByCity(City city);
+//    List<User> findAll(Specification<Object> spec, Pageable pageable);
 }

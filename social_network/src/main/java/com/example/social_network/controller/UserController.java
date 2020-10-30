@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.awt.print.Pageable;
 import java.util.List;
 import java.util.Set;
 
@@ -31,6 +32,7 @@ public class UserController {
 
     /**
      * Создание учетной записи пользователя. Сохраняет пользователя в базе данных
+     *
      * @param userDto данные пользователя в виде Dto
      * @return пользователя
      */
@@ -42,6 +44,7 @@ public class UserController {
 
     /**
      * Получает страницу пользователя по его id
+     *
      * @param id пользователя
      * @return страницу пользователя с заданным id
      */
@@ -59,60 +62,70 @@ public class UserController {
 
     /**
      * Обновляет поля на странице пользователя
+     *
      * @param userDto данные пользователя
-     * @param id пользователя
+     * @param id      пользователя
      * @return id пользователя
      */
     @PatchMapping("{id}")
-    public Long updatePage(@RequestBody @Valid UserEditDto userDto, @PathVariable Long id){
-        log.info("Update following info {} about user with id={}", userDto,id);
-        return userService.updateUser(userDto,id);
+    public Long updatePage(@RequestBody @Valid UserEditDto userDto,
+                           @PathVariable Long id) throws Exception {
+        log.info("Update following info {} about user with id={}", userDto, id);
+        return userService.updateUser(userDto, id);
     }
 
     /**
      * Удаляет страницу пользователя с указанным id
+     *
      * @param id
      */
     @DeleteMapping("{id}")
-    public void delete(@PathVariable Long id){
-        log.info("Delete user with id={}",id);
+    public void delete(@PathVariable Long id) {
+        log.info("Delete user with id={}", id);
         userService.delete(id);
     }
 
     //TODO может все взаимодействие с френдами в отдельный контроллер выбросить?
+
     /**
      * Добавляет друга пользователю с userId
      *
-     * @param userId  идентификатор пользователя
+     * @param userId   идентификатор пользователя
      * @param friendId идентификатор друга
      */
     @PutMapping("/friends/{userId}/{friendId}")
-    public void addFriend(@PathVariable Long userId, @PathVariable Long friendId){
+    public void addFriend(@PathVariable Long userId, @PathVariable Long friendId) {
         log.info("Create friendship of users id = {} and id = {}", userId, friendId);
-        userService.addFriendToUser(userId,friendId);
+        userService.addFriendToUser(userId, friendId);
     }
+
+    //TODO Get all users with paging
 
     /**
      * Получение списка всех друзей пользователя
+     *
      * @param id пользователя
      * @return список друзей
      */
     @GetMapping("/friends/{id}")
-    public Set<UserByListDto> getFriends(@PathVariable Long id){
+    public Set<UserByListDto> getFriends(@PathVariable Long id) {
         log.info("Get list of friends for user with id = {}", id);
         return userService.getFriends(id);
     }
 
-    //TODO поиск по нескольким параметрам: город, пол, возраст, фамилия (часть)
     //TODO добавить Pageable pageable (в параметры метода и в findAll)
 
     //TODO список городов по частичному названию и их id
     //А затем для поиска друга вводить уже этот  id в запросе в фильтре
 
+    /**
+     * Поиск пользователей с помощью фильтра
+     *
+     * @param filter
+     * @return список пользователей удовлетворяющих условиям фильтра
+     */
     @GetMapping("/find")
-    public List<UserByListDto> findAll(UserFilter filter) {
-        return userService.findAll(filter);
+    public List<UserByListDto> findAll(UserFilter filter, Pageable pageable) {
+        return userService.findAll(filter, pageable);
     }
-
-    //TODO поиск по всем по имени - фамилии
 }

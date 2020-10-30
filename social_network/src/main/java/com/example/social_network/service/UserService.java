@@ -10,11 +10,10 @@ import com.example.social_network.repository.CityRepository;
 import com.example.social_network.repository.UserRepository;
 import com.example.social_network.service.filters.UserFilter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.print.Pageable;
 import java.util.*;
 
 /**
@@ -33,9 +32,6 @@ public class UserService {
      *
      * @param userDto
      * @return id пользователя
-     */
-    /*
-        TODO вот ввели тут какой-то город при регистрации, а его нет в базе, то что?
      */
     public Long save(UserRegisterDto userDto) throws Exception {
         User user = converterUserRegisterDtoToUser(userDto);
@@ -62,7 +58,7 @@ public class UserService {
      * @param id
      * @return id пользователя с обновленными полями
      */
-    public Long updateUser(UserEditDto userDto, Long id){
+    public Long updateUser(UserEditDto userDto, Long id) throws Exception {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
 
         //TODO мы не знаем какие поля изменились поэтому все проверяем на null.
@@ -71,7 +67,7 @@ public class UserService {
         if(userDto.getAge() != null) { user.setAge(userDto.getAge()); }
         if(userDto.getGender() != null) { user.setGender(userDto.getGender()); }
         if(userDto.getInterests() != null) { user.setInterests(userDto.getInterests()); }
-//        if(userDto.getCity() != null) { user.setCity(userDto.getCity()); }
+        if(userDto.getCity() != null) { user.setCity(getCityInstanceByName(userDto.getCity()));}
         user = userRepository.save(user);
         return user.getId();
     }
@@ -120,34 +116,29 @@ public class UserService {
         }
     }
 
-    public List<UserByListDto> findUsersByCity(String cityName){
-        //TODO если в поиске забили город, а их несколько с таким именем, то тут будет эксепшн
-        //TODO по идее тогда надо возвращать список этих городов с регионами и просить уточнить запрос
-        //TODO вместо проверки на isEmpty
-//        User entity = Optional.ofNullable(id)
-//                .flatMap(userRepository::findById)
-//                .orElseThrow(() -> new RuntimeException("User not found"));
-        Optional<City> optionalCity = cityRepository.findByName(cityName);
-        if(optionalCity.isEmpty()) {
-            return null;
-        } else {
-            City city = optionalCity.get();
-            List<User> users = userRepository.findAllByCity(city);
-            List<UserByListDto> userByListDtos = new ArrayList<>();
-            users.forEach(user -> userByListDtos.add(convertToUserByListDto(user)));
-            return userByListDtos;
-        }
-//        UserByListDto userByListDto = convertToUserByListDto(userRepository.findById(1L).get());
-//        List<UserByListDto> list = new ArrayList<>();
-//        list.add(userByListDto);
-//        return list;
-    }
-
-    public List<UserByListDto> findAll(UserFilter filter) {
-        List<User> users = userRepository.findAll(filter.toSpecification());
+    /**
+     * Поиск пользователей по фильтрам
+     *
+     * @param filter набор условий
+     * @return список юзеров в виде {@UserByListDto}
+     */
+    public List<UserByListDto> findAll(UserFilter filter, Pageable pageable) {
+        Page<User> users = userRepository.findAll(filter.toSpecification(), pageable);
         List<UserByListDto> userByListDtos = new ArrayList<>();
         users.forEach(user -> userByListDtos.add(convertToUserByListDto(user)));
         return userByListDtos;
+    }
+
+    //TODO: а если найдено наоборот несколько городов с таким именем, то что
+
+    /**
+     * Возвращает сущность City по названию города
+     * @param cityName название города
+     * @return сущность City
+     * @throws Exception если города с таким названием в базе нет
+     */
+    public City getCityInstanceByName(String cityName) throws Exception {
+        return cityRepository.findByName(cityName).orElseThrow(() ->new Exception("City not found"));
     }
 
     /**
@@ -157,23 +148,13 @@ public class UserService {
      * @return User
      */
     public User converterUserRegisterDtoToUser(UserRegisterDto userDto) throws Exception {
-        String cityName = userDto.getCity();
-        Optional<City> cityOptional = cityRepository.findByName(cityName);
-        //TODO: а если найдено наоборот несколько городов с таким именем, то что
-        //Может тогда поле регион тоже надо заполнять
-        City city = new City();
-        if(cityOptional.isEmpty()){
-            throw new Exception("Указанного города не существует");
-        } else {
-            city = cityOptional.get();
-        }
         return User.builder()
                 .name(userDto.getName())
                 .surname(userDto.getSurname())
                 .age(userDto.getAge())
                 .gender(userDto.getGender())
                 .interests(userDto.getInterests())
-                .city(city)
+                .city(getCityInstanceByName(userDto.getCity()))
                 .build();
     }
 

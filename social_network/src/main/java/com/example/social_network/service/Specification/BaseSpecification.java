@@ -1,10 +1,20 @@
 package com.example.social_network.service.Specification;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;
-
 import javax.persistence.criteria.JoinType;
 
+/**
+ * Базовый класс спецификаций
+ */
 public class BaseSpecification {
+
+    /**
+     * Поиск по вхождению
+     *
+     * @param column колонка таблицы сущности T
+     * @param value значение для поиска
+     * @return спецификация
+     */
     public static <T> Specification <T> like(final String column, final String value) {
         return StringUtils.isEmpty(column) || StringUtils.isEmpty(value)
                 ? null
@@ -12,14 +22,56 @@ public class BaseSpecification {
                 cb.like(root.get(column), "%"+ value + "%");
     }
 
-    //TODO join "city" надо как-то в параметры вынести
-    public static <T> Specification <T> equal(final String column, final T value) {
-        return StringUtils.isEmpty(column) || value.equals(null)
+    /**
+     * Поиск по эквивалентности полю
+     *
+     * @param column колонка таблицы сущности T
+     * @param value значение для сравнения
+     * @return спецификация
+     */
+    public static <T> Specification <T> equal(final String column, final String value) {
+        return StringUtils.isEmpty(column) || StringUtils.isEmpty(value)
                 ? null
                 : (root, query, cb) ->
-                cb.equal(root.join("city", JoinType.LEFT).get(column), value);
+                cb.equal(root.get(column), value);
     }
 
+    /**
+     * Поиск по эквивалентности полю
+     *
+     * @param joinAttribute поле сущности, по которому будет join
+     * @param column колонка таблицы сущности T
+     * @param value значение для сравнения
+     * @return спецификация
+     */
+    public static <T> Specification <T> equal(final String joinAttribute, final String column, final T value) {
+        return StringUtils.isEmpty(column) || (value == null)
+                ? null
+                : (root, query, cb) ->
+                cb.equal(root.join(joinAttribute, JoinType.LEFT).get(column), value);
+    }
+
+    /**
+     * Поиск по эквивалентности полю
+     *
+     * @param column колонка таблицы сущности T
+     * @param value Enum для сравнения равенства
+     * @return спецификация
+     */
+    public static <T> Specification <T> equal(final String column, final Enum value) {
+        return StringUtils.isEmpty(column) || (value == null)
+                ? null
+                : (root, query, cb) ->
+                cb.equal(root.get(column), value);
+    }
+
+    /**
+     * Поиск сущностей, у которых значение поля больше заданного
+     *
+     * @param column колонка таблицы сущности T
+     * @param min значение для сравнения
+     * @return спецификация
+     */
     public  static <T> Specification <T> gt(final String column, final Integer min) {
         return StringUtils.isEmpty(column) || min == null
                 ? null
@@ -27,6 +79,13 @@ public class BaseSpecification {
                 cb.gt(root.get(column), min);
     }
 
+    /**
+     * Поиск сущностей, у которых значение поля больше меньше
+     *
+     * @param column колонка таблицы сущности T
+     * @param max значение для сравнения
+     * @return спецификация
+     */
     public static <T> Specification <T> lt(final String column, final Integer max) {
         return StringUtils.isEmpty(column) || max == null
                 ? null
