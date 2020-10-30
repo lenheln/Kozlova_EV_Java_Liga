@@ -1,5 +1,8 @@
 package com.example.social_network.service.Specification;
+import com.example.social_network.domain.User;
+import com.example.social_network.utils.Genders;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import javax.persistence.criteria.JoinType;
 
@@ -15,7 +18,7 @@ public class BaseSpecification {
      * @param value значение для поиска
      * @return спецификация
      */
-    public static <T> Specification <T> like(final String column, final String value) {
+    public static <T> Specification<T> like(final String column, final String value) {
         return StringUtils.isEmpty(column) || StringUtils.isEmpty(value)
                 ? null
                 : (root, query, cb) ->
@@ -29,7 +32,7 @@ public class BaseSpecification {
      * @param value значение для сравнения
      * @return спецификация
      */
-    public static <T> Specification <T> equal(final String column, final String value) {
+    public static <T> Specification<T> equal(final String column, final String value) {
         return StringUtils.isEmpty(column) || StringUtils.isEmpty(value)
                 ? null
                 : (root, query, cb) ->
@@ -44,8 +47,8 @@ public class BaseSpecification {
      * @param value значение для сравнения
      * @return спецификация
      */
-    public static <T> Specification <T> equal(final String joinAttribute, final String column, final T value) {
-        return StringUtils.isEmpty(column) || (value == null)
+    public static <T> Specification<T> equal(final String joinAttribute, final String column, final String value) {
+        return StringUtils.isEmpty(column) || ObjectUtils.isEmpty(value)
                 ? null
                 : (root, query, cb) ->
                 cb.equal(root.join(joinAttribute, JoinType.LEFT).get(column), value);
@@ -58,8 +61,8 @@ public class BaseSpecification {
      * @param value Enum для сравнения равенства
      * @return спецификация
      */
-    public static <T> Specification <T> equal(final String column, final Enum value) {
-        return StringUtils.isEmpty(column) || (value == null)
+    public static <T> Specification<T> equal(final String column, final Enum value) {
+        return StringUtils.isEmpty(column) || ObjectUtils.isEmpty(value)
                 ? null
                 : (root, query, cb) ->
                 cb.equal(root.get(column), value);
@@ -72,7 +75,7 @@ public class BaseSpecification {
      * @param min значение для сравнения
      * @return спецификация
      */
-    public  static <T> Specification <T> gt(final String column, final Integer min) {
+    public  static <T> Specification<T> gt(final String column, final Integer min) {
         return StringUtils.isEmpty(column) || min == null
                 ? null
                 : (root, query, cb) ->

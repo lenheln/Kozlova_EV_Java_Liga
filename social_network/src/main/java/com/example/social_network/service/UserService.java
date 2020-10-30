@@ -10,10 +10,12 @@ import com.example.social_network.repository.CityRepository;
 import com.example.social_network.repository.UserRepository;
 import com.example.social_network.service.filters.UserFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.print.Pageable;
 import java.util.*;
 
 /**
@@ -120,13 +122,15 @@ public class UserService {
      * Поиск пользователей по фильтрам
      *
      * @param filter набор условий
+     * @param pageable настройки пагинации
      * @return список юзеров в виде {@UserByListDto}
      */
-    public List<UserByListDto> findAll(UserFilter filter, Pageable pageable) {
-        Page<User> users = userRepository.findAll(filter.toSpecification(), pageable);
-        List<UserByListDto> userByListDtos = new ArrayList<>();
-        users.forEach(user -> userByListDtos.add(convertToUserByListDto(user)));
-        return userByListDtos;
+    public Page<UserByListDto> findAll(UserFilter filter, Pageable pageable) {
+        Specification<User> userS = null;
+        return userRepository
+                .findAll(filter.toSpecification(), pageable)
+                .map(this::convertToUserByListDto);
+
     }
 
     //TODO: а если найдено наоборот несколько городов с таким именем, то что

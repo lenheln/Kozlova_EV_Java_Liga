@@ -1,4 +1,5 @@
 package com.example.social_network.service.filters;
+import com.example.social_network.domain.User;
 import com.example.social_network.service.Specification.BaseSpecification;
 import com.example.social_network.utils.Genders;
 import lombok.Getter;
@@ -43,11 +44,11 @@ public class UserFilter {
      */
     private Genders gender;
 
-    public Specification<Object> toSpecification(){
+    public Specification<User> toSpecification(){
 
-        return Specification.where(BaseSpecification.equal("name", name))
+        return Specification.where(BaseSpecification.<User>equal("name", name))
                 .and(BaseSpecification.like("surname", surname))
-                .and(BaseSpecification.equal("city","name", city))
+                .and(BaseSpecification.<User>equal("city","name", city))
                 .and(BaseSpecification.gt("age", minAge))
                 .and(BaseSpecification.lt("age", maxAge))
                 .and(BaseSpecification.equal("gender", gender));

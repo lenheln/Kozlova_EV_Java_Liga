@@ -8,10 +8,11 @@ import com.example.social_network.service.UserService;
 import com.example.social_network.service.filters.UserFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.awt.print.Pageable;
 import java.util.List;
 import java.util.Set;
 
@@ -121,11 +122,12 @@ public class UserController {
     /**
      * Поиск пользователей с помощью фильтра
      *
-     * @param filter
+     * @param filter настройки фильтрации
+     * @param pageable настройки пагинации
      * @return список пользователей удовлетворяющих условиям фильтра
      */
     @GetMapping("/find")
-    public List<UserByListDto> findAll(UserFilter filter, Pageable pageable) {
+    public Page<UserByListDto> findAll(UserFilter filter, Pageable pageable) {
         return userService.findAll(filter, pageable);
     }
 }
