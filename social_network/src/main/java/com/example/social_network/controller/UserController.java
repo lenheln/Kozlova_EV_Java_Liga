@@ -114,8 +114,6 @@ public class UserController {
         return userService.getFriends(id);
     }
 
-    //TODO добавить Pageable pageable (в параметры метода и в findAll)
-
     //TODO список городов по частичному названию и их id
     //А затем для поиска друга вводить уже этот  id в запросе в фильтре
 
@@ -126,6 +124,8 @@ public class UserController {
      * @param pageable настройки пагинации
      * @return список пользователей удовлетворяющих условиям фильтра
      */
+
+    //TODO page=1&size=2
     @GetMapping("/find")
     public Page<UserByListDto> findAll(UserFilter filter, Pageable pageable) {
         return userService.findAll(filter, pageable);

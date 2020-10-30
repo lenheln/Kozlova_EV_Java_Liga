@@ -13,7 +13,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
-//    Optional<User> findById(Long id);
-//    List<User> findAllByCity(City city);
-      Page<User> findAll(Specification<User> spec, Pageable pageable);
 }
