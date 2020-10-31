@@ -10,7 +10,9 @@ import com.example.social_network.repository.CityRepository;
 import com.example.social_network.repository.UserRepository;
 import com.example.social_network.service.filters.UserFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -89,9 +91,12 @@ public class UserService {
      * @param id пользователя
      * @return сет друзей
      */
-    public Set<UserByListDto> getFriends(Long id){
+    //TODO пагинация не работает
+    //TODO фильтр по списку друзей
+    public List<UserByListDto> getFriends(Long id, UserFilter filter, Pageable pageable){
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
-        Set<UserByListDto> friends = new HashSet<>();
+        //они должны удовлетворять спецификации- быть другом and filter.toSpec
+        List<UserByListDto> friends = new ArrayList<>();
         user.getMyFriends().forEach(user1 -> { friends.add(convertToUserByListDto(user1)); });
         user.getFriendsOfMine().forEach(user1 -> {friends.add(convertToUserByListDto(user1));});
         return friends;
@@ -103,7 +108,7 @@ public class UserService {
      * @param userId идентификатор пользователя
      * @param friendId идентификатор друга
      */
-    public void addFriendToUser(Long userId, Long friendId){
+    public void addFriend(Long userId, Long friendId){
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         User friend = userRepository.findById(friendId).orElseThrow(() -> new RuntimeException("Friend not found"));
 
@@ -116,6 +121,19 @@ public class UserService {
             user.getMyFriends().add(friend);
             userRepository.save(user);
         }
+    }
+
+    /**
+     * Удаление друза из списка друзей
+     *
+     * @param userId идентификатор пользователя, который совершает действие
+     * @param friendId идентификатор другя
+     */
+    public void deleteFriend(Long userId, Long friendId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        User friend = userRepository.findById(friendId).orElseThrow(() -> new RuntimeException("Friend not found"));
+        user.getMyFriends().remove(friend);
+        userRepository.save(user);
     }
 
     /**

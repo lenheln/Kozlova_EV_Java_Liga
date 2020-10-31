@@ -8,8 +8,10 @@ import com.example.social_network.service.UserService;
 import com.example.social_network.service.filters.UserFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -44,6 +46,21 @@ public class UserController {
     }
 
     /**
+     * Поиск пользователей с помощью фильтра
+     *
+     * @param filter настройки фильтрации
+     * @param pageable настройки пагинации
+     * @return список пользователей удовлетворяющих условиям фильтра
+     */
+    @GetMapping()
+    public Page<UserByListDto> findAll(UserFilter filter,
+                                       @PageableDefault(size = 3) Pageable pageable) {
+        log.info("Получение списка пользователей с помощью фильтра");
+        return userService.findAll(filter, pageable);
+    }
+
+
+    /**
      * Получает страницу пользователя по его id
      *
      * @param id пользователя
@@ -51,6 +68,7 @@ public class UserController {
      */
     @GetMapping("{id}")
     //TODO handler exception сделать
+    //TODO а зачем нам по id страницу получать?
     public UserPageDto getPersonalPage(@PathVariable Long id) {
         log.info("Get page of user with id={}", id);
         return userService.getUser(id);
@@ -86,48 +104,54 @@ public class UserController {
         userService.delete(id);
     }
 
-    //TODO может все взаимодействие с френдами в отдельный контроллер выбросить?
-
     /**
      * Добавляет друга пользователю с userId
      *
      * @param userId   идентификатор пользователя
      * @param friendId идентификатор друга
      */
-    @PutMapping("/friends/{userId}/{friendId}")
-    public void addFriend(@PathVariable Long userId, @PathVariable Long friendId) {
+    @PutMapping("/{userId}/add")
+    public void addFriend(@PathVariable Long userId, @RequestParam Long friendId) {
         log.info("Create friendship of users id = {} and id = {}", userId, friendId);
-        userService.addFriendToUser(userId, friendId);
+        userService.addFriend(userId, friendId);
     }
-
-    //TODO Get all users with paging
 
     /**
      * Получение списка всех друзей пользователя
      *
-     * @param id пользователя
+     * @param userId пользователя
      * @return список друзей
      */
-    @GetMapping("/friends/{id}")
-    public Set<UserByListDto> getFriends(@PathVariable Long id) {
-        log.info("Get list of friends for user with id = {}", id);
-        return userService.getFriends(id);
+    //TODO пагинация, поиск по фамилии, части ее, фича с переводом на другой язык
+//    @GetMapping("/{userId}/friends")
+//    public List<UserByListDto> getFriends(@PathVariable Long userId,
+//                                          @PageableDefault(size = 3) Pageable pageable) {
+//        log.info("Get list of friends for user with id = {}", userId);
+//        return userService.getFriends(userId, pageable);
+//    }
+
+    //TODO поиск друга по фильтрам среди друзей
+    @GetMapping("/{userId}/friends")
+    public List<UserByListDto> getFriends(@PathVariable Long userId,
+                                          UserFilter filter,
+                                          @PageableDefault(size = 3) Pageable pageable) {
+        log.info("Get list of friends for user with id = {}", userId);
+        return userService.getFriends(userId, filter, pageable);
+    }
+
+    /**
+     * Удаление друза из списка друзей
+     *
+     * @param userId идентификатор пользователя, который совершает действие
+     * @param friendId идентификатор другя
+     */
+    @PutMapping("/{userId}/friends/delete")
+    public void deleteFriend(@PathVariable Long userId, @RequestParam Long friendId){
+        log.info("Delete friendship of users id = {} and id = {}", userId, friendId);
+        userService.deleteFriend(userId, friendId);
     }
 
     //TODO список городов по частичному названию и их id
     //А затем для поиска друга вводить уже этот  id в запросе в фильтре
 
-    /**
-     * Поиск пользователей с помощью фильтра
-     *
-     * @param filter настройки фильтрации
-     * @param pageable настройки пагинации
-     * @return список пользователей удовлетворяющих условиям фильтра
-     */
-
-    //TODO page=1&size=2
-    @GetMapping("/find")
-    public Page<UserByListDto> findAll(UserFilter filter, Pageable pageable) {
-        return userService.findAll(filter, pageable);
-    }
 }
