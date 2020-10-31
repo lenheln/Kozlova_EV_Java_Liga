@@ -81,7 +81,17 @@ public class UserService {
      *
      * @param id
      */
+    //TODO дикий тут метод какой-то. Вставить deleteFriend
     public void delete(Long id){
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        Set<User> friendsOfMine = user.getFriendsOfMine();
+        for (User friend: friendsOfMine) {
+            Long idF = friend.getId();
+            User persistentFriend = userRepository.findById(idF).orElseThrow(() -> new RuntimeException("User not found"));
+            persistentFriend.getMyFriends().remove(user);
+            userRepository.save(persistentFriend);
+            userRepository.flush();
+        };
         userRepository.deleteById(id);
     }
 
@@ -111,16 +121,8 @@ public class UserService {
     public void addFriend(Long userId, Long friendId){
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         User friend = userRepository.findById(friendId).orElseThrow(() -> new RuntimeException("Friend not found"));
-
-        Set<User> friends = new HashSet<>();
-        friends.addAll(user.getMyFriends());
-        friends.addAll(user.getFriendsOfMine());
-        if(friends.contains(friend)){
-            throw  new RuntimeException("Friend has already added");
-        } else {
-            user.getMyFriends().add(friend);
-            userRepository.save(user);
-        }
+        user.getMyFriends().add(friend);
+        userRepository.save(user);
     }
 
     /**

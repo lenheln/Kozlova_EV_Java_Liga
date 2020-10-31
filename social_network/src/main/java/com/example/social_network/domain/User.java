@@ -58,13 +58,13 @@ public class User {
     @JoinColumn(name="cityid")
     private City city;
 
-    @ManyToMany(cascade={CascadeType.ALL})
+    @ManyToMany(cascade={CascadeType.PERSIST}, fetch = FetchType.LAZY)
     @JoinTable(name="friendship",
             joinColumns={@JoinColumn(name="iduser")},
             inverseJoinColumns={@JoinColumn(name="idfriend")})
     private Set<User> myFriends = new HashSet<User>();
 
-    @ManyToMany(mappedBy = "myFriends")
+    @ManyToMany(cascade={CascadeType.PERSIST}, mappedBy = "myFriends", fetch = FetchType.LAZY)
     private Set<User> friendsOfMine = new HashSet<User>();
 
     @Override

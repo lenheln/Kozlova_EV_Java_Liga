@@ -1,7 +1,7 @@
 --Создание таблицы описывающей дружбу пользователей
 CREATE TABLE IF NOT EXISTS friendship
 (
-    idUser INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
-    idFriend INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    idUser INTEGER NOT NULL REFERENCES users (id),
+    idFriend INTEGER NOT NULL REFERENCES users (id),
     PRIMARY KEY (idUser, idFriend)
 );
