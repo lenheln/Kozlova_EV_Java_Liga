@@ -81,15 +81,12 @@ public class UserService {
      *
      * @param id
      */
-    //TODO дикий тут метод какой-то. Вставить deleteFriend
     public void delete(Long id){
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
         Set<User> friendsOfMine = user.getFriendsOfMine();
         for (User friend: friendsOfMine) {
-            Long idF = friend.getId();
-            User persistentFriend = userRepository.findById(idF).orElseThrow(() -> new RuntimeException("User not found"));
-            persistentFriend.getMyFriends().remove(user);
-            userRepository.save(persistentFriend);
+            friend.getMyFriends().remove(user);
+            userRepository.save(friend);
             userRepository.flush();
         };
         userRepository.deleteById(id);

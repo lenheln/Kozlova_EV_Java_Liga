@@ -137,10 +137,8 @@ public class UserController {
                                           @PageableDefault(size = 3) Pageable pageable) {
         log.info("Get list of friends for user with id = {}", userId);
         return userService.getFriends(userId, filter, pageable);
-    }
-
-    /**
-     * Удаление друза из списка друзей
+    }/**
+     * Удаление друга из списка друзей
      *
      * @param userId идентификатор пользователя, который совершает действие
      * @param friendId идентификатор другя
