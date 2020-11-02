@@ -9,6 +9,7 @@ import com.example.social_network.dto.UserRegisterDto;
 import com.example.social_network.repository.CityRepository;
 import com.example.social_network.repository.UserRepository;
 import com.example.social_network.service.Specification.BaseSpecification;
+import com.example.social_network.service.filters.FriendFilter;
 import com.example.social_network.service.filters.UserFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -87,8 +88,8 @@ public class UserService {
         for (User friend: friendsOfMine) {
             friend.getMyFriends().remove(user);
             userRepository.save(friend);
-            userRepository.flush();
         };
+        userRepository.flush();
         userRepository.deleteById(id);
     }
 
@@ -98,23 +99,12 @@ public class UserService {
      * @param id пользователя
      * @return сет друзей
      */
-    //TODO пагинация не работает
-    //TODO фильтр по списку друзей
-    public List<UserByListDto> getFriends(Long id, UserFilter filter, Pageable pageable){
+    //TODO плохо, что сначала получаем юзера, а потом опять запрос идет
+    public Page<UserByListDto> getFriends(Long id, FriendFilter filter, Pageable pageable){
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
-        List<User> friendships = userRepository.findAll(BaseSpecification.mySpec(user));
-        //        //они должны удовлетворять спецификации- быть другом and filter.toSpec
-//        List<UserByListDto> friends = new ArrayList<>();
-//        user.getMyFriends().forEach(user1 -> { friends.add(convertToUserByListDto(user1)); });
-//        user.getFriendsOfMine().forEach(user1 -> {friends.add(convertToUserByListDto(user1));});
-//        return friends;
-        //Нужно скормить спецификацию где мы вытаскиваем друзей в метод finaAll в репозиторий
-        List<User> users = userRepository.findAll();
-        List<UserByListDto> usersDto = new ArrayList<>();
-        for (User u: users) {
-            usersDto.add(convertToUserByListDto(u));
-        }
-        return usersDto;
+        return userRepository
+                .findAll(filter.getSpecification(user), pageable)
+                .map(this::convertToUserByListDto);
     }
 
     /**
@@ -151,7 +141,6 @@ public class UserService {
      * @return список юзеров в виде {@UserByListDto}
      */
     public Page<UserByListDto> findAll(UserFilter filter, Pageable pageable) {
-        Specification<User> userS = null;
         return userRepository
                 .findAll(filter.toSpecification(), pageable)
                 .map(this::convertToUserByListDto);

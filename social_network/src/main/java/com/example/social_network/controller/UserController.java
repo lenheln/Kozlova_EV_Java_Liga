@@ -5,10 +5,10 @@ import com.example.social_network.dto.UserEditDto;
 import com.example.social_network.dto.UserPageDto;
 import com.example.social_network.dto.UserRegisterDto;
 import com.example.social_network.service.UserService;
+import com.example.social_network.service.filters.FriendFilter;
 import com.example.social_network.service.filters.UserFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.support.PagedListHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Контроллер для работы с сущностью User (пользователь)
@@ -31,7 +30,6 @@ public class UserController {
 
     //TODO проверка есть ли юзер с таким именем
     //TODO логи добавить
-    //TODO по разным контроллерам?
 
     /**
      * Создание учетной записи пользователя. Сохраняет пользователя в базе данных
@@ -116,28 +114,15 @@ public class UserController {
         userService.addFriend(userId, friendId);
     }
 
-    /**
-     * Получение списка всех друзей пользователя
-     *
-     * @param userId пользователя
-     * @return список друзей
-     */
-    //TODO пагинация, поиск по фамилии, части ее, фича с переводом на другой язык
-//    @GetMapping("/{userId}/friends")
-//    public List<UserByListDto> getFriends(@PathVariable Long userId,
-//                                          @PageableDefault(size = 3) Pageable pageable) {
-//        log.info("Get list of friends for user with id = {}", userId);
-//        return userService.getFriends(userId, pageable);
-//    }
-
-    //TODO поиск друга по фильтрам среди друзей
     @GetMapping("/{userId}/friends")
-    public List<UserByListDto> getFriends(@PathVariable Long userId,
-                                          UserFilter filter,
+    public Page<UserByListDto> getFriends(@PathVariable Long userId,
+                                          FriendFilter filter,
                                           @PageableDefault(size = 3) Pageable pageable) {
         log.info("Get list of friends for user with id = {}", userId);
         return userService.getFriends(userId, filter, pageable);
-    }/**
+    }
+
+    /**
      * Удаление друга из списка друзей
      *
      * @param userId идентификатор пользователя, который совершает действие
@@ -150,6 +135,4 @@ public class UserController {
     }
 
     //TODO список городов по частичному названию и их id
-    //А затем для поиска друга вводить уже этот  id в запросе в фильтре
-
 }

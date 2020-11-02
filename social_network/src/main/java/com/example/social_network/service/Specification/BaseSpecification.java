@@ -96,13 +96,11 @@ public class BaseSpecification {
                 cb.lt(root.get("age"),max);
     }
 
-    //TODO does it work?
-    public static Specification<User> mySpec(User user){
+    public static Specification<User> isFriend(User user){
         return (root, query , cb) -> {
             Predicate userPr = cb.isMember(user, root.get("friendsOfMine"));
             Predicate friendPr = cb.isMember(user, root.get("myFriends"));
             return cb.or(userPr,friendPr);
         };
-
     }
 }
