@@ -121,7 +121,7 @@ public class UserDao {
             entityManager.getTransaction().begin();
             CriteriaBuilder cb = entityManager.getCriteriaBuilder();
             CriteriaQuery<String> query = cb.createQuery(String.class);
-
+//            CriteriaQuery<User> query = cb.createQuery(User.class);
             Root<Message> messageRoot = query.from(Message.class);
             Join<Message, User> authorJoin = messageRoot.join("authorId");
             Join<Message, User> recieverJoin = messageRoot.join("recieverId");
@@ -135,6 +135,13 @@ public class UserDao {
                             .otherwise(authorJoin.get("surname"))
             ).where(cb.or(userAuthor, userReciever))
                     .distinct(true);
+
+//            query.select(
+//                    cb.<User>selectCase()
+//                            .when(cb.<User>equal(messageRoot.get("authorId"), user), recieverJoin.get("recieverId"))
+//                            .otherwise(authorJoin.get("authorId"))
+//            ).where(cb.or(userAuthor, userReciever))
+//                    .distinct(true);
             resultList = entityManager.createQuery(query).getResultList();
             /**
              *      157 - id for example

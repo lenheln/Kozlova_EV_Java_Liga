@@ -8,3 +8,7 @@ INSERT INTO users (name, surname, age, gender, cityId) VALUES ('Мадам', 'Б
 INSERT INTO users (name, surname, age, gender, cityId) VALUES ('Валентина', 'Терешкова', 65, 'F', 2);
 INSERT INTO users (name, surname, age, gender, cityId) VALUES ('Василий', 'Петров', 33, 'M', 3);
 INSERT INTO users (name, surname, age, gender, cityId) VALUES ('Иннокентий', 'Петров', 43, 'M', 3);
+
+insert into friendship (iduser, idfriend) VALUES (1,2);
+insert into friendship (iduser, idfriend) VALUES (1,3);
+insert into friendship (iduser, idfriend) VALUES (4,1);

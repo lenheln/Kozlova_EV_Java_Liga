@@ -8,12 +8,12 @@ import com.example.social_network.dto.UserPageDto;
 import com.example.social_network.dto.UserRegisterDto;
 import com.example.social_network.repository.CityRepository;
 import com.example.social_network.repository.UserRepository;
+import com.example.social_network.service.Specification.BaseSpecification;
 import com.example.social_network.service.filters.UserFilter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.support.PagedListHolder;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -102,11 +102,19 @@ public class UserService {
     //TODO фильтр по списку друзей
     public List<UserByListDto> getFriends(Long id, UserFilter filter, Pageable pageable){
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
-        //они должны удовлетворять спецификации- быть другом and filter.toSpec
-        List<UserByListDto> friends = new ArrayList<>();
-        user.getMyFriends().forEach(user1 -> { friends.add(convertToUserByListDto(user1)); });
-        user.getFriendsOfMine().forEach(user1 -> {friends.add(convertToUserByListDto(user1));});
-        return friends;
+        List<User> friendships = userRepository.findAll(BaseSpecification.mySpec(user));
+        //        //они должны удовлетворять спецификации- быть другом and filter.toSpec
+//        List<UserByListDto> friends = new ArrayList<>();
+//        user.getMyFriends().forEach(user1 -> { friends.add(convertToUserByListDto(user1)); });
+//        user.getFriendsOfMine().forEach(user1 -> {friends.add(convertToUserByListDto(user1));});
+//        return friends;
+        //Нужно скормить спецификацию где мы вытаскиваем друзей в метод finaAll в репозиторий
+        List<User> users = userRepository.findAll();
+        List<UserByListDto> usersDto = new ArrayList<>();
+        for (User u: users) {
+            usersDto.add(convertToUserByListDto(u));
+        }
+        return usersDto;
     }
 
     /**

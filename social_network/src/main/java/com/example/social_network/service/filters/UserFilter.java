@@ -45,7 +45,6 @@ public class UserFilter {
     private Genders gender;
 
     public Specification<User> toSpecification(){
-
         return Specification.where(BaseSpecification.<User>equal("name", name))
                 .and(BaseSpecification.like("surname", surname))
                 .and(BaseSpecification.<User>equal("city","name", city))

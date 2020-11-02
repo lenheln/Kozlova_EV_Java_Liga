@@ -1,10 +1,10 @@
 package com.example.social_network.service.Specification;
 import com.example.social_network.domain.User;
-import com.example.social_network.utils.Genders;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
-import javax.persistence.criteria.JoinType;
+
+import javax.persistence.criteria.*;
 
 /**
  * Базовый класс спецификаций
@@ -94,5 +94,15 @@ public class BaseSpecification {
                 ? null
                 : (root, query, cb) ->
                 cb.lt(root.get("age"),max);
+    }
+
+    //TODO does it work?
+    public static Specification<User> mySpec(User user){
+        return (root, query , cb) -> {
+            Predicate userPr = cb.isMember(user, root.get("friendsOfMine"));
+            Predicate friendPr = cb.isMember(user, root.get("myFriends"));
+            return cb.or(userPr,friendPr);
+        };
+
     }
 }
