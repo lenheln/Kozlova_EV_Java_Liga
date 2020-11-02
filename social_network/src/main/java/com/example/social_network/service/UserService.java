@@ -8,14 +8,11 @@ import com.example.social_network.dto.UserPageDto;
 import com.example.social_network.dto.UserRegisterDto;
 import com.example.social_network.repository.CityRepository;
 import com.example.social_network.repository.UserRepository;
-import com.example.social_network.service.Specification.BaseSpecification;
 import com.example.social_network.service.filters.FriendFilter;
 import com.example.social_network.service.filters.UserFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -102,8 +99,9 @@ public class UserService {
     //TODO плохо, что сначала получаем юзера, а потом опять запрос идет
     public Page<UserByListDto> getFriends(Long id, FriendFilter filter, Pageable pageable){
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        filter.setUser(user);
         return userRepository
-                .findAll(filter.getSpecification(user), pageable)
+                .findAll(filter.toSpecification(), pageable)
                 .map(this::convertToUserByListDto);
     }
 
