@@ -2,7 +2,6 @@ package com.example.social_network.service.filters;
 import com.example.social_network.domain.User;
 import com.example.social_network.service.Specification.BaseSpecification;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -11,7 +10,6 @@ import org.springframework.data.jpa.domain.Specification;
 public class FriendFilter extends UserFilter {
 
     private User user;
-
     @Override
     public Specification<User> toSpecification() {
         return Specification.where(BaseSpecification.isFriend(user)).and(super.toSpecification());

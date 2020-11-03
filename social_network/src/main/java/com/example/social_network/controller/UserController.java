@@ -7,6 +7,8 @@ import com.example.social_network.dto.UserRegisterDto;
 import com.example.social_network.service.UserService;
 import com.example.social_network.service.filters.FriendFilter;
 import com.example.social_network.service.filters.UserFilter;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -38,7 +40,7 @@ public class UserController {
      * @return пользователя
      */
     @PostMapping
-    public Long registration(@RequestBody @Valid UserRegisterDto userDto) throws Exception {
+    public Long createPage(@RequestBody @Valid UserRegisterDto userDto) throws Exception {
         log.info("Register new user={}", userDto.toString());
         return userService.save(userDto);
     }
@@ -51,7 +53,7 @@ public class UserController {
      * @return список пользователей удовлетворяющих условиям фильтра
      */
     @GetMapping()
-    public Page<UserByListDto> findAll(UserFilter filter,
+    public Page<UserByListDto> getUsers(UserFilter filter,
                                        @PageableDefault(size = 3) Pageable pageable) {
         log.info("Получение списка пользователей с помощью фильтра");
         return userService.findAll(filter, pageable);
@@ -67,7 +69,7 @@ public class UserController {
     @GetMapping("{id}")
     //TODO handler exception сделать
     //TODO а зачем нам по id страницу получать?
-    public UserPageDto getPersonalPage(@PathVariable Long id) {
+    public UserPageDto getPage(@PathVariable Long id) {
         log.info("Get page of user with id={}", id);
         return userService.getUser(id);
     }
@@ -91,13 +93,14 @@ public class UserController {
         return userService.updateUser(userDto, id);
     }
 
+
     /**
      * Удаляет страницу пользователя с указанным id
      *
      * @param id
      */
     @DeleteMapping("{id}")
-    public void delete(@PathVariable Long id) {
+    public void deletePage(@PathVariable Long id) {
         log.info("Delete user with id={}", id);
         userService.delete(id);
     }
