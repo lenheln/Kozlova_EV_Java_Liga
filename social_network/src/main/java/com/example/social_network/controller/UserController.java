@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -26,6 +27,7 @@ import java.util.List;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 @Slf4j
+@Api(description = "Контроллер для работы с сущностью User (пользователь)")
 public class UserController {
 
     private final UserService userService;
@@ -40,6 +42,7 @@ public class UserController {
      * @return пользователя
      */
     @PostMapping
+    @ApiOperation("Создание учетной записи пользователя. Сохраняет пользователя в базе данных")
     public Long createPage(@RequestBody @Valid UserRegisterDto userDto) throws Exception {
         log.info("Register new user={}", userDto.toString());
         return userService.save(userDto);
@@ -53,22 +56,23 @@ public class UserController {
      * @return список пользователей удовлетворяющих условиям фильтра
      */
     @GetMapping()
+    @ApiOperation("Поиск пользователей с помощью фильтра")
     public Page<UserByListDto> getUsers(UserFilter filter,
-                                       @PageableDefault(size = 3) Pageable pageable) {
+                                        @ApiIgnore @PageableDefault(size = 3) Pageable pageable) {
         log.info("Получение списка пользователей с помощью фильтра");
         return userService.findAll(filter, pageable);
     }
 
 
     /**
-     * Получает страницу пользователя по его id
+     * Получение страницы пользователя по его id
      *
      * @param id пользователя
      * @return страницу пользователя с заданным id
      */
     @GetMapping("{id}")
+    @ApiOperation("Получение страницы пользователя по его id")
     //TODO handler exception сделать
-    //TODO а зачем нам по id страницу получать?
     public UserPageDto getPage(@PathVariable Long id) {
         log.info("Get page of user with id={}", id);
         return userService.getUser(id);
@@ -80,13 +84,14 @@ public class UserController {
     //А если пользовтель хочет удалить информацию об интересах ему придется "" вставить, чтоб не было null
 
     /**
-     * Обновляет поля на странице пользователя
+     * Обновление полей на странице пользователя
      *
      * @param userDto данные пользователя
      * @param id      пользователя
      * @return id пользователя
      */
     @PatchMapping("{id}")
+    @ApiOperation("Обновление полей на странице пользователя")
     public Long updatePage(@RequestBody @Valid UserEditDto userDto,
                            @PathVariable Long id) throws Exception {
         log.info("Update following info {} about user with id={}", userDto, id);
@@ -95,32 +100,42 @@ public class UserController {
 
 
     /**
-     * Удаляет страницу пользователя с указанным id
+     * Удаление страницы пользователя с указанным id
      *
      * @param id
      */
     @DeleteMapping("{id}")
+    @ApiOperation("Удаление страницы пользователя с указанным id")
     public void deletePage(@PathVariable Long id) {
         log.info("Delete user with id={}", id);
         userService.delete(id);
     }
 
     /**
-     * Добавляет друга пользователю с userId
+     * Добавление друга пользователю с userId
      *
      * @param userId   идентификатор пользователя
      * @param friendId идентификатор друга
      */
     @PutMapping("/{userId}/add")
+    @ApiOperation("Добавление друга пользователю с userId")
     public void addFriend(@PathVariable Long userId, @RequestParam Long friendId) {
         log.info("Create friendship of users id = {} and id = {}", userId, friendId);
         userService.addFriend(userId, friendId);
     }
 
+    /**
+     * Получение списка друзей пользователя с помощью фильтра
+     * @param userId идентификатор пользователя
+     * @param filter фильтры
+     * @param pageable
+     * @return страницу с друзьями
+     */
     @GetMapping("/{userId}/friends")
+    @ApiOperation("Получение списка друзей пользователя с помощью фильтра")
     public Page<UserByListDto> getFriends(@PathVariable Long userId,
                                           FriendFilter filter,
-                                          @PageableDefault(size = 3) Pageable pageable) {
+                                          @ApiIgnore @PageableDefault(size = 3) Pageable pageable) {
         log.info("Get list of friends for user with id = {}", userId);
         return userService.getFriends(userId, filter, pageable);
     }
@@ -132,6 +147,7 @@ public class UserController {
      * @param friendId идентификатор другя
      */
     @PutMapping("/{userId}/friends/delete")
+    @ApiOperation("Удаление друга из списка друзей")
     public void deleteFriend(@PathVariable Long userId, @RequestParam Long friendId){
         log.info("Delete friendship of users id = {} and id = {}", userId, friendId);
         userService.deleteFriend(userId, friendId);
