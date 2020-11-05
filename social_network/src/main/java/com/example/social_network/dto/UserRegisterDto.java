@@ -23,19 +23,17 @@ import javax.validation.constraints.Positive;
 public class UserRegisterDto {
 
     @NotNull
-    @Length(max = 45)
+    @Length(min = 1, max = 45)
     private String name;
 
     @NotNull
-    @Length(max = 45)
+    @Length(min = 1, max = 45)
     private String surname;
 
-    @NotNull
     @Positive
     @Max(125)
     private Integer age;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     private Genders gender;
 

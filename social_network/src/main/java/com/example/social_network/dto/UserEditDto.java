@@ -14,17 +14,17 @@ import javax.validation.constraints.Positive;
 
 /**
  * Dto для сущности User (пользователь) для обновления страницы
- * Поля не проверяются на NotNull, так как обновлять можно не все поля
  */
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserEditDto {
-    @Length(max = 45)
+    @Length(min = 1 , max = 45)
     private String name;
 
-    @Length(max = 45)
+    @Length(min = 1,  max = 45)
     private String surname;
 
     @Positive

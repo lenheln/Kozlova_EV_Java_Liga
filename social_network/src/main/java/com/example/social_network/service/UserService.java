@@ -37,7 +37,7 @@ public class UserService {
      */
     public Long save(UserRegisterDto userDto) throws Exception {
         User user = converterUserRegisterDtoToUser(userDto);
-        userRepository.save(user);
+        user = userRepository.save(user);
         return user.getId();
     }
 
@@ -154,7 +154,11 @@ public class UserService {
      * @throws Exception если города с таким названием в базе нет
      */
     public City getCityInstanceByName(String cityName) throws Exception {
-        return cityRepository.findByName(cityName).orElseThrow(() ->new Exception("City not found"));
+        if(cityName == null){
+            return null;
+        } else {
+            return cityRepository.findByName(cityName).orElseThrow(() -> new Exception("City not found"));
+        }
     }
 
     /**
@@ -175,38 +179,19 @@ public class UserService {
     }
 
     /**
-     * Конвертирует сущность {@link User} в сущность DTO {@link UserRegisterDto}
-     * для отображения на форме регистрации
-     *
-     * @param user
-     * @return UserRegisterDto
-     */
-    //TODO лишнее?
-    public UserRegisterDto convertToUserRegisterDto(User user){
-        return UserRegisterDto.builder()
-                .name(user.getName())
-                .surname(user.getSurname())
-                .age(user.getAge())
-                .gender(user.getGender())
-                .interests(user.getInterests())
-                .city(user.getCity().getName())
-                .build();
-    }
-
-    /**
      * Конвертирует сущность {@link User} в сущность DTO {@link UserPageDto}
      * для отображения на странице пользователя
      *
      * @param user
      * @return UserPageDto
      */
-    public UserPageDto convertToUserPageDto(User user){
+    public UserPageDto convertToUserPageDto(User user) {
         return UserPageDto.builder()
                 .fio(String.format("%s %s", user.getName(), user.getSurname()))
                 .age(user.getAge())
                 .gender(user.getGender())
                 .interests(user.getInterests())
-                .city(user.getCity().getName())
+                .city(user.getCity())
                 .build();
     }
 

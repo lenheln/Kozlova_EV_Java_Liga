@@ -32,22 +32,20 @@ public class User {
     private Long id;
 
     @NotNull
-    @Length(max = 45)
+    @Length(min = 1, max = 45)
     @Column(name = "name")
     private String name;
 
     @NotNull
-    @Length(max = 45)
+    @Length(min = 1, max = 45)
     @Column(name = "surname")
     private String surname;
 
-    @NotNull
     @Positive
     @Max(125)
     @Column(name = "age")
     private Integer age;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "gender")
     private Genders gender;

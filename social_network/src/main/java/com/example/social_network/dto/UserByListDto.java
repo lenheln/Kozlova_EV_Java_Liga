@@ -9,6 +9,10 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * Dto для отображения пользователя в каком-либо списке
+ */
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -16,6 +20,8 @@ import javax.validation.constraints.NotNull;
 public class UserByListDto {
 
     private String fio;
+
     private Genders gender;
+
     private Integer age;
 }
