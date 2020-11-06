@@ -10,6 +10,7 @@ import com.example.social_network.repository.CityRepository;
 import com.example.social_network.repository.UserRepository;
 import com.example.social_network.service.filters.FriendFilter;
 import com.example.social_network.service.filters.UserFilter;
+import com.example.social_network.utils.Genders;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -33,17 +34,25 @@ class UserServiceTest {
     @Mock
     CityRepository cityRepository;
 
+
     private UserService userService;
     private User user;
+    private City city;
 
     @BeforeEach
     void init() {
         MockitoAnnotations.initMocks(this);
         this.userService = new UserService(userRepository, cityRepository);
+
+        city = new  City(1, "Москва");
         user = User.builder()
                 .id(1L)
                 .name("Name")
                 .surname("Surname")
+                .age(30)
+                .city(city)
+                .gender(Genders.F)
+                .interests("Nothing")
                 .build();
     }
 
@@ -72,17 +81,29 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Обновление полей пользователя")
-    void updateUser_EditUserName_ReturnDtoWithEditedName() throws Exception {
+    void updateUser_UserEditDto_ReturnDtoWithEditedFields() throws Exception {
 
+        City newCity = new City(2, "Петербург");
         UserEditDto userEditDto = UserEditDto.builder()
                 .name("New name")
+                .surname("New surname")
+                .age(35)
+                .city(newCity)
+                .gender(Genders.M)
+                .interests("New interests")
                 .build();
 
         Mockito.when(userRepository.findById(Mockito.anyLong())).thenReturn(java.util.Optional.ofNullable(user));
         Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(user);
-
         userService.updateUser(userEditDto, 1L);
+
+        Assertions.assertEquals(1L, user.getId());
         Assertions.assertEquals("New name", user.getName());
+        Assertions.assertEquals("New surname", user.getSurname());
+        Assertions.assertEquals(35, user.getAge());
+        Assertions.assertEquals(Genders.M, user.getGender());
+        Assertions.assertEquals(newCity, user.getCity());
+        Assertions.assertEquals("New interests", user.getInterests());
 
         Mockito.verify(userRepository, Mockito.times(1)).findById(Mockito.anyLong());
         Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any(User.class));
@@ -179,30 +200,48 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Получение сущности City по названию города")
-    void getCityInstanceByName_ReturnCity() throws Exception {
-        City city = new City();
-        Mockito.when(cityRepository.findByName(Mockito.anyString())).thenReturn(java.util.Optional.of(city));
-        Assertions.assertEquals(city, userService.getCityInstanceByName("CityName"));
-
-        Mockito.verify(cityRepository, Mockito.times(1)).findByName(Mockito.anyString());
-        Mockito.verifyNoMoreInteractions(cityRepository);
-    }
-
-    @Test
     @DisplayName("Конвертирует сущность DTO {@UserRegisterDto } в сущность {@User}")
-    void converterUserRegisterDtoToUser() {
+    void converterUserRegisterDtoToUser() throws Exception {
+
+        City city = new  City(1, "Москва");
+        UserRegisterDto userDto = UserRegisterDto.builder()
+                .name("Name")
+                .surname("Surname")
+                .age(30)
+                .city(city)
+                .gender(Genders.F)
+                .interests("Nothing")
+                .build();
+
+        User user = userService.converterUserRegisterDtoToUser(userDto);
+
+        Assertions.assertEquals("Name", user.getName());
+        Assertions.assertEquals("Surname", user.getSurname());
+        Assertions.assertEquals(30, user.getAge());
+        Assertions.assertEquals(city, user.getCity());
+        Assertions.assertEquals(Genders.F, user.getGender());
+        Assertions.assertEquals("Nothing", user.getInterests());
     }
 
     @Test
-    void convertToUserRegisterDto() {
-    }
-
-    @Test
+    @DisplayName("Конвертирует сущность User в сущность UserPageDto")
     void convertToUserPageDto() {
+        UserPageDto userDto = userService.convertToUserPageDto(user);
+
+        Assertions.assertEquals("Name Surname", userDto.getFio());
+        Assertions.assertEquals(30, userDto.getAge());
+        Assertions.assertEquals(city, userDto.getCity());
+        Assertions.assertEquals(Genders.F, userDto.getGender());
+        Assertions.assertEquals("Nothing", userDto.getInterests());
     }
 
     @Test
-    void convertToUserByListDto(User f) {
+    @DisplayName("Конвертирует сущность User в сущность UserByListDto")
+    void convertToUserByListDto() {
+        UserByListDto userDto = userService.convertToUserByListDto(user);
+
+        Assertions.assertEquals("Name Surname", userDto.getFio());
+        Assertions.assertEquals(30, userDto.getAge());
+        Assertions.assertEquals(Genders.F, userDto.getGender());
     }
 }

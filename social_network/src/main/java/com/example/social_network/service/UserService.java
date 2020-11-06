@@ -15,7 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.*;
 
@@ -63,16 +62,16 @@ public class UserService {
      */
 
     //TODO по идее если Id не найден, то нельзя прерывать программу
-    public void updateUser(UserEditDto userDto, Long id) throws Exception {
-        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+    //TODO если хочет удалить поле например age как это сделать или city
 
-        //TODO мы не знаем какие поля изменились поэтому все проверяем на null.
+    public void updateUser(UserEditDto userDto, Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
         if(userDto.getName() != null) { user.setName(userDto.getName()); }
         if(userDto.getSurname() != null) { user.setSurname(userDto.getSurname()); }
         if(userDto.getAge() != null) { user.setAge(userDto.getAge()); }
         if(userDto.getGender() != null) { user.setGender(userDto.getGender()); }
         if(userDto.getInterests() != null) { user.setInterests(userDto.getInterests()); }
-        if(userDto.getCity() != null) { user.setCity(getCityInstanceByName(userDto.getCity()));}
+        if(userDto.getCity() != null) { user.setCity(userDto.getCity());}
         userRepository.save(user);
     }
 
@@ -132,23 +131,6 @@ public class UserService {
         return userRepository
                 .findAll(filter.toSpecification(), pageable)
                 .map(this::convertToUserByListDto);
-
-    }
-
-    //TODO: а если найдено наоборот несколько городов с таким именем, то что
-
-    /**
-     * Получение сущности City по названию города
-     * @param cityName название города
-     * @return сущность City
-     * @throws Exception если города с таким названием в базе нет
-     */
-    public City getCityInstanceByName(String cityName) throws Exception {
-        if(cityName == null){
-            return null;
-        } else {
-            return cityRepository.findByName(cityName).orElseThrow(() -> new Exception("City not found"));
-        }
     }
 
     //TODO во всех конвертерах нужен маппер
@@ -165,7 +147,7 @@ public class UserService {
                 .age(userDto.getAge())
                 .gender(userDto.getGender())
                 .interests(userDto.getInterests())
-                .city(getCityInstanceByName(userDto.getCity()))
+                .city(userDto.getCity())
                 .build();
     }
 

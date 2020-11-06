@@ -1,5 +1,6 @@
 package com.example.social_network.dto;
 
+import com.example.social_network.domain.City;
 import com.example.social_network.utils.Genders;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,6 +41,5 @@ public class UserRegisterDto {
     @Length(max = 512)
     private String interests;
 
-    @Length(max = 45)
-    private String city;
+    private City city;
 }

@@ -9,7 +9,6 @@ import com.example.social_network.service.filters.FriendFilter;
 import com.example.social_network.service.filters.UserFilter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.models.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -100,8 +99,7 @@ public class UserController {
      */
     @PatchMapping("{id}")
     @ApiOperation("Обновление полей на странице пользователя")
-    public ResponseEntity updatePage(@RequestBody @Valid UserEditDto userDto,
-                           @PathVariable Long id) throws Exception {
+    public ResponseEntity updatePage(@RequestBody @Valid UserEditDto userDto, @PathVariable Long id) {
         log.info("Update following info {} about user with id={}", userDto, id);
         userService.updateUser(userDto, id);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
