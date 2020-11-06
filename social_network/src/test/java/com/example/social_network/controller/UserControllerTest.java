@@ -33,7 +33,6 @@ class UserControllerTest {
     private UserService userService;
 
     private UserController userController;
-    private User user;
 
     @BeforeEach
     void setUp() {
@@ -136,8 +135,7 @@ class UserControllerTest {
     @DisplayName("Получение списка друзей пользователя с помощью фильтра")
     void getFriends_Ok() {
 
-        List<UserByListDto> users = new ArrayList<>();
-        users.add(new UserByListDto());
+        List<UserByListDto> users = List.of(new UserByListDto());
         Page<UserByListDto> page = new PageImpl<>(users);
 
         Mockito.when(userService.getFriends(
@@ -146,7 +144,7 @@ class UserControllerTest {
                 Mockito.any(Pageable.class)
         )).thenReturn(page);
         Pageable pageable =  Pageable.unpaged();
-        ResponseEntity answer = userController.getFriends(1L, new FriendFilter(user), pageable);
+        ResponseEntity answer = userController.getFriends(1L, new FriendFilter(new User()), pageable);
 
         Assertions.assertEquals(200, answer.getStatusCodeValue());
         Assertions.assertEquals(page, answer.getBody());

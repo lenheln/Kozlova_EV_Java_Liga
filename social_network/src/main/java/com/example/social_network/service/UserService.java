@@ -81,15 +81,7 @@ public class UserService {
      *
      * @param id
      */
-    @ResponseBody
     public void delete(Long id){
-        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
-        Set<User> friendsOfMine = user.getFriendsOfMine();
-        for (User friend: friendsOfMine) {
-            friend.getMyFriends().remove(user);
-            userRepository.save(friend);
-        };
-        userRepository.flush();
         userRepository.deleteById(id);
     }
 
@@ -115,24 +107,18 @@ public class UserService {
      * @param userId идентификатор пользователя
      * @param friendId идентификатор друга
      */
-    public void addFriend(Long userId, Long friendId){
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        User friend = userRepository.findById(friendId).orElseThrow(() -> new RuntimeException("Friend not found"));
-        user.getMyFriends().add(friend);
-        userRepository.save(user);
+    public void addFriend(Long userId, Long friendId) {
+        userRepository.addFriend(userId, friendId);
     }
 
     /**
-     * Удаление друза из списка друзей
+     * Удаление друга из списка друзей
      *
      * @param userId идентификатор пользователя, который совершает действие
      * @param friendId идентификатор другя
      */
     public void deleteFriend(Long userId, Long friendId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        User friend = userRepository.findById(friendId).orElseThrow(() -> new RuntimeException("Friend not found"));
-        user.getMyFriends().remove(friend);
-        userRepository.save(user);
+        userRepository.deleteFriend(userId, friendId);
     }
 
     /**
@@ -152,7 +138,7 @@ public class UserService {
     //TODO: а если найдено наоборот несколько городов с таким именем, то что
 
     /**
-     * Возвращает сущность City по названию города
+     * Получение сущности City по названию города
      * @param cityName название города
      * @return сущность City
      * @throws Exception если города с таким названием в базе нет
@@ -165,6 +151,7 @@ public class UserService {
         }
     }
 
+    //TODO во всех конвертерах нужен маппер
     /**
      * Конвертирует сущность DTO {@UserRegisterDto } в сущность {@User}
      *
