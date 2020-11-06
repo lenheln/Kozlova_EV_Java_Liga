@@ -1,5 +1,7 @@
 package com.example.social_network.service.Specification;
 import com.example.social_network.domain.User;
+import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -100,7 +102,19 @@ public class BaseSpecification {
         return (root, query , cb) -> {
             Predicate userPr = cb.isMember(user, root.get("friendsOfMine"));
             Predicate friendPr = cb.isMember(user, root.get("myFriends"));
-            return cb.or(userPr,friendPr);
+      //      Root<User> userRoot = query.from(User.class);
+     //       Subquery<User> subquery = query.subquery(User.class);
+
+     //       subquery.select(root).where(cb.equal(root.get("id"),id));
+//            Expression<User> user = cb.parameter(User.class);
+//            Path<Set<Long>> myFriends = root.get("myFriends").get("id");
+//            Path<Set<Long>> friendsOfMine = root.join("friendsOfMine").get("if");
+//
+//            Predicate userPr = cb.isMember(id, myFriends);
+//
+//            Predicate friendPr = cb.isMember(id, friendsOfMine);
+
+              return cb.or(userPr,friendPr);
         };
     }
 }

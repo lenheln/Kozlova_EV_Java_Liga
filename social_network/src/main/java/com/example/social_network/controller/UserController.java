@@ -9,11 +9,14 @@ import com.example.social_network.service.filters.FriendFilter;
 import com.example.social_network.service.filters.UserFilter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.models.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -33,7 +36,10 @@ public class UserController {
     private final UserService userService;
 
     //TODO проверка есть ли юзер с таким именем
-    //TODO логи добавить
+    //TODO логи добавить и проверить (они должны все ошибки записывать)
+    //TODO add response??? 404 - там где ошибки типа User not found
+    //TODO возвращать только респонсы, чтобы не перегружать поток данными
+    //TODO @ExceptionHandler
 
     /**
      * Создание учетной записи пользователя. Сохраняет пользователя в базе данных
@@ -42,10 +48,12 @@ public class UserController {
      * @return пользователя
      */
     @PostMapping
+//TODO обработку валидации. Если невалидные значения, то самим написать что не так
     @ApiOperation("Создание учетной записи пользователя. Сохраняет пользователя в базе данных")
-    public Long createPage(@RequestBody @Valid UserRegisterDto userDto) throws Exception {
+    public ResponseEntity createPage(@RequestBody @Valid UserRegisterDto userDto) throws Exception {
         log.info("Register new user={}", userDto.toString());
-        return userService.save(userDto);
+        Long id = userService.save(userDto);
+        return new ResponseEntity(id, HttpStatus.CREATED);
     }
 
     /**
@@ -57,12 +65,12 @@ public class UserController {
      */
     @GetMapping()
     @ApiOperation("Поиск пользователей с помощью фильтра")
-    public Page<UserByListDto> getUsers(UserFilter filter,
+    public ResponseEntity getUsers(UserFilter filter,
                                         @ApiIgnore @PageableDefault(size = 3) Pageable pageable) {
-        log.info("Получение списка пользователей с помощью фильтра");
-        return userService.findAll(filter, pageable);
+        log.info("Get list of users");
+        Page<UserByListDto> page = userService.findAll(filter, pageable);
+        return new ResponseEntity(page, HttpStatus.OK);
     }
-
 
     /**
      * Получение страницы пользователя по его id
@@ -72,10 +80,10 @@ public class UserController {
      */
     @GetMapping("{id}")
     @ApiOperation("Получение страницы пользователя по его id")
-    //TODO handler exception сделать
-    public UserPageDto getPage(@PathVariable Long id) {
+    public ResponseEntity getPage(@PathVariable Long id) {
         log.info("Get page of user with id={}", id);
-        return userService.getUser(id);
+        UserPageDto userDto = userService.getUser(id);
+        return new ResponseEntity(userDto, HttpStatus.OK);
     }
 
     //TODO мы не знаем какое поле или поля будут обновляться. Значит нужно на каждое поле
@@ -92,12 +100,12 @@ public class UserController {
      */
     @PatchMapping("{id}")
     @ApiOperation("Обновление полей на странице пользователя")
-    public Long updatePage(@RequestBody @Valid UserEditDto userDto,
+    public ResponseEntity updatePage(@RequestBody @Valid UserEditDto userDto,
                            @PathVariable Long id) throws Exception {
         log.info("Update following info {} about user with id={}", userDto, id);
-        return userService.updateUser(userDto, id);
+        userService.updateUser(userDto, id);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
-
 
     /**
      * Удаление страницы пользователя с указанным id
@@ -106,9 +114,10 @@ public class UserController {
      */
     @DeleteMapping("{id}")
     @ApiOperation("Удаление страницы пользователя с указанным id")
-    public void deletePage(@PathVariable Long id) {
+    public ResponseEntity deletePage(@PathVariable Long id) {
         log.info("Delete user with id={}", id);
         userService.delete(id);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     /**
@@ -119,9 +128,10 @@ public class UserController {
      */
     @PutMapping("/{userId}/add")
     @ApiOperation("Добавление друга пользователю с userId")
-    public void addFriend(@PathVariable Long userId, @RequestParam Long friendId) {
+    public ResponseEntity addFriend(@PathVariable Long userId, @RequestParam Long friendId) {
         log.info("Create friendship of users id = {} and id = {}", userId, friendId);
         userService.addFriend(userId, friendId);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     /**
@@ -133,11 +143,12 @@ public class UserController {
      */
     @GetMapping("/{userId}/friends")
     @ApiOperation("Получение списка друзей пользователя с помощью фильтра")
-    public Page<UserByListDto> getFriends(@PathVariable Long userId,
+    public ResponseEntity getFriends(@PathVariable Long userId,
                                           FriendFilter filter,
                                           @ApiIgnore @PageableDefault(size = 3) Pageable pageable) {
         log.info("Get list of friends for user with id = {}", userId);
-        return userService.getFriends(userId, filter, pageable);
+        Page<UserByListDto> page = userService.getFriends(userId, filter, pageable);
+        return new ResponseEntity(page, HttpStatus.OK);
     }
 
     /**
@@ -148,9 +159,10 @@ public class UserController {
      */
     @PutMapping("/{userId}/friends/delete")
     @ApiOperation("Удаление друга из списка друзей")
-    public void deleteFriend(@PathVariable Long userId, @RequestParam Long friendId){
+    public ResponseEntity deleteFriend(@PathVariable Long userId, @RequestParam Long friendId){
         log.info("Delete friendship of users id = {} and id = {}", userId, friendId);
         userService.deleteFriend(userId, friendId);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     //TODO список городов по частичному названию и их id

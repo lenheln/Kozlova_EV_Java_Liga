@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.*;
 
@@ -54,13 +55,15 @@ public class UserService {
     }
 
     /**
-     * Обновляет поля пользователя
+     * Обновление полей пользователя
      *
      * @param userDto
      * @param id
      * @return id пользователя с обновленными полями
      */
-    public Long updateUser(UserEditDto userDto, Long id) throws Exception {
+
+    //TODO по идее если Id не найден, то нельзя прерывать программу
+    public void updateUser(UserEditDto userDto, Long id) throws Exception {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
 
         //TODO мы не знаем какие поля изменились поэтому все проверяем на null.
@@ -70,8 +73,7 @@ public class UserService {
         if(userDto.getGender() != null) { user.setGender(userDto.getGender()); }
         if(userDto.getInterests() != null) { user.setInterests(userDto.getInterests()); }
         if(userDto.getCity() != null) { user.setCity(getCityInstanceByName(userDto.getCity()));}
-        user = userRepository.save(user);
-        return user.getId();
+        userRepository.save(user);
     }
 
     /**
@@ -79,6 +81,7 @@ public class UserService {
      *
      * @param id
      */
+    @ResponseBody
     public void delete(Long id){
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
         Set<User> friendsOfMine = user.getFriendsOfMine();
@@ -100,6 +103,7 @@ public class UserService {
     public Page<UserByListDto> getFriends(Long id, FriendFilter filter, Pageable pageable){
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
         filter.setUser(user);
+//        filter.setId(id);
         return userRepository
                 .findAll(filter.toSpecification(), pageable)
                 .map(this::convertToUserByListDto);
