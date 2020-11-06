@@ -72,7 +72,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Обновление полей пользователя")
-    void updateUser() throws Exception {
+    void updateUser_EditUserName_ReturnDtoWithEditedName() throws Exception {
 
         UserEditDto userEditDto = UserEditDto.builder()
                 .name("New name")
@@ -91,7 +91,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Удаляет страницу пользователя (пользователя из базы данных) с указанным id")
-    void delete() {
+    void delete_Ok() {
         Mockito.doNothing().when(userRepository).deleteById(Mockito.anyLong());
         userService.delete(1L);
         Mockito.verify(userRepository, Mockito.times(1)).deleteById(Mockito.anyLong());
@@ -100,7 +100,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Получение списка всех друзей пользователя")
-    void getFriends() {
+    void getFriends_ReturnPageOfUserFriends() {
         User user = User.builder()
                 .name("Name")
                 .surname("Surname")
@@ -135,7 +135,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Добавление друга пользователю с userId")
-    void addFriend() {
+    void addFriend_Ok() {
         Mockito.when(userRepository.addFriend(Mockito.anyLong(), Mockito.anyLong())).thenReturn(1);
         userService.addFriend(1L, 2L);
 
@@ -145,7 +145,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Удаление друга из списка друзей")
-    void deleteFriend() {
+    void deleteFriend_Ok() {
         Mockito.when(userRepository.deleteFriend(Mockito.anyLong(), Mockito.anyLong())).thenReturn(1);
         userService.deleteFriend(1L, 2L);
 
@@ -180,7 +180,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("Получение сущности City по названию города")
-    void getCityInstanceByName() throws Exception {
+    void getCityInstanceByName_ReturnCity() throws Exception {
         City city = new City();
         Mockito.when(cityRepository.findByName(Mockito.anyString())).thenReturn(java.util.Optional.of(city));
         Assertions.assertEquals(city, userService.getCityInstanceByName("CityName"));
