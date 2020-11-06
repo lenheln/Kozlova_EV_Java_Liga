@@ -56,7 +56,6 @@ class UserServiceTest {
                 .build();
     }
 
-    //TODO названия методов тестов???
     @Test
     @DisplayName("Создание учетной записи пользователя. Сохраняет пользователя в базе данных")
     void save_ReturnId() throws Exception {

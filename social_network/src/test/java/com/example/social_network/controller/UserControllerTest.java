@@ -21,8 +21,6 @@ import org.springframework.http.ResponseEntity;
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO не тестируются исключения
-
 /**
  * Юнит-тесты контроллера
  */

@@ -34,12 +34,6 @@ public class UserController {
 
     private final UserService userService;
 
-    //TODO проверка есть ли юзер с таким именем
-    //TODO логи добавить и проверить (они должны все ошибки записывать)
-    //TODO add response??? 404 - там где ошибки типа User not found
-    //TODO возвращать только респонсы, чтобы не перегружать поток данными
-    //TODO @ExceptionHandler
-
     /**
      * Создание учетной записи пользователя. Сохраняет пользователя в базе данных
      *
@@ -47,7 +41,6 @@ public class UserController {
      * @return пользователя
      */
     @PostMapping
-//TODO обработку валидации. Если невалидные значения, то самим написать что не так
     @ApiOperation("Создание учетной записи пользователя. Сохраняет пользователя в базе данных")
     public ResponseEntity createPage(@RequestBody @Valid UserRegisterDto userDto) throws Exception {
         log.info("Register new user={}", userDto.toString());
@@ -84,11 +77,6 @@ public class UserController {
         UserPageDto userDto = userService.getUser(id);
         return new ResponseEntity(userDto, HttpStatus.OK);
     }
-
-    //TODO мы не знаем какое поле или поля будут обновляться. Значит нужно на каждое поле
-    //писать метод его обновления. Либо в сервисе проверять принятые поля от dto на null
-    // и копировать только те, что не null (сейчас последнее)
-    //А если пользовтель хочет удалить информацию об интересах ему придется "" вставить, чтоб не было null
 
     /**
      * Обновление полей на странице пользователя
@@ -162,6 +150,4 @@ public class UserController {
         userService.deleteFriend(userId, friendId);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
-
-    //TODO список городов по частичному названию и их id
 }

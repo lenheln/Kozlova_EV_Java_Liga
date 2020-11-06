@@ -61,9 +61,6 @@ public class UserService {
      * @return id пользователя с обновленными полями
      */
 
-    //TODO по идее если Id не найден, то нельзя прерывать программу
-    //TODO если хочет удалить поле например age как это сделать или city
-
     public void updateUser(UserEditDto userDto, Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
         if(userDto.getName() != null) { user.setName(userDto.getName()); }
@@ -90,7 +87,6 @@ public class UserService {
      * @param id пользователя
      * @return сет друзей
      */
-    //TODO плохо, что сначала получаем юзера, а потом опять запрос идет
     public Page<UserByListDto> getFriends(Long id, FriendFilter filter, Pageable pageable){
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
         filter.setUser(user);
@@ -133,7 +129,6 @@ public class UserService {
                 .map(this::convertToUserByListDto);
     }
 
-    //TODO во всех конвертерах нужен маппер
     /**
      * Конвертирует сущность DTO {@UserRegisterDto } в сущность {@User}
      *

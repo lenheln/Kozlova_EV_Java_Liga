@@ -18,7 +18,6 @@ import javax.validation.constraints.Positive;
     Dto для отображения на странице пользователя
  */
 
-//TODO чем еще может отличаться от другой дто
 @Data
 @Builder
 @NoArgsConstructor
