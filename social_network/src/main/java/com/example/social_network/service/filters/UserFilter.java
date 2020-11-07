@@ -2,6 +2,7 @@ package com.example.social_network.service.filters;
 import com.example.social_network.domain.User;
 import com.example.social_network.service.Specification.BaseSpecification;
 import com.example.social_network.utils.Genders;
+import com.example.social_network.utils.KeyboardConverter;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.Specification;
@@ -45,11 +46,21 @@ public class UserFilter {
     private Genders gender;
 
     public Specification<User> toSpecification(){
-        return Specification.where(BaseSpecification.<User>equal("name", name))
-                .and(BaseSpecification.like("surname", surname))
-                .and(BaseSpecification.<User>equal("city","name", city))
-                .and(BaseSpecification.gt("age", minAge))
-                .and(BaseSpecification.lt("age", maxAge))
-                .and(BaseSpecification.equal("gender", gender));
+
+        String convertedName = (name == null) ?  null : KeyboardConverter.convert(name);
+        String convertedSurname = (surname == null) ?  null : KeyboardConverter.convert(surname);
+
+        return Specification.where(
+                        Specification.where(BaseSpecification.<User>equal("name", name))
+                        .or(BaseSpecification.equal("name", convertedName))
+                        )
+                        .and(
+                                Specification.where(BaseSpecification.<User>like("surname", surname))
+                                .or(BaseSpecification.<User>like("surname", convertedSurname))
+                        )
+                        .and(BaseSpecification.<User>equal("city","name", city))
+                        .and(BaseSpecification.gt("age", minAge))
+                        .and(BaseSpecification.lt("age", maxAge))
+                        .and(BaseSpecification.equal("gender", gender));
     }
 }

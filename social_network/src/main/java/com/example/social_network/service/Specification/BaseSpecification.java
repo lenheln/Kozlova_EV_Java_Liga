@@ -21,7 +21,7 @@ public class BaseSpecification {
      * @return спецификация
      */
     public static <T> Specification<T> like(final String column, final String value) {
-        return StringUtils.isEmpty(column) || StringUtils.isEmpty(value)
+        return StringUtils.isEmpty(column) || StringUtils.isEmpty(value) || value.equals(null)
                 ? null
                 : (root, query, cb) ->
                 cb.like(root.get(column), "%"+ value + "%");
@@ -35,7 +35,7 @@ public class BaseSpecification {
      * @return спецификация
      */
     public static <T> Specification<T> equal(final String column, final String value) {
-        return StringUtils.isEmpty(column) || StringUtils.isEmpty(value)
+        return StringUtils.isEmpty(column) || StringUtils.isEmpty(value) || value.equals(null)
                 ? null
                 : (root, query, cb) ->
                 cb.equal(root.get(column), value);
