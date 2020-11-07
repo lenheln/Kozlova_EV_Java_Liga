@@ -25,7 +25,7 @@ import java.util.List;
  * Юнит-тесты контроллера
  */
 
-class UserControllerTest {
+class UserControllerUnitTest {
 
     @Mock
     private UserService userService;
