@@ -6,7 +6,6 @@ import com.example.social_network.dto.UserByListDto;
 import com.example.social_network.dto.UserEditDto;
 import com.example.social_network.dto.UserPageDto;
 import com.example.social_network.dto.UserRegisterDto;
-import com.example.social_network.repository.CityRepository;
 import com.example.social_network.repository.UserRepository;
 import com.example.social_network.service.filters.FriendFilter;
 import com.example.social_network.service.filters.UserFilter;

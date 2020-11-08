@@ -1,6 +1,7 @@
 package com.example.social_network.domain;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import javax.persistence.*;
 @Table(name = "cities")
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Data
 public class City {
 
@@ -20,7 +22,7 @@ public class City {
     @Column(name = "name")
     private String name;
 
-//    @Column(name = "regionname")
-//    private String regionName;
-
+    @ManyToOne
+    @JoinColumn(name = "regionid")
+    private Region region;
 }

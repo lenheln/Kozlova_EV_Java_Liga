@@ -33,5 +33,5 @@ public class UserPageDto {
 
     private String interests;
 
-    private City city;
+    private CityOnUserPageDto city;
 }

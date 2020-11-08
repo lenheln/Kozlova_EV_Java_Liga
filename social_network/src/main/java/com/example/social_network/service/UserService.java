@@ -1,12 +1,10 @@
 package com.example.social_network.service;
 
-import com.example.social_network.domain.City;
 import com.example.social_network.domain.User;
 import com.example.social_network.dto.UserByListDto;
 import com.example.social_network.dto.UserEditDto;
 import com.example.social_network.dto.UserPageDto;
 import com.example.social_network.dto.UserRegisterDto;
-import com.example.social_network.repository.CityRepository;
 import com.example.social_network.repository.UserRepository;
 import com.example.social_network.service.filters.FriendFilter;
 import com.example.social_network.service.filters.UserFilter;
@@ -25,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final CityRepository cityRepository;
+    private final CityService cityService;
 
     /**
      * Создание учетной записи пользователя. Сохраняет пользователя в базе данных
@@ -157,7 +155,7 @@ public class UserService {
                 .age(user.getAge())
                 .gender(user.getGender())
                 .interests(user.getInterests())
-                .city(user.getCity())
+                .city(cityService.convertToCityOnPageDto(user.getCity()))
                 .build();
     }
 
@@ -175,4 +173,5 @@ public class UserService {
                 .age(user.getAge())
                 .build();
     }
+
 }
