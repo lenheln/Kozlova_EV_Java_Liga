@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.Specification;
 
+/**
+ * Фильтрует друзей конкретного пользователя по полям-критериям
+ */
 @Setter
 @AllArgsConstructor
 public class FriendFilter extends UserFilter {

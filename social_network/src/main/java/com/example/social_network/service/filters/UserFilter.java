@@ -8,7 +8,7 @@ import lombok.Setter;
 import org.springframework.data.jpa.domain.Specification;
 
 /**
- *  Класс описывает фильтрацию пользователей по савокупности полей
+ *  Фильтрует пользователей по полям-критериям
  */
 @Getter
 @Setter
@@ -46,7 +46,7 @@ public class UserFilter {
     private Genders gender;
 
     public Specification<User> toSpecification(){
-
+        
         String convertedName = (name == null) ?  null : KeyboardConverter.convert(name);
         String convertedSurname = (surname == null) ?  null : KeyboardConverter.convert(surname);
 

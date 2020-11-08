@@ -1,7 +1,5 @@
 package com.example.social_network.service.Specification;
 import com.example.social_network.domain.User;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -24,7 +22,10 @@ public class BaseSpecification {
         return StringUtils.isEmpty(column) || StringUtils.isEmpty(value) || value.equals(null)
                 ? null
                 : (root, query, cb) ->
-                cb.like(root.get(column), "%"+ value + "%");
+                cb.like(
+                        cb.lower(root.get(column)),
+                        cb.lower(cb.literal("%"+ value + "%"))
+                );
     }
 
     /**
@@ -38,7 +39,10 @@ public class BaseSpecification {
         return StringUtils.isEmpty(column) || StringUtils.isEmpty(value) || value.equals(null)
                 ? null
                 : (root, query, cb) ->
-                cb.equal(root.get(column), value);
+                cb.equal(
+                        cb.lower(root.get(column)),
+                        cb.lower(cb.literal(value))
+                );
     }
 
     /**
