@@ -42,7 +42,7 @@ public class UserFilter {
     private Genders gender;
 
     public Specification<User> toSpecification() {
-        
+
         Specification<User> resultSpec = null;
         if(fio != null) {
             String[] fioPartly = fio.split(" ");
