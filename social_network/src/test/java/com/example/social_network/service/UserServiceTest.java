@@ -2,10 +2,7 @@ package com.example.social_network.service;
 
 import com.example.social_network.domain.City;
 import com.example.social_network.domain.User;
-import com.example.social_network.dto.UserByListDto;
-import com.example.social_network.dto.UserEditDto;
-import com.example.social_network.dto.UserPageDto;
-import com.example.social_network.dto.UserRegisterDto;
+import com.example.social_network.dto.*;
 import com.example.social_network.repository.UserRepository;
 import com.example.social_network.service.filters.FriendFilter;
 import com.example.social_network.service.filters.UserFilter;
@@ -31,7 +28,7 @@ class UserServiceTest {
     UserRepository userRepository;
 
     @Mock
-    CityRepository cityRepository;
+    CityService cityService;
 
 
     private UserService userService;
@@ -41,9 +38,13 @@ class UserServiceTest {
     @BeforeEach
     void init() {
         MockitoAnnotations.initMocks(this);
-        this.userService = new UserService(userRepository, cityRepository);
+        this.userService = new UserService(userRepository, cityService);
 
-        city = new  City(1, "Москва");
+        city =  City.builder()
+                .id(34L)
+                .name("г Москва")
+                .build();
+
         user = User.builder()
                 .id(1L)
                 .name("Name")
@@ -81,7 +82,7 @@ class UserServiceTest {
     @DisplayName("Обновление полей пользователя")
     void updateUser_UserEditDto_ReturnDtoWithEditedFields() throws Exception {
 
-        City newCity = new City(2, "Петербург");
+        City newCity = City.builder().id(31L).name("г Санкт-Петербург").build();
         UserEditDto userEditDto = UserEditDto.builder()
                 .name("New name")
                 .surname("New surname")
@@ -201,7 +202,11 @@ class UserServiceTest {
     @DisplayName("Конвертирует сущность DTO {@UserRegisterDto } в сущность {@User}")
     void converterUserRegisterDtoToUser() throws Exception {
 
-        City city = new  City(1, "Москва");
+        City city = City.builder()
+                        .id(34L)
+                        .name("г Москва")
+                        .build();
+
         UserRegisterDto userDto = UserRegisterDto.builder()
                 .name("Name")
                 .surname("Surname")
@@ -224,11 +229,14 @@ class UserServiceTest {
     @Test
     @DisplayName("Конвертирует сущность User в сущность UserPageDto")
     void convertToUserPageDto() {
+        CityOnUserPageDto cityDto = CityOnUserPageDto.builder()
+                .name("г Москва")
+                .build();
+        Mockito.when(cityService.convertToCityOnPageDto(Mockito.any(City.class))).thenReturn(cityDto);
         UserPageDto userDto = userService.convertToUserPageDto(user);
-
         Assertions.assertEquals("Name Surname", userDto.getFio());
         Assertions.assertEquals(30, userDto.getAge());
-        Assertions.assertEquals(city, userDto.getCity());
+        Assertions.assertEquals(cityDto, userDto.getCity());
         Assertions.assertEquals(Genders.F, userDto.getGender());
         Assertions.assertEquals("Nothing", userDto.getInterests());
     }

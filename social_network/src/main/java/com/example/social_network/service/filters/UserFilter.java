@@ -1,4 +1,5 @@
 package com.example.social_network.service.filters;
+import com.example.social_network.domain.City;
 import com.example.social_network.domain.User;
 import com.example.social_network.service.Specification.BaseSpecification;
 import com.example.social_network.utils.Genders;
@@ -25,9 +26,9 @@ public class UserFilter {
     private String surname;
 
     /**
-     * Название города
+     * Сущность город
      */
-    private String city;
+    private City city;
 
     /**
      * Минимальный возраст пользователя
@@ -58,7 +59,7 @@ public class UserFilter {
                                 Specification.where(BaseSpecification.<User>like("surname", surname))
                                 .or(BaseSpecification.<User>like("surname", convertedSurname))
                         )
-                        .and(BaseSpecification.<User>equal("city","name", city))
+                        .and(BaseSpecification.<User>equalCity("city","id", city))
                         .and(BaseSpecification.gt("age", minAge))
                         .and(BaseSpecification.lt("age", maxAge))
                         .and(BaseSpecification.equal("gender", gender));

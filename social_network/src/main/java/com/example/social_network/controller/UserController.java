@@ -11,16 +11,21 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+
 
 /**
  * Контроллер для работы с сущностью User (пользователь)
@@ -43,9 +48,10 @@ public class UserController {
     @PostMapping
     @ApiOperation("Создание учетной записи пользователя. Сохраняет пользователя в базе данных")
     public ResponseEntity createPage(@RequestBody @Valid UserRegisterDto userDto) throws Exception {
-        log.info("Register new user={}", userDto.toString());
         Long id = userService.save(userDto);
-        return new ResponseEntity(id, HttpStatus.CREATED);
+        log.info("Register new user={}", userDto.toString());
+        String message = String.format("User with id = %d created", id);
+        return new ResponseEntity(message, HttpStatus.CREATED);
     }
 
     /**
@@ -88,9 +94,10 @@ public class UserController {
     @PatchMapping("{id}")
     @ApiOperation("Обновление полей на странице пользователя")
     public ResponseEntity updatePage(@RequestBody @Valid UserEditDto userDto, @PathVariable Long id) {
-        log.info("Update following info {} about user with id={}", userDto, id);
         userService.updateUser(userDto, id);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        log.info("Update following info {} about user with id={}", userDto, id);
+        String message = String.format("User with id = %d updated", id);
+        return new ResponseEntity(message, HttpStatus.OK);
     }
 
     /**
@@ -101,9 +108,11 @@ public class UserController {
     @DeleteMapping("{id}")
     @ApiOperation("Удаление страницы пользователя с указанным id")
     public ResponseEntity deletePage(@PathVariable Long id) {
-        log.info("Delete user with id={}", id);
         userService.delete(id);
-        return new ResponseEntity(HttpStatus.OK);
+        log.info("Delete user with id={}", id);
+        String message = String.format("User with id = %d deleted", id);
+
+        return new ResponseEntity(message, HttpStatus.OK);
     }
 
     /**
@@ -115,9 +124,11 @@ public class UserController {
     @PutMapping("/{userId}/add")
     @ApiOperation("Добавление друга пользователю с userId")
     public ResponseEntity addFriend(@PathVariable Long userId, @RequestParam Long friendId) {
-        log.info("Create friendship of users id = {} and id = {}", userId, friendId);
         userService.addFriend(userId, friendId);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        log.info("Create friendship of users id = {} and id = {}", userId, friendId);
+        String message = String.format("User with id = %d added as a friend", friendId);
+
+        return new ResponseEntity(message, HttpStatus.OK);
     }
 
     /**
@@ -146,8 +157,28 @@ public class UserController {
     @PutMapping("/{userId}/friends/delete")
     @ApiOperation("Удаление друга из списка друзей")
     public ResponseEntity deleteFriend(@PathVariable Long userId, @RequestParam Long friendId){
-        log.info("Delete friendship of users id = {} and id = {}", userId, friendId);
         userService.deleteFriend(userId, friendId);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        log.info("Delete friendship of users id = {} and id = {}", userId, friendId);
+        String message = String.format("User with id = %d deleted from friends", friendId);
+
+        return new ResponseEntity(message, HttpStatus.OK);
+    }
+
+    /**
+     * Обработчик ошибок валидации полей
+     *
+     * @param ex исключение
+     * @return исключение в тестовом виде
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
     }
 }

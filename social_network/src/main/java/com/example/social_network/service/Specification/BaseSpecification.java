@@ -1,4 +1,5 @@
 package com.example.social_network.service.Specification;
+import com.example.social_network.domain.City;
 import com.example.social_network.domain.User;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.ObjectUtils;
@@ -53,11 +54,11 @@ public class BaseSpecification {
      * @param value значение для сравнения
      * @return спецификация
      */
-    public static <T> Specification<T> equal(final String joinAttribute, final String column, final String value) {
+    public static <T> Specification<T> equalCity(final String joinAttribute, final String column, final City value) {
         return StringUtils.isEmpty(column) || ObjectUtils.isEmpty(value)
                 ? null
                 : (root, query, cb) ->
-                cb.equal(root.join(joinAttribute, JoinType.LEFT).get(column), value);
+                cb.equal(root.join(joinAttribute, JoinType.LEFT).get(column), value.getId());
     }
 
     /**

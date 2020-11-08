@@ -5,16 +5,21 @@ import com.example.social_network.dto.UserEditDto;
 import com.example.social_network.dto.UserRegisterDto;
 import com.example.social_network.utils.Genders;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.core.Is;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.flyway.FlywayDataSource;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -43,7 +48,10 @@ public class UserControllerIntegrationTest {
                 .surname("Surname")
                 .age(30)
                 .gender(Genders.M)
-                .city(new City(1, "Москва"))
+                .city(City.builder()
+                        .id(34L)
+                        .name("г Москва")
+                        .build())
                 .interests("Programming")
                 .build();
 
@@ -51,6 +59,22 @@ public class UserControllerIntegrationTest {
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(userDto)))
                 .andExpect(status().isCreated());
+    }
+
+    @Test
+    @DisplayName("Создание учетной записи пользователя.Сохраняет пользователя в базе данных")
+    void createPage_InValidName_ThrowException() throws Exception {
+        UserRegisterDto userDto = UserRegisterDto.builder()
+                .name("")
+                .surname("surname")
+                .build();
+        mockMvc.perform(post("/users")
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(userDto)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name", Is.is("length must be between 1 and 45")))
+                .andExpect(MockMvcResultMatchers.content()
+                        .contentType("application/json"));
     }
 
     @Test
@@ -63,19 +87,23 @@ public class UserControllerIntegrationTest {
                 .param("surname", "Surname1")
                 .param("age", "33")
                 .param("gender", "F")
-                .param("city", "Москва")
+                .param("city.id", "1")
                 .param("interests", "books"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$content.[fio]", Is.is("User1 Surname1")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$content.[age]", Is.is(33)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$content.[gender]", Is.is("F")));
+
         MvcResult result = resultActions.andReturn();
 
-        String expected = "{\"content\":[{\"fio\":\"User1 Surname1\",\"gender\":\"F\",\"age\":33}]," +
-                "\"pageable\":{\"sort\":{\"sorted\":false,\"unsorted\":true,\"empty\":true}," +
-                "\"offset\":0,\"pageNumber\":0,\"pageSize\":3,\"unpaged\":false,\"paged\":true}," +
-                "\"totalPages\":1,\"last\":true,\"totalElements\":1,\"size\":3,\"number\":0," +
-                "\"sort\":{\"sorted\":false,\"unsorted\":true,\"empty\":true}," +
-                "\"numberOfElements\":1,\"first\":true,\"empty\":false}";
-
-        JSONAssert.assertEquals(expected, result.getResponse().getContentAsString(), false);
+//        String expected = "{\"content\":[{\"fio\":\"User1 Surname1\",\"gender\":\"F\",\"age\":33}]," +
+//                "\"pageable\":{\"sort\":{\"sorted\":false,\"unsorted\":true,\"empty\":true}," +
+//                "\"offset\":0,\"pageNumber\":0,\"pageSize\":3,\"unpaged\":false,\"paged\":true}," +
+//                "\"totalPages\":1,\"last\":true,\"totalElements\":1,\"size\":3,\"number\":0," +
+//                "\"sort\":{\"sorted\":false,\"unsorted\":true,\"empty\":true}," +
+//                "\"numberOfElements\":1,\"first\":true,\"empty\":false}";
+//
+//        JSONAssert.assertEquals(expected, result.getResponse().getContentAsString(), false);
     }
 
     @Test
@@ -103,11 +131,11 @@ public class UserControllerIntegrationTest {
     public void getPage_id1_PageUser1() throws Exception {
         mockMvc.perform(get("/users/1"))
                 .andExpect(status().isOk())
-                .andExpect(content().json("{\"fio\":\"User1 Surname1\"," +
-                        "\"age\":33," +
-                        "\"gender\":\"F\"," +
-                        "\"interests\":\"books\"," +
-                        "\"city\":{\"id\":1,\"name\":\"Москва\"}}"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.fio", Is.is("User1 Surname1")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.age", Is.is(33)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.gender", Is.is("F")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.interests", Is.is("books")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.city.name", Is.is("г Барнаул")));
     }
 
     @Test
@@ -119,12 +147,27 @@ public class UserControllerIntegrationTest {
                 .age(35)
                 .interests("Space")
                 .gender(Genders.M)
-                .city(new City(2, "Петербург"))
+                .city(City.builder().id(31L).name("г Санкт-Петербург").build())
                 .build();
         mockMvc.perform(patch("/users/1")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(userDto)))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @DisplayName("Обновление полей на странице пользователя")
+    void updatePage_InValidAge_ThrowException() throws Exception {
+        UserEditDto userDto = UserEditDto.builder()
+                .age(-35)
+                .build();
+        mockMvc.perform(patch("/users/1")
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(userDto)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.age", Is.is("must be greater than 0")))
+                .andExpect(MockMvcResultMatchers.content()
+                        .contentType("application/json"));
     }
 
     @Test
