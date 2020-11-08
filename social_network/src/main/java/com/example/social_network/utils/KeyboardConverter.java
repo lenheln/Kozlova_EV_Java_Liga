@@ -1,5 +1,7 @@
 package com.example.social_network.utils;
 
+import org.w3c.dom.CharacterData;
+
 import java.util.HashMap;
 
 public class KeyboardConverter {
@@ -17,7 +19,7 @@ public class KeyboardConverter {
         char[] chars = string.toCharArray();
         char[] result = new char[chars.length];
         for (int i = 0; i < chars.length; i++) {
-            char letter = chars[i];
+            Character letter = Character.toLowerCase(chars[i]);
             if(keyboard.containsKey(letter)) {
                 result[i] = keyboard.get(letter);
             }
@@ -52,7 +54,7 @@ public class KeyboardConverter {
         keyboard.put('k','л');
         keyboard.put('l','д');
         keyboard.put(';','ж');
-//        keyboard.put(''', 'э');
+        keyboard.put('\'', 'э');
         keyboard.put('z','я');
         keyboard.put('x','ч');
         keyboard.put('c','с');
