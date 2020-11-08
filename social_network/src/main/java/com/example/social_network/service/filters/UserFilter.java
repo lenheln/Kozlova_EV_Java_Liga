@@ -16,14 +16,9 @@ import org.springframework.data.jpa.domain.Specification;
 public class UserFilter {
 
     /**
-     * Имя пользователя
+     * Фио пользователя
      */
-    private String name;
-
-    /**
-     * Фамилия пользователя (или ее часть)
-     */
-    private String surname;
+    private String fio;
 
     /**
      * Сущность город
@@ -46,22 +41,32 @@ public class UserFilter {
      */
     private Genders gender;
 
-    public Specification<User> toSpecification(){
+    public Specification<User> toSpecification() {
+        
+        Specification<User> resultSpec = null;
+        if(fio != null) {
+            String[] fioPartly = fio.split(" ");
+            resultSpec = concatSpecifications(fioPartly.length-1, fioPartly);
+        }
+        return Specification.where(resultSpec)
+                    .and(BaseSpecification.equalCity("city", "id", city))
+                    .and(BaseSpecification.gt("age", minAge))
+                    .and(BaseSpecification.lt("age", maxAge))
+                    .and(BaseSpecification.equal("gender", gender));
 
-        String convertedName = (name == null) ?  null : KeyboardConverter.convert(name);
-        String convertedSurname = (surname == null) ?  null : KeyboardConverter.convert(surname);
+    }
 
+    public Specification<User> concatSpecifications(int i, String[] fio) {
+        while(i > 0) {
+            return concatSpecifications(i - 1, fio).and(createSpecification(fio[i]));
+        }
         return Specification.where(
-                        Specification.where(BaseSpecification.<User>equal("name", name))
-                        .or(BaseSpecification.equal("name", convertedName))
-                        )
-                        .and(
-                                Specification.where(BaseSpecification.<User>like("surname", surname))
-                                .or(BaseSpecification.<User>like("surname", convertedSurname))
-                        )
-                        .and(BaseSpecification.<User>equalCity("city","id", city))
-                        .and(BaseSpecification.gt("age", minAge))
-                        .and(BaseSpecification.lt("age", maxAge))
-                        .and(BaseSpecification.equal("gender", gender));
+                createSpecification(fio[0])
+        );
+    }
+
+    public Specification<User> createSpecification(String fioPart) {
+        return Specification.where(BaseSpecification.<User>like("name", fioPart))
+                .or(BaseSpecification.<User>like("surname", fioPart));
     }
 }
