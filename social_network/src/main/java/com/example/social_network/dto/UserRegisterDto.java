@@ -38,8 +38,5 @@ public class UserRegisterDto {
     @Enumerated(EnumType.STRING)
     private Genders gender;
 
-    @Length(max = 512)
-    private String interests;
-
     private City city;
 }

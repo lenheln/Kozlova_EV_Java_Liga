@@ -14,6 +14,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 /**
  * Сервисный слой для работы с сущностью User (пользователь)
  */
@@ -148,12 +154,21 @@ public class UserService {
      * @return UserPageDto
      */
     public UserPageDto convertToUserPageDto(User user) {
+
         return UserPageDto.builder()
                 .fio(String.format("%s %s", user.getName(), user.getSurname()))
                 .age(user.getAge())
                 .gender(user.getGender())
                 .interests(user.getInterests())
                 .city(cityService.convertToCityOnPageDto(user.getCity()))
+                .friends(Stream.concat(
+                        user.getMyFriends().stream(),
+                        user.getFriendsOfMine().stream()
+                )
+                        .collect(Collectors.toList())
+                        .stream()
+                        .map(this::convertToUserByListDto)
+                        .collect(Collectors.toList()))
                 .build();
     }
 

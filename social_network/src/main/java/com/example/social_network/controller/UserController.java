@@ -67,7 +67,7 @@ public class UserController {
     @GetMapping()
     @ApiOperation("Поиск пользователей с помощью фильтра")
     public ResponseEntity getUsers(UserFilter filter,
-                                        @ApiIgnore @PageableDefault(size = 3) Pageable pageable) {
+                                        @ApiIgnore @PageableDefault(size = 10) Pageable pageable) {
 
         Page<UserByListDto> page = userService.findAll(filter, pageable);
         log.info("Get list of users");

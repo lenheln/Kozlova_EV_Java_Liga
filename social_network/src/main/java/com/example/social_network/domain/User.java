@@ -62,10 +62,10 @@ public class User {
     @JoinTable(name="friendship",
             joinColumns={@JoinColumn(name="iduser")},
             inverseJoinColumns={@JoinColumn(name="idfriend")})
-    private Set<User> myFriends = new HashSet<User>();
+    private List<User> myFriends = new ArrayList<>();
 
     @ManyToMany(cascade={CascadeType.PERSIST}, mappedBy = "myFriends", fetch = FetchType.LAZY)
-    private Set<User> friendsOfMine = new HashSet<User>();
+    private List<User> friendsOfMine = new ArrayList<>();
 
     @Override
     public String toString(){

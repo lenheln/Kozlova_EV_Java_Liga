@@ -13,6 +13,8 @@ import javax.persistence.Enumerated;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
     Dto для отображения на странице пользователя
@@ -34,4 +36,6 @@ public class UserPageDto {
     private String interests;
 
     private CityOnUserPageDto city;
+
+    private List<UserByListDto> friends = new ArrayList<>();
 }

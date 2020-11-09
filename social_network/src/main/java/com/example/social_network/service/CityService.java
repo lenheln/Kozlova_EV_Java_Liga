@@ -5,7 +5,8 @@ import com.example.social_network.domain.Region;
 import com.example.social_network.dto.CityOnUserPageDto;
 import com.example.social_network.repository.CityRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,14 +29,11 @@ public class CityService {
      * @param name поисковый запрос
      * @return список dto удовлетворяющих запросу
      */
-    
-    public List<CityOnUserPageDto> findCityByName(String name) {
-        List<City> cities = cityRepository.findByNameContaining(name);
-        List<CityOnUserPageDto> citiesDto = new ArrayList<>();
-        for (City city: cities) {
-            citiesDto.add(convertToCityOnPageDto(city));
-        }
-        return citiesDto;
+
+    public Page<CityOnUserPageDto> findCityByName(String name, Pageable pageable) {
+        return cityRepository
+                .findByNameContaining(name, pageable)
+                .map(this::convertToCityOnPageDto);
     }
 
     /**
