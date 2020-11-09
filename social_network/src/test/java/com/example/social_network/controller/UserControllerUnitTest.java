@@ -46,7 +46,7 @@ class UserControllerUnitTest {
         ResponseEntity answer =  userController.createPage(new UserRegisterDto());
 
         Assertions.assertEquals(201, answer.getStatusCodeValue());
-        Assertions.assertEquals(1L, answer.getBody());
+        Assertions.assertEquals("User with id = 1 created", answer.getBody());
 
         Mockito.verify(userService, Mockito.times(1)).save(Mockito.any(UserRegisterDto.class));
         Mockito.verifyNoMoreInteractions(userService);
@@ -101,7 +101,8 @@ class UserControllerUnitTest {
                 Mockito.any(UserEditDto.class),
                 Mockito.anyLong());
         ResponseEntity answer = userController.updatePage(new UserEditDto(), 1L);
-        Assertions.assertEquals(204, answer.getStatusCodeValue());
+        Assertions.assertEquals(200, answer.getStatusCodeValue());
+        Assertions.assertEquals("User with id = 1 updated", answer.getBody());
 
         Mockito.verify(userService, Mockito.times(1)).updateUser(Mockito.any(UserEditDto.class), Mockito.anyLong());
         Mockito.verifyNoMoreInteractions(userService);
@@ -123,7 +124,8 @@ class UserControllerUnitTest {
     void addFriend_Ok() {
         Mockito.doNothing().when(userService).addFriend(Mockito.anyLong(), Mockito.anyLong());
         ResponseEntity answer = userController.addFriend(1L, 2L);
-        Assertions.assertEquals(204, answer.getStatusCodeValue());
+        Assertions.assertEquals(200, answer.getStatusCodeValue());
+        Assertions.assertEquals("User with id = 2 added as a friend", answer.getBody());
 
         Mockito.verify(userService, Mockito.times(1)).addFriend(Mockito.anyLong(), Mockito.anyLong());
         Mockito.verifyNoMoreInteractions(userService);
@@ -159,7 +161,8 @@ class UserControllerUnitTest {
     void deleteFriend_Ok() {
         Mockito.doNothing().when(userService).deleteFriend(Mockito.anyLong(), Mockito.anyLong());
         ResponseEntity answer = userController.deleteFriend(1L, 2L);
-        Assertions.assertEquals(204, answer.getStatusCodeValue());
+        Assertions.assertEquals(200, answer.getStatusCodeValue());
+        Assertions.assertEquals("User with id = 2 deleted from friends", answer.getBody());
 
         Mockito.verify(userService, Mockito.times(1)).deleteFriend(Mockito.anyLong(),Mockito.anyLong());
         Mockito.verifyNoMoreInteractions(userService);

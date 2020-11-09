@@ -6,19 +6,12 @@ import com.example.social_network.dto.UserRegisterDto;
 import com.example.social_network.utils.Genders;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.core.Is;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,7 +51,8 @@ public class UserControllerIntegrationTest {
         mockMvc.perform(post("/users")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(userDto)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(content().string("User with id = 4 created"));
     }
 
     @Test
@@ -71,16 +65,15 @@ public class UserControllerIntegrationTest {
         mockMvc.perform(post("/users")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(userDto)))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name", Is.is("length must be between 1 and 45")))
-                .andExpect(MockMvcResultMatchers.content()
-                        .contentType("application/json"));
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.name", Is.is("length must be between 1 and 45")))
+                .andExpect(content().contentType("application/json"));
     }
 
     @Test
     @DisplayName("Получение пользователей с применением фильтра по всем полям")
     public void getUsers_WithFilter_ReturnUser() throws Exception {
-        ResultActions resultActions = mockMvc.perform(get("/users").contentType("application/json")
+        mockMvc.perform(get("/users").contentType("application/json")
                 .param("page", "0")
                 .param("size", "3")
                 .param("name", "User1")
@@ -90,40 +83,27 @@ public class UserControllerIntegrationTest {
                 .param("city.id", "1")
                 .param("interests", "books"))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$content.[fio]", Is.is("User1 Surname1")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$content.[age]", Is.is(33)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$content.[gender]", Is.is("F")));
-
-        MvcResult result = resultActions.andReturn();
-
-//        String expected = "{\"content\":[{\"fio\":\"User1 Surname1\",\"gender\":\"F\",\"age\":33}]," +
-//                "\"pageable\":{\"sort\":{\"sorted\":false,\"unsorted\":true,\"empty\":true}," +
-//                "\"offset\":0,\"pageNumber\":0,\"pageSize\":3,\"unpaged\":false,\"paged\":true}," +
-//                "\"totalPages\":1,\"last\":true,\"totalElements\":1,\"size\":3,\"number\":0," +
-//                "\"sort\":{\"sorted\":false,\"unsorted\":true,\"empty\":true}," +
-//                "\"numberOfElements\":1,\"first\":true,\"empty\":false}";
-//
-//        JSONAssert.assertEquals(expected, result.getResponse().getContentAsString(), false);
+                .andExpect(jsonPath("$.content[0].fio", Is.is("User1 Surname1")))
+                .andExpect(jsonPath("$.content[0].age", Is.is(33)))
+                .andExpect(jsonPath("$.content[0].gender", Is.is("F")));
     }
 
     @Test
     @DisplayName("Получение пользователей без фильтра. Пагинация default")
     public void getUsers_ReturnUsersList() throws Exception {
-        ResultActions resultActions = mockMvc.perform(get("/users").contentType("application/json"))
-                .andExpect(status().isOk());
-        MvcResult result = resultActions.andReturn();
+         mockMvc.perform(get("/users").contentType("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].fio", Is.is("User1 Surname1")))
+                .andExpect(jsonPath("$.content[0].age", Is.is(33)))
+                .andExpect(jsonPath("$.content[0].gender", Is.is("F")))
 
-        System.out.println(result.getResponse().getContentAsString());
-        String expected = "{\"content\":[{\"fio\":\"User1 Surname1\",\"gender\":\"F\",\"age\":33}," +
-                "{\"fio\":\"User2 Surname2\",\"gender\":\"M\",\"age\":90}," +
-                "{\"fio\":\"User3 Surname3\",\"gender\":\"M\",\"age\":50}]," +
-                "\"pageable\":{\"sort\":{\"sorted\":false,\"unsorted\":true,\"empty\":true}," +
-                "\"offset\":0,\"pageSize\":3,\"pageNumber\":0,\"paged\":true,\"unpaged\":false}," +
-                "\"totalElements\":3,\"totalPages\":1,\"last\":true,\"number\":0," +
-                "\"size\":3,\"sort\":{\"sorted\":false,\"unsorted\":true,\"empty\":true}," +
-                "\"numberOfElements\":3,\"first\":true,\"empty\":false}";
+                .andExpect(jsonPath("$.content[1].fio", Is.is("User2 Surname2")))
+                .andExpect(jsonPath("$.content[1].age", Is.is(90)))
+                .andExpect(jsonPath("$.content[1].gender", Is.is("M")))
 
-        JSONAssert.assertEquals(expected, result.getResponse().getContentAsString(), false);
+                .andExpect(jsonPath("$.content[2].fio", Is.is("User3 Surname3")))
+                .andExpect(jsonPath("$.content[2].age", Is.is(50)))
+                .andExpect(jsonPath("$.content[2].gender", Is.is("M")));
     }
 
     @Test
@@ -131,11 +111,11 @@ public class UserControllerIntegrationTest {
     public void getPage_id1_PageUser1() throws Exception {
         mockMvc.perform(get("/users/1"))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.fio", Is.is("User1 Surname1")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.age", Is.is(33)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.gender", Is.is("F")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.interests", Is.is("books")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.city.name", Is.is("г Барнаул")));
+                .andExpect(jsonPath("$.fio", Is.is("User1 Surname1")))
+                .andExpect(jsonPath("$.age", Is.is(33)))
+                .andExpect(jsonPath("$.gender", Is.is("F")))
+                .andExpect(jsonPath("$.interests", Is.is("books")))
+                .andExpect(jsonPath("$.city.name", Is.is("г Барнаул")));
     }
 
     @Test
@@ -152,7 +132,7 @@ public class UserControllerIntegrationTest {
         mockMvc.perform(patch("/users/1")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(userDto)))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -166,8 +146,7 @@ public class UserControllerIntegrationTest {
                 .content(objectMapper.writeValueAsString(userDto)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.age", Is.is("must be greater than 0")))
-                .andExpect(MockMvcResultMatchers.content()
-                        .contentType("application/json"));
+                .andExpect(content().contentType("application/json"));
     }
 
     @Test
@@ -181,31 +160,27 @@ public class UserControllerIntegrationTest {
     @DisplayName("Добавление друга пользователю с userId")
     public void addFriend_isOk() throws Exception {
         mockMvc.perform(put("/users/2/add").param("friendId", "3"))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
     }
 
     @Test
     @DisplayName("Удаление друга из списка друзей")
     public void deleteFriend_isOk() throws Exception {
         mockMvc.perform(put("/users/1/friends/delete").param("friendId", "2"))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
     }
 
     @Test
     @DisplayName("Получение списка друзей пользователя с помощью фильтра")
     public void getFriends_FriendList() throws Exception {
-        ResultActions resultActions = mockMvc.perform(get("/users/1/friends").contentType("application_json"))
-                .andExpect(status().isOk());
-        MvcResult result = resultActions.andReturn();
+        mockMvc.perform(get("/users/1/friends").contentType("application_json"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].fio", Is.is("User2 Surname2")))
+                .andExpect(jsonPath("$.content[0].age", Is.is(90)))
+                .andExpect(jsonPath("$.content[0].gender", Is.is("M")))
 
-        String expected = "{\"content\":[{\"fio\":\"User2 Surname2\",\"gender\":\"M\",\"age\":90}," +
-                "{\"fio\":\"User3 Surname3\",\"gender\":\"M\",\"age\":50}]," +
-                "\"pageable\":{\"sort\":{\"unsorted\":true,\"sorted\":false,\"empty\":true}," +
-                "\"offset\":0,\"pageNumber\":0,\"pageSize\":3,\"paged\":true,\"unpaged\":false}," +
-                "\"totalElements\":2,\"totalPages\":1,\"last\":true,\"number\":0,\"size\":3," +
-                "\"sort\":{\"unsorted\":true,\"sorted\":false,\"empty\":true}," +
-                "\"numberOfElements\":2,\"first\":true,\"empty\":false}";
-
-        JSONAssert.assertEquals(expected, result.getResponse().getContentAsString(), false);
+                .andExpect(jsonPath("$.content[1].fio", Is.is("User3 Surname3")))
+                .andExpect(jsonPath("$.content[1].age", Is.is(50)))
+                .andExpect(jsonPath("$.content[1].gender", Is.is("M")));
     }
 }
