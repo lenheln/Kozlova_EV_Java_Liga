@@ -9,3 +9,8 @@ CREATE TABLE IF NOT EXISTS users
   interests VARCHAR(512)        ,
   cityId    INTEGER             REFERENCES cities (id)
 );
+
+-- Создание индекса для таблицы пользователей
+CREATE INDEX filter_idx
+    ON users USING btree
+    (name, surname, age, gender, cityid);

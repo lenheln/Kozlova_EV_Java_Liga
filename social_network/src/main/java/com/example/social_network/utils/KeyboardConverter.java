@@ -1,16 +1,16 @@
 package com.example.social_network.utils;
-
-import org.w3c.dom.CharacterData;
-
 import java.util.HashMap;
 
+/**
+ *  Конвертирует строку, из одной раскладки клавиатуры в другую
+ */
 public class KeyboardConverter {
 
     /**
      * Конвертирует строку в строку в другой раскладке клавиатуры
      *
      * @param string
-     * @return
+     * @return сконвертированная строка
      */
 
     public static String convert(String string){
@@ -30,6 +30,11 @@ public class KeyboardConverter {
         return new String(result);
     }
 
+    /**
+     * Словарь соответсвий английской и русской раскладки клавиатуры
+     *
+     * @return словарь
+     */
     public static HashMap<Character, Character> getKeyboard(){
         HashMap<Character, Character> keyboard = new HashMap();
         keyboard.put('q','й');

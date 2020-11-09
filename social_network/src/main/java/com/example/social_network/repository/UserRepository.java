@@ -22,6 +22,7 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
     /**
      * Добавление друга пользователю с userId
+     *
      * @param idUser идентификатор пользователя
      * @param idFriend идентификатор друга
      * @return количество измененных в БД строк

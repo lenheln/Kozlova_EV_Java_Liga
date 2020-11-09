@@ -43,7 +43,6 @@ public class UserService {
      * @param id
      * @return страницу пользователя
      */
-    @Transactional(readOnly = true)
     public UserPageDto getUser(Long id) {
         User user = userRepository.findById(id).get();
         return convertToUserPageDto(user);
@@ -86,7 +85,6 @@ public class UserService {
     public Page<UserByListDto> getFriends(Long id, FriendFilter filter, Pageable pageable){
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
         filter.setUser(user);
-//        filter.setId(id);
         return userRepository
                 .findAll(filter.toSpecification(), pageable)
                 .map(this::convertToUserByListDto);
@@ -173,5 +171,4 @@ public class UserService {
                 .age(user.getAge())
                 .build();
     }
-
 }

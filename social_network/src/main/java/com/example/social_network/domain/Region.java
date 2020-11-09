@@ -4,6 +4,9 @@ import lombok.Data;
 
 import javax.persistence.*;
 
+/**
+ *  Сущность регион
+ */
 @Entity
 @Table(name = "regions")
 @Data

@@ -7,6 +7,10 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+/**
+ *  Сущность город
+ */
+
 @Entity
 @Table(name = "cities")
 @AllArgsConstructor

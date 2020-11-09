@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ *  Dto для сущности City для отображения в списке городов при поиске города
+ */
 @Data
 @Builder
 @NoArgsConstructor
