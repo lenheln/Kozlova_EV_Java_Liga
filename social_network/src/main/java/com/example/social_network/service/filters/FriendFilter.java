@@ -6,7 +6,7 @@ import lombok.Setter;
 import org.springframework.data.jpa.domain.Specification;
 
 /**
- * Фильтрует друзей конкретного пользователя по полям-критериям
+ * Фильтр друзей конкретного пользователя по полям-критериям
  */
 
 @Setter

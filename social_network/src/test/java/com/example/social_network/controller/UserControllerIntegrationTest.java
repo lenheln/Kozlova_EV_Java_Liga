@@ -1,19 +1,28 @@
 package com.example.social_network.controller;
 
 import com.example.social_network.domain.City;
+import com.example.social_network.domain.User;
 import com.example.social_network.dto.UserEditDto;
 import com.example.social_network.dto.UserRegisterDto;
 import com.example.social_network.utils.Genders;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.core.Is;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.criteria.*;
+
+import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -26,6 +35,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Transactional
 public class UserControllerIntegrationTest {
+
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Autowired
     private MockMvc mockMvc;
@@ -45,7 +57,6 @@ public class UserControllerIntegrationTest {
                         .id(34L)
                         .name("г Москва")
                         .build())
-                .interests("Programming")
                 .build();
 
         mockMvc.perform(post("/users")
@@ -76,14 +87,14 @@ public class UserControllerIntegrationTest {
         mockMvc.perform(get("/users").contentType("application/json")
                 .param("page", "0")
                 .param("size", "3")
-                .param("name", "User1")
-                .param("surname", "Surname1")
+                .param("name", "Маша")
+                .param("surname", "Иванова")
                 .param("age", "33")
                 .param("gender", "F")
                 .param("city.id", "1")
                 .param("interests", "books"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].fio", Is.is("User1 Surname1")))
+                .andExpect(jsonPath("$.content[0].fio", Is.is("Маша Иванова")))
                 .andExpect(jsonPath("$.content[0].age", Is.is(33)))
                 .andExpect(jsonPath("$.content[0].gender", Is.is("F")));
     }
@@ -93,25 +104,25 @@ public class UserControllerIntegrationTest {
     public void getUsers_ReturnUsersList() throws Exception {
          mockMvc.perform(get("/users").contentType("application/json"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].fio", Is.is("User1 Surname1")))
+                .andExpect(jsonPath("$.content[0].fio", Is.is("Маша Иванова")))
                 .andExpect(jsonPath("$.content[0].age", Is.is(33)))
                 .andExpect(jsonPath("$.content[0].gender", Is.is("F")))
 
-                .andExpect(jsonPath("$.content[1].fio", Is.is("User2 Surname2")))
+                .andExpect(jsonPath("$.content[1].fio", Is.is("Пётр Петров")))
                 .andExpect(jsonPath("$.content[1].age", Is.is(90)))
                 .andExpect(jsonPath("$.content[1].gender", Is.is("M")))
 
-                .andExpect(jsonPath("$.content[2].fio", Is.is("User3 Surname3")))
+                .andExpect(jsonPath("$.content[2].fio", Is.is("Олег Олегов")))
                 .andExpect(jsonPath("$.content[2].age", Is.is(50)))
                 .andExpect(jsonPath("$.content[2].gender", Is.is("M")));
     }
 
     @Test
     @DisplayName("Получение страницы пользователя по его id")
-    public void getPage_id1_PageUser1() throws Exception {
+    public void getPage_id1_PageМаша() throws Exception {
         mockMvc.perform(get("/users/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.fio", Is.is("User1 Surname1")))
+                .andExpect(jsonPath("$.fio", Is.is("Маша Иванова")))
                 .andExpect(jsonPath("$.age", Is.is(33)))
                 .andExpect(jsonPath("$.gender", Is.is("F")))
                 .andExpect(jsonPath("$.interests", Is.is("books")))
@@ -129,10 +140,25 @@ public class UserControllerIntegrationTest {
                 .gender(Genders.M)
                 .city(City.builder().id(31L).name("г Санкт-Петербург").build())
                 .build();
+
         mockMvc.perform(patch("/users/1")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(userDto)))
                 .andExpect(status().isOk());
+
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery query =  cb.createQuery(User.class);
+        Root<User> root = query.from(User.class);
+
+        query.select(root).where(cb.equal(root.get("id"),1));
+        User updatedUser = (User) entityManager.createQuery(query).getSingleResult();
+
+        Assertions.assertEquals(updatedUser.getName(), "New name");
+        Assertions.assertEquals(updatedUser.getSurname(), "New surname");
+        Assertions.assertEquals(updatedUser.getAge(), 35);
+        Assertions.assertEquals(updatedUser.getInterests(), "Space");
+        Assertions.assertEquals(updatedUser.getCity(), City.builder().id(31L).name("г Санкт-Петербург").build());
+        Assertions.assertEquals(updatedUser.getGender(), Genders.M);
     }
 
     @Test
@@ -154,6 +180,18 @@ public class UserControllerIntegrationTest {
     public void deletePage_isOk() throws Exception {
         mockMvc.perform(delete("/users/1"))
                 .andExpect(status().isOk());
+
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery query =  cb.createQuery(Long.class);
+        Root<User> root = query.from(User.class);
+        query.select(root.get("id"));
+        List<Long> idList = entityManager.createQuery(query).getResultList();
+
+        Assertions.assertFalse(idList.contains(1L));
+        Assertions.assertTrue(idList.contains(2L));
+        Assertions.assertTrue(idList.contains(3L));
+
+        entityManager.close();
     }
 
     @Test
@@ -161,6 +199,21 @@ public class UserControllerIntegrationTest {
     public void addFriend_isOk() throws Exception {
         mockMvc.perform(put("/users/2/add").param("friendId", "3"))
                 .andExpect(status().isOk());
+
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery query =  cb.createQuery(User.class);
+        Root<User> root = query.from(User.class);
+
+        query.select(root.get("friendsOfMine")).where(cb.equal(root.get("id"),3));
+        User user2 = (User) entityManager.createQuery(query).getSingleResult();
+        Assertions.assertEquals(user2.getId(), 2);
+
+        query.select(root.get("myFriends")).where(cb.equal(root.get("id"), 2));
+        User user3 = (User) entityManager.createQuery(query).getSingleResult();
+        Assertions.assertEquals(user3.getId(),3);
+
+        entityManager.close();
+
     }
 
     @Test
@@ -168,6 +221,20 @@ public class UserControllerIntegrationTest {
     public void deleteFriend_isOk() throws Exception {
         mockMvc.perform(put("/users/1/friends/delete").param("friendId", "2"))
                 .andExpect(status().isOk());
+
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery query =  cb.createQuery(User.class);
+        Root<User> root = query.from(User.class);
+
+        query.select(root.get("friendsOfMine")).where(cb.equal(root.get("id"),2));
+        Assertions.assertThrows(NoResultException.class,
+                () -> entityManager.createQuery(query).getSingleResult());
+
+        query.select(root.get("myFriends")).where(cb.equal(root.get("id"),1));
+        Assertions.assertThrows(NoResultException.class,
+                () -> entityManager.createQuery(query).getSingleResult());
+
+        entityManager.close();
     }
 
     @Test
@@ -175,11 +242,11 @@ public class UserControllerIntegrationTest {
     public void getFriends_FriendList() throws Exception {
         mockMvc.perform(get("/users/1/friends").contentType("application_json"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].fio", Is.is("User2 Surname2")))
+                .andExpect(jsonPath("$.content[0].fio", Is.is("Пётр Петров")))
                 .andExpect(jsonPath("$.content[0].age", Is.is(90)))
                 .andExpect(jsonPath("$.content[0].gender", Is.is("M")))
 
-                .andExpect(jsonPath("$.content[1].fio", Is.is("User3 Surname3")))
+                .andExpect(jsonPath("$.content[1].fio", Is.is("Олег Олегов")))
                 .andExpect(jsonPath("$.content[1].age", Is.is(50)))
                 .andExpect(jsonPath("$.content[1].gender", Is.is("M")));
     }
