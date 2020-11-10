@@ -26,7 +26,6 @@ import java.util.List;
 @AllArgsConstructor
 public class UserPageDto {
 
-
     private String fio;
 
     private Integer age;

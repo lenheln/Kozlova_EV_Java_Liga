@@ -30,7 +30,4 @@ public class City {
     @ManyToOne
     @JoinColumn(name = "regionid")
     private Region region;
-
-    @OneToMany(mappedBy = "city")
-    private List<User> users;
 }

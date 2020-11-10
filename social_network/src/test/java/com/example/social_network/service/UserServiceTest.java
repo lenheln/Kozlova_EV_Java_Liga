@@ -53,6 +53,8 @@ class UserServiceTest {
                 .city(city)
                 .gender(Genders.F)
                 .interests("Nothing")
+                .myFriends(new ArrayList<>())
+                .friendsOfMine(new ArrayList<>())
                 .build();
     }
 
@@ -213,7 +215,6 @@ class UserServiceTest {
                 .age(30)
                 .city(city)
                 .gender(Genders.F)
-                .interests("Nothing")
                 .build();
 
         User user = userService.converterUserRegisterDtoToUser(userDto);
@@ -223,7 +224,6 @@ class UserServiceTest {
         Assertions.assertEquals(30, user.getAge());
         Assertions.assertEquals(city, user.getCity());
         Assertions.assertEquals(Genders.F, user.getGender());
-        Assertions.assertEquals("Nothing", user.getInterests());
     }
 
     @Test
@@ -233,6 +233,7 @@ class UserServiceTest {
                 .name("г Москва")
                 .build();
         Mockito.when(cityService.convertToCityOnPageDto(Mockito.any(City.class))).thenReturn(cityDto);
+
         UserPageDto userDto = userService.convertToUserPageDto(user);
         Assertions.assertEquals("Name Surname", userDto.getFio());
         Assertions.assertEquals(30, userDto.getAge());

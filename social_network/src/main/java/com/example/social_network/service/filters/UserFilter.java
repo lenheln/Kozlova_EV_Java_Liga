@@ -9,7 +9,7 @@ import lombok.Setter;
 import org.springframework.data.jpa.domain.Specification;
 
 /**
- *  Фильтрует пользователей по полям-критериям
+ *  Фильтр пользователей по полям-критериям
  */
 
 @Getter

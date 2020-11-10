@@ -24,18 +24,4 @@ import java.util.List;
  */
 @Repository
 public interface CityRepository extends JpaRepository<City, Long>, JpaSpecificationExecutor<City> {
-
-
-//    public Page<City> findByNameContaining(String name, Pageable pageable);
-
-
-    /**
-     select cities.*
-     from cities
-     left join users
-     on (users.cityid = cities.id)
-     where cities.name like '%name%'
-     group by cities.id
-     order by count(cities.id) desc;
-     */
 }
