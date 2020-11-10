@@ -24,7 +24,7 @@ public class UserFilter {
     /**
      * Сущность город
      */
-    private City city;
+    String city;
 
     /**
      * Минимальный возраст пользователя
@@ -49,20 +49,31 @@ public class UserFilter {
      */
     public Specification<User> toSpecification() {
 
-        Specification<User> fioSpecification = null;
-        if(fio != null) {
-            String[] fioPartly = fio.split(" ");
-            fioSpecification = appendSpecifications(fioPartly.length-1, fioPartly);
-        }
-        return Specification.where(fioSpecification)
-                    .and(BaseSpecification.equalCity("city", "id", city))
+        return Specification.where(getSpecificationByFio(fio))
+                    .and(BaseSpecification.like("city", "name", city))
                     .and(BaseSpecification.gt("age", minAge))
                     .and(BaseSpecification.lt("age", maxAge))
                     .and(BaseSpecification.equal("gender", gender));
     }
 
     /**
-     * Составляет единое выражение - спецификацию для всех токенов из поля fio
+     * Получает спецификацию для поисковой строки fio
+     *
+     * @param fio поисковая строка
+     * @return спецификация
+     */
+    public Specification<User> getSpecificationByFio(String fio){
+
+        if(fio != null) {
+            fio = KeyboardConverter.convert(fio);
+            String[] fioPartly = fio.split(" ");
+            return appendSpecifications(fioPartly.length-1, fioPartly);
+
+        } else { return null; }
+    }
+
+    /**
+     * Составляет единую спецификацию для всех слов из поля fio
      *
      * @param i порядковый номер токена
      * @param fio массив токенов на которые разбито поле fio
@@ -79,8 +90,8 @@ public class UserFilter {
     }
 
     /**
-     * Составляет базовую спецификацию для одного токена из строки fio.
-     * Базовая спецификация проверяет присутствие токена в имени или фамилии пользователя.
+     * Составляет базовую спецификацию для одного слова из строки fio.
+     * Базовая спецификация проверяет присутствие слова в имени или фамилии пользователя.
      *
      * @param fioPart токен из строки fio
      * @return базовую спецификацию для токена из строки fio

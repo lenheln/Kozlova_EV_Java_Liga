@@ -67,7 +67,7 @@ public class UserController {
     @GetMapping()
     @ApiOperation("Поиск пользователей с помощью фильтра")
     public ResponseEntity getUsers(UserFilter filter,
-                                        @ApiIgnore @PageableDefault(size = 10) Pageable pageable) {
+                                        @ApiIgnore @PageableDefault(size = 5) Pageable pageable) {
 
         Page<UserByListDto> page = userService.findAll(filter, pageable);
         log.info("Get list of users");
@@ -162,7 +162,7 @@ public class UserController {
     @ApiOperation("Получение списка друзей пользователя с помощью фильтра")
     public ResponseEntity getFriends(@PathVariable Long userId,
                                           FriendFilter filter,
-                                          @ApiIgnore @PageableDefault(size = 3) Pageable pageable) {
+                                          @ApiIgnore @PageableDefault(size = 5) Pageable pageable) {
 
         Page<UserByListDto> page = userService.getFriends(userId, filter, pageable);
         log.info("Get list of friends for user with id = {}", userId);

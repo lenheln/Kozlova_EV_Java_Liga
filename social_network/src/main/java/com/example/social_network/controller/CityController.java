@@ -12,8 +12,11 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
+
+import java.util.List;
 
 /**
  * Контроллер для работы с сущностью City
@@ -29,7 +32,7 @@ public class CityController {
 
     @GetMapping
     @ApiOperation("Получение списка городов")
-    public Page<CityOnUserPageDto> getCities(String name,
+    public Page<CityOnUserPageDto> getCities(@RequestParam(required = false) String name,
                                              @ApiIgnore @PageableDefault(size = 10) Pageable pageable) {
         return cityService.findCityByName(name, pageable);
     }

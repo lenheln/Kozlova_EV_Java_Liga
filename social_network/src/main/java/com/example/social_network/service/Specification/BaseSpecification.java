@@ -54,11 +54,14 @@ public class BaseSpecification {
      * @param value значение для сравнения
      * @return спецификация
      */
-    public static <T> Specification<T> equalCity(final String joinAttribute, final String column, final City value) {
+    public static <T> Specification<T> like(final String joinAttribute, final String column, final String value) {
         return StringUtils.isEmpty(column) || ObjectUtils.isEmpty(value)
                 ? null
                 : (root, query, cb) ->
-                cb.equal(root.join(joinAttribute, JoinType.LEFT).get(column), value.getId());
+                cb.like(
+                    cb.lower(root.join(joinAttribute, JoinType.LEFT).get(column)),
+                    cb.lower(cb.literal("%"+ value + "%"))
+                );
     }
 
     /**
