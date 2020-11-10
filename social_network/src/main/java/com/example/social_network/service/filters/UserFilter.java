@@ -24,7 +24,7 @@ public class UserFilter {
     /**
      * Сущность город
      */
-    private City city;
+    String city;
 
     /**
      * Минимальный возраст пользователя
@@ -50,7 +50,7 @@ public class UserFilter {
     public Specification<User> toSpecification() {
 
         return Specification.where(getSpecificationByFio(fio))
-                    .and(BaseSpecification.equalCity("city", "id", city))
+                    .and(BaseSpecification.like("city", "name", city))
                     .and(BaseSpecification.gt("age", minAge))
                     .and(BaseSpecification.lt("age", maxAge))
                     .and(BaseSpecification.equal("gender", gender));
