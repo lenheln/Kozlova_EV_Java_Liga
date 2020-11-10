@@ -7,7 +7,8 @@ import java.util.HashMap;
 public class KeyboardConverter {
 
     /**
-     * Конвертирует строку в строку в другой раскладке клавиатуры
+     * Конвертирует строку из английской раскладки в русскую
+     * Если исходная строка в русской раскладке - возвращает исходную строку
      *
      * @param string
      * @return сконвертированная строка
@@ -24,7 +25,7 @@ public class KeyboardConverter {
                 result[i] = keyboard.get(letter);
             }
             else{
-                return null;
+                return string;
             }
         }
         return new String(result);
@@ -75,6 +76,7 @@ public class KeyboardConverter {
         keyboard.put('"','э');
         keyboard.put('<','б');
         keyboard.put('>','ю');
+        keyboard.put(' ', ' ');
         return keyboard;
     }
 }

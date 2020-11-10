@@ -141,7 +141,6 @@ public class UserService {
                 .surname(userDto.getSurname())
                 .age(userDto.getAge())
                 .gender(userDto.getGender())
-                .interests(userDto.getInterests())
                 .city(userDto.getCity())
                 .build();
     }
