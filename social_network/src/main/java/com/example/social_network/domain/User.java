@@ -6,12 +6,13 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.Year;
+import java.util.*;
 
 /**
  * Сущность User (пользователь)
@@ -41,10 +42,8 @@ public class User {
     @Column(name = "surname")
     private String surname;
 
-    @Positive
-    @Max(125)
-    @Column(name = "age")
-    private Integer age;
+    @Column(name = "dateofbday")
+    private LocalDate dateOfBDay;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "gender")
@@ -70,6 +69,6 @@ public class User {
     @Override
     public String toString(){
         return String.format("Name: %s, Surname: %s, Age: %d, Gender: %s, Interests: %s, City: %s \n",
-                name, surname, age, gender, interests, city);
+                name, surname, Period.between(LocalDate.now(), dateOfBDay).getYears(), gender, interests, city);
     }
 }
