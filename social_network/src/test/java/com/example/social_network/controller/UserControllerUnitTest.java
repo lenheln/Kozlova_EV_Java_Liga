@@ -144,7 +144,7 @@ class UserControllerUnitTest {
                 Mockito.any(Pageable.class)
         )).thenReturn(page);
         Pageable pageable =  Pageable.unpaged();
-        ResponseEntity answer = userController.getFriends(1L, new FriendFilter(new User()), pageable);
+        ResponseEntity answer = userController.getFriends(1L, new FriendFilter(1L), pageable);
 
         Assertions.assertEquals(200, answer.getStatusCodeValue());
         Assertions.assertEquals(page, answer.getBody());

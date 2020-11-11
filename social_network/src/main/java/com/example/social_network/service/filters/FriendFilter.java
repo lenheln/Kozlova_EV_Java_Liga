@@ -2,6 +2,7 @@ package com.example.social_network.service.filters;
 import com.example.social_network.domain.User;
 import com.example.social_network.service.Specification.BaseSpecification;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -11,6 +12,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class FriendFilter extends UserFilter {
 
     private Long id;

@@ -43,8 +43,10 @@ class UserServiceTest {
         this.userService = new UserService(userRepository, cityService);
 
         city =  City.builder()
-                .id(34L)
-                .name("г Москва")
+                .id(1L)
+                .name("г Барнаул")
+                .region(null)
+                .users(null)
                 .build();
 
         user = User.builder()
@@ -73,9 +75,28 @@ class UserServiceTest {
     @Test
     @DisplayName("Получение данных пользователя по его id")
     void getUser_ReturnUserPageDto() {
-        UserPageDto userDto = userService.convertToUserPageDto(user);
+        CityOnUserPageDto cityDto = CityOnUserPageDto.builder()
+                .name("г Барнаул")
+                .regionName(null)
+                .build();
 
-        Mockito.when(userRepository.findById(Mockito.anyLong())).thenReturn(java.util.Optional.ofNullable(user));
+        UserPageDto userDto = UserPageDto.builder()
+                .fio("Name Surname")
+                .age(Period.between(user.getDateOfBDay(), LocalDate.now()).getYears())
+                .city(cityDto)
+                .gender(Genders.F)
+                .interests("Nothing")
+                .friends(new ArrayList<>())
+                .build();
+
+        Mockito.when(
+                userRepository.findById(Mockito.anyLong())
+        ).thenReturn(java.util.Optional.ofNullable(user));
+
+        Mockito.when(
+                cityService.convertToCityOnPageDto(Mockito.any(City.class))
+        ).thenReturn(cityDto);
+
         Assertions.assertEquals(userDto, userService.getUser(1L));
 
         Mockito.verify(userRepository, Mockito.times(1)).findById(Mockito.anyLong());
@@ -125,38 +146,29 @@ class UserServiceTest {
     @Test
     @DisplayName("Получение списка всех друзей пользователя")
     void getFriends_ReturnPageOfUserFriends() {
-        User user = User.builder()
-                .name("Name")
-                .surname("Surname")
-                .build();
-
-        Mockito.when(userRepository.findById(Mockito.anyLong())).thenReturn(java.util.Optional.ofNullable(user));
 
         User friend = User.builder()
                 .name("Friend name")
                 .surname("Friend surname")
+                .dateOfBDay(LocalDate.of(1990, 7, 7))
                 .build();
 
-        List<User> friendList = List.of(friend);
-        Page friendsPage = new PageImpl(friendList);
+        Page friendsPage = new PageImpl(List.of(friend));
+
         Mockito.when(userRepository.findAll(Mockito.any(Specification.class), Mockito.any(Pageable.class)))
                 .thenReturn(friendsPage);
 
         UserByListDto friendDto = UserByListDto.builder()
                 .fio("Friend name Friend surname")
+                .age(Period.between(LocalDate.of(1990, 7, 7), LocalDate.now()).getYears())
                 .build();
 
-        Mockito.when(userService.convertToUserByListDto(Mockito.any(User.class))).thenReturn(friendDto);
-
         List<UserByListDto> friendsDtoList = new ArrayList<>();
-        friendList.forEach((f) -> friendsDtoList.add(userService.convertToUserByListDto(f)));
+        friendsDtoList.add(friendDto);
         Page friendsDtoPage = new PageImpl(friendsDtoList);
 
-        FriendFilter filter = new FriendFilter(user);
-        Pageable pageable = Pageable.unpaged();
-        Assertions.assertEquals(friendsDtoPage, userService.getFriends(1L, filter, pageable));
+        Assertions.assertEquals(friendsDtoPage, userService.getFriends(1L, new FriendFilter(), Pageable.unpaged()));
 
-        Mockito.verify(userRepository, Mockito.times(1)).findById(Mockito.anyLong());
         Mockito.verify(userRepository, Mockito.times(1)).findAll(
                 Mockito.any(Specification.class),
                 Mockito.any(Pageable.class));
@@ -195,12 +207,16 @@ class UserServiceTest {
                 Mockito.any(Pageable.class)
         )).thenReturn(usersPage);
 
-        List<UserByListDto> usersDto = new ArrayList<>();
-        usersDto.add(userService.convertToUserByListDto(user));
-        Page usersDtoPage = new PageImpl<>(usersDto);
+        UserByListDto userDto = UserByListDto.builder()
+                .fio("Name Surname")
+                .age(Period.between(user.getDateOfBDay(), LocalDate.now()).getYears())
+                .gender(Genders.F)
+                .build();
+        List<UserByListDto> usersDtoList = new ArrayList<>();
+        usersDtoList.add(userDto);
+        Page usersDtoPage = new PageImpl<>(usersDtoList);
 
-        Pageable pageable =  Pageable.unpaged();
-        Assertions.assertEquals(usersDtoPage, userService.findAll(new UserFilter(), pageable));
+        Assertions.assertEquals(usersDtoPage, userService.findAll(new UserFilter(), Pageable.unpaged()));
 
         Mockito.verify(userRepository, Mockito.times(1)).findAll(
                 Mockito.any(Specification.class),
