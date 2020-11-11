@@ -10,9 +10,7 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 /**
@@ -32,6 +30,7 @@ public class UserRegisterDto {
     @Length(min = 1, max = 45)
     private String surname;
 
+    @Past
     private LocalDate dateOfBDay;
 
     @Enumerated(EnumType.STRING)

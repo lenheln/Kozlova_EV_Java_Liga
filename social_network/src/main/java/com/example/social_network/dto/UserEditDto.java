@@ -11,6 +11,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Past;
 import javax.validation.constraints.Positive;
 import java.time.LocalDate;
 
@@ -29,6 +30,7 @@ public class UserEditDto {
     @Length(min = 1,  max = 45)
     private String surname;
 
+    @Past
     private LocalDate dateOfBDay;
 
     @Enumerated(EnumType.STRING)
