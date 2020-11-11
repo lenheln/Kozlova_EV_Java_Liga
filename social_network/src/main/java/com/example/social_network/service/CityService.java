@@ -39,9 +39,8 @@ public class CityService {
      */
     public Page<CityOnUserPageDto> findCityByName(String name, Pageable pageable) {
 
-        Specification<City> specification = new Specification<City>() {
-            @Override
-            public Predicate toPredicate(Root<City> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+        Specification<City> specification = (root, query, cb) -> {
+
                 Join<City, User> joinUsers = root.join("users", JoinType.LEFT);
                 query.multiselect(joinUsers)
                         .groupBy(root.get("id"))
@@ -50,8 +49,8 @@ public class CityService {
                 return (name == null)
                         ? null
                         : cb.like(cb.lower(root.get("name")), cb.lower(cb.literal("%" + name + "%")));
-            }
         };
+
         return cityRepository.findAll(specification, pageable)
                              .map(this::convertToCityOnPageDto);
     }
@@ -63,6 +62,7 @@ public class CityService {
      * @return dto
      */
     public CityOnUserPageDto convertToCityOnPageDto(City city){
+        if(city == null) { return null; }
         CityOnUserPageDto cityDto = new CityOnUserPageDto();
         cityDto.setName(city.getName());
         Region region = city.getRegion();

@@ -13,10 +13,10 @@ import org.springframework.data.jpa.domain.Specification;
 @AllArgsConstructor
 public class FriendFilter extends UserFilter {
 
-    private User user;
+    private Long id;
 
     @Override
     public Specification<User> toSpecification() {
-        return Specification.where(BaseSpecification.isFriend(user)).and(super.toSpecification());
+        return Specification.where(BaseSpecification.isFriend(id)).and(super.toSpecification());
     }
 }

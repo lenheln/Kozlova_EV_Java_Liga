@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,4 +31,8 @@ public class City {
     @ManyToOne
     @JoinColumn(name = "regionid")
     private Region region;
+
+    @OneToMany(mappedBy = "city")
+    private List<User> users = new ArrayList<>();
+
 }

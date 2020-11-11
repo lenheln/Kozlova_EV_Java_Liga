@@ -7,5 +7,5 @@ CREATE TABLE IF NOT EXISTS cities
 );
 
 -- Создание индекса на столбец с названием города
---CREATE INDEX cityName_idx
---    ON cities USING btree (name);
+CREATE INDEX cityName_idx
+    ON cities USING btree (name);

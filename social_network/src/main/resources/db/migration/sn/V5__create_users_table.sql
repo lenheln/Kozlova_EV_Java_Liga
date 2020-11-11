@@ -11,6 +11,6 @@ CREATE TABLE IF NOT EXISTS users
 );
 
 -- Создание индекса для таблицы пользователей
---CREATE INDEX filter_idx
---    ON users USING btree
---    (name, surname, age, gender, cityid);
+CREATE INDEX filter_idx
+    ON users USING btree
+    (name, surname, age, gender, cityid);

@@ -89,8 +89,7 @@ public class UserService {
      * @return сет друзей
      */
     public Page<UserByListDto> getFriends(Long id, FriendFilter filter, Pageable pageable){
-        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
-        filter.setUser(user);
+        filter.setId(id);
         return userRepository
                 .findAll(filter.toSpecification(), pageable)
                 .map(this::convertToUserByListDto);

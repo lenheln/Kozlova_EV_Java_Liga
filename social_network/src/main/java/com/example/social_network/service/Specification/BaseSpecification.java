@@ -109,14 +109,16 @@ public class BaseSpecification {
     /**
      * Поиск сущностей, у которых в друзьях есть данный пользователь
      *
-     * @param user пользователь
+     * @param id пользователя
      * @return спецификация
      */
-    public static Specification<User> isFriend(User user){
+
+    public static Specification<User> isFriend(Long id){
         return (root, query , cb) -> {
-            Predicate userPr = cb.isMember(user, root.get("friendsOfMine"));
-            Predicate friendPr = cb.isMember(user, root.get("myFriends"));
-            return cb.or(userPr,friendPr);
+
+            Join<User, User> joinFriends = root.join("myFriends", JoinType.LEFT);
+            Join<User, User> joinFriendsOfMine = root.join("friendsOfMine", JoinType.LEFT);
+            return cb.or(cb.equal(joinFriends.get("id"), id), cb.equal(joinFriendsOfMine.get("id"), id));
         };
     }
 }
