@@ -6,6 +6,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.*;
+import java.time.LocalDate;
 
 /**
  * Базовый класс спецификаций
@@ -89,8 +90,7 @@ public class BaseSpecification {
         return StringUtils.isEmpty(column) || min == null
                 ? null
                 : (root, query, cb) ->
-                cb.gt(root.get(column), min);
-    }
+                cb.lessThanOrEqualTo(root.get("dateOfBDay"), LocalDate.now().minusYears(min));    }
 
     /**
      * Поиск сущностей, у которых значение поля больше меньше
@@ -103,7 +103,7 @@ public class BaseSpecification {
         return StringUtils.isEmpty(column) || max == null
                 ? null
                 : (root, query, cb) ->
-                cb.lt(root.get("age"),max);
+                cb.greaterThanOrEqualTo(root.get("dateOfBDay"), LocalDate.now().minusYears(max));
     }
 
     /**

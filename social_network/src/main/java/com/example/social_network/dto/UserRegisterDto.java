@@ -13,6 +13,7 @@ import javax.persistence.Enumerated;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import java.time.LocalDate;
 
 /**
  * Dto для сущности User (пользователь) на страницу регистрации
@@ -31,9 +32,7 @@ public class UserRegisterDto {
     @Length(min = 1, max = 45)
     private String surname;
 
-    @Positive
-    @Max(125)
-    private Integer age;
+    private LocalDate dateOfBDay;
 
     @Enumerated(EnumType.STRING)
     private Genders gender;

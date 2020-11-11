@@ -69,6 +69,7 @@ public class CityService {
      * @return dto
      */
     public CityOnUserPageDto convertToCityOnPageDto(City city){
+        if(city == null) {return null;}
         CityOnUserPageDto cityDto = new CityOnUserPageDto();
         cityDto.setName(city.getName());
         Region region = city.getRegion();
