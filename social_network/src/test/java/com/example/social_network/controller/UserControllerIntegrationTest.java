@@ -21,8 +21,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.criteria.*;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -51,7 +51,7 @@ public class UserControllerIntegrationTest {
         UserRegisterDto userDto = UserRegisterDto.builder()
                 .name("Name")
                 .surname("Surname")
-                .age(30)
+                .dateOfBDay(LocalDate.of(1990, 3, 3))
                 .gender(Genders.M)
                 .city(City.builder()
                         .id(34L)
@@ -109,11 +109,11 @@ public class UserControllerIntegrationTest {
                 .andExpect(jsonPath("$.content[0].gender", Is.is("F")))
 
                 .andExpect(jsonPath("$.content[1].fio", Is.is("Пётр Петров")))
-                .andExpect(jsonPath("$.content[1].age", Is.is(90)))
+                .andExpect(jsonPath("$.content[1].age", Is.is(65)))
                 .andExpect(jsonPath("$.content[1].gender", Is.is("M")))
 
                 .andExpect(jsonPath("$.content[2].fio", Is.is("Олег Олегов")))
-                .andExpect(jsonPath("$.content[2].age", Is.is(50)))
+                .andExpect(jsonPath("$.content[2].age", Is.is(40)))
                 .andExpect(jsonPath("$.content[2].gender", Is.is("M")));
     }
 
@@ -135,7 +135,7 @@ public class UserControllerIntegrationTest {
         UserEditDto userDto = UserEditDto.builder()
                 .name("New name")
                 .surname("New surname")
-                .age(35)
+                .dateOfBDay(LocalDate.of(1950, 5,5))
                 .interests("Space")
                 .gender(Genders.M)
                 .city(City.builder().id(31L).name("г Санкт-Петербург").build())
@@ -155,7 +155,7 @@ public class UserControllerIntegrationTest {
 
         Assertions.assertEquals(updatedUser.getName(), "New name");
         Assertions.assertEquals(updatedUser.getSurname(), "New surname");
-        Assertions.assertEquals(updatedUser.getAge(), 35);
+        Assertions.assertEquals(updatedUser.getDateOfBDay(), LocalDate.of(1950, 5,5));
         Assertions.assertEquals(updatedUser.getInterests(), "Space");
         Assertions.assertEquals(updatedUser.getCity(), City.builder().id(31L).name("г Санкт-Петербург").build());
         Assertions.assertEquals(updatedUser.getGender(), Genders.M);
@@ -165,13 +165,13 @@ public class UserControllerIntegrationTest {
     @DisplayName("Обновление полей на странице пользователя")
     void updatePage_InValidAge_ThrowException() throws Exception {
         UserEditDto userDto = UserEditDto.builder()
-                .age(-35)
+                .name("")
                 .build();
         mockMvc.perform(patch("/users/1")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(userDto)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.age", Is.is("must be greater than 0")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name", Is.is("length must be between 1 and 45")))
                 .andExpect(content().contentType("application/json"));
     }
 
@@ -243,11 +243,11 @@ public class UserControllerIntegrationTest {
         mockMvc.perform(get("/users/1/friends").contentType("application_json"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].fio", Is.is("Пётр Петров")))
-                .andExpect(jsonPath("$.content[0].age", Is.is(90)))
+                .andExpect(jsonPath("$.content[0].age", Is.is(65)))
                 .andExpect(jsonPath("$.content[0].gender", Is.is("M")))
 
                 .andExpect(jsonPath("$.content[1].fio", Is.is("Олег Олегов")))
-                .andExpect(jsonPath("$.content[1].age", Is.is(50)))
+                .andExpect(jsonPath("$.content[1].age", Is.is(40)))
                 .andExpect(jsonPath("$.content[1].gender", Is.is("M")));
     }
 }

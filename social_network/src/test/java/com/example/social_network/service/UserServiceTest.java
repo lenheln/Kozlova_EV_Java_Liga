@@ -19,6 +19,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +51,7 @@ class UserServiceTest {
                 .id(1L)
                 .name("Name")
                 .surname("Surname")
-                .age(30)
+                .dateOfBDay(LocalDate.of(1987, 7, 21))
                 .city(city)
                 .gender(Genders.F)
                 .interests("Nothing")
@@ -88,7 +90,7 @@ class UserServiceTest {
         UserEditDto userEditDto = UserEditDto.builder()
                 .name("New name")
                 .surname("New surname")
-                .age(35)
+                .dateOfBDay(LocalDate.of(1993, 3, 3))
                 .city(newCity)
                 .gender(Genders.M)
                 .interests("New interests")
@@ -101,7 +103,7 @@ class UserServiceTest {
         Assertions.assertEquals(1L, user.getId());
         Assertions.assertEquals("New name", user.getName());
         Assertions.assertEquals("New surname", user.getSurname());
-        Assertions.assertEquals(35, user.getAge());
+        Assertions.assertEquals(LocalDate.of(1993,3,3), user.getDateOfBDay());
         Assertions.assertEquals(Genders.M, user.getGender());
         Assertions.assertEquals(newCity, user.getCity());
         Assertions.assertEquals("New interests", user.getInterests());
@@ -139,6 +141,12 @@ class UserServiceTest {
         Page friendsPage = new PageImpl(friendList);
         Mockito.when(userRepository.findAll(Mockito.any(Specification.class), Mockito.any(Pageable.class)))
                 .thenReturn(friendsPage);
+
+        UserByListDto friendDto = UserByListDto.builder()
+                .fio("Friend name Friend surname")
+                .build();
+
+        Mockito.when(userService.convertToUserByListDto(Mockito.any(User.class))).thenReturn(friendDto);
 
         List<UserByListDto> friendsDtoList = new ArrayList<>();
         friendList.forEach((f) -> friendsDtoList.add(userService.convertToUserByListDto(f)));
@@ -212,7 +220,7 @@ class UserServiceTest {
         UserRegisterDto userDto = UserRegisterDto.builder()
                 .name("Name")
                 .surname("Surname")
-                .age(30)
+                .dateOfBDay(LocalDate.of(1987, 7, 21))
                 .city(city)
                 .gender(Genders.F)
                 .build();
@@ -221,7 +229,7 @@ class UserServiceTest {
 
         Assertions.assertEquals("Name", user.getName());
         Assertions.assertEquals("Surname", user.getSurname());
-        Assertions.assertEquals(30, user.getAge());
+        Assertions.assertEquals(LocalDate.of(1987, 7, 21), user.getDateOfBDay());
         Assertions.assertEquals(city, user.getCity());
         Assertions.assertEquals(Genders.F, user.getGender());
     }
@@ -236,7 +244,13 @@ class UserServiceTest {
 
         UserPageDto userDto = userService.convertToUserPageDto(user);
         Assertions.assertEquals("Name Surname", userDto.getFio());
-        Assertions.assertEquals(30, userDto.getAge());
+        Assertions.assertEquals(
+                Period.between(
+                        user.getDateOfBDay(),
+                        LocalDate.now()
+                ).getYears(),
+                userDto.getAge()
+        );
         Assertions.assertEquals(cityDto, userDto.getCity());
         Assertions.assertEquals(Genders.F, userDto.getGender());
         Assertions.assertEquals("Nothing", userDto.getInterests());
@@ -248,7 +262,13 @@ class UserServiceTest {
         UserByListDto userDto = userService.convertToUserByListDto(user);
 
         Assertions.assertEquals("Name Surname", userDto.getFio());
-        Assertions.assertEquals(30, userDto.getAge());
+        Assertions.assertEquals(
+                Period.between(
+                        user.getDateOfBDay(),
+                        LocalDate.now()
+                ).getYears(),
+                userDto.getAge()
+        );
         Assertions.assertEquals(Genders.F, userDto.getGender());
     }
 }
