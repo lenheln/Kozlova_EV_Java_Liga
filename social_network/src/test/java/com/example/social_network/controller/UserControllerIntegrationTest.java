@@ -18,10 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.criteria.*;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -84,18 +84,25 @@ public class UserControllerIntegrationTest {
     @Test
     @DisplayName("Получение пользователей с применением фильтра по всем полям")
     public void getUsers_WithFilter_ReturnUser() throws Exception {
+
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery query =  cb.createQuery(User.class);
+        Root<User> root = query.from(User.class);
+
+        query.select(root).where(cb.equal(root.get("id"),1));
+        User user = (User) entityManager.createQuery(query).getSingleResult();
+        int age = Period.between(user.getDateOfBDay(), LocalDate.now()).getYears();
+
         mockMvc.perform(get("/users").contentType("application/json")
                 .param("page", "0")
                 .param("size", "3")
                 .param("name", "Маша")
                 .param("surname", "Иванова")
-                .param("age", "33")
                 .param("gender", "F")
-                .param("city.id", "1")
-                .param("interests", "books"))
+                .param("city.id", "1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].fio", Is.is("Маша Иванова")))
-                .andExpect(jsonPath("$.content[0].age", Is.is(33)))
+                .andExpect(jsonPath("$.content[0].age", Is.is(age)))
                 .andExpect(jsonPath("$.content[0].gender", Is.is("F")));
     }
 
@@ -120,10 +127,18 @@ public class UserControllerIntegrationTest {
     @Test
     @DisplayName("Получение страницы пользователя по его id")
     public void getPage_id1_PageМаша() throws Exception {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery query =  cb.createQuery(User.class);
+        Root<User> root = query.from(User.class);
+
+        query.select(root).where(cb.equal(root.get("id"),1));
+        User user = (User) entityManager.createQuery(query).getSingleResult();
+        int age = Period.between(user.getDateOfBDay(), LocalDate.now()).getYears();
+
         mockMvc.perform(get("/users/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.fio", Is.is("Маша Иванова")))
-                .andExpect(jsonPath("$.age", Is.is(33)))
+                .andExpect(jsonPath("$.age", Is.is(age)))
                 .andExpect(jsonPath("$.gender", Is.is("F")))
                 .andExpect(jsonPath("$.interests", Is.is("books")))
                 .andExpect(jsonPath("$.city.name", Is.is("г Барнаул")));
@@ -132,10 +147,12 @@ public class UserControllerIntegrationTest {
     @Test
     @DisplayName("Обновление полей на странице пользователя")
     public void updatePage_isOk() throws Exception {
+
+        LocalDate date = LocalDate.of(1950, 5,5);
         UserEditDto userDto = UserEditDto.builder()
                 .name("New name")
                 .surname("New surname")
-                .dateOfBDay(LocalDate.of(1950, 5,5))
+                .dateOfBDay(date)
                 .interests("Space")
                 .gender(Genders.M)
                 .city(City.builder().id(31L).name("г Санкт-Петербург").build())
@@ -155,9 +172,15 @@ public class UserControllerIntegrationTest {
 
         Assertions.assertEquals(updatedUser.getName(), "New name");
         Assertions.assertEquals(updatedUser.getSurname(), "New surname");
-        Assertions.assertEquals(updatedUser.getDateOfBDay(), LocalDate.of(1950, 5,5));
+        Assertions.assertEquals(updatedUser.getDateOfBDay(), date);
         Assertions.assertEquals(updatedUser.getInterests(), "Space");
-        Assertions.assertEquals(updatedUser.getCity(), City.builder().id(31L).name("г Санкт-Петербург").build());
+        Assertions.assertEquals(
+                updatedUser.getCity(),
+                City.builder()
+                        .id(31L)
+                        .name("г Санкт-Петербург")
+                        .build()
+        );
         Assertions.assertEquals(updatedUser.getGender(), Genders.M);
     }
 
