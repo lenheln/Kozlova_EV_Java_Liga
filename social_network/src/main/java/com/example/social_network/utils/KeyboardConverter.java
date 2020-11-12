@@ -17,18 +17,19 @@ public class KeyboardConverter {
     public static String convert(String string){
         HashMap<Character, Character> keyboard = getKeyboard();
 
-        char[] chars = string.toCharArray();
-        char[] result = new char[chars.length];
-        for (int i = 0; i < chars.length; i++) {
-            Character letter = Character.toLowerCase(chars[i]);
+        char[] letters = string.toCharArray();
+        char[] convertedLetters = new char[letters.length];
+
+        for (int i = 0; i < letters.length; i++) {
+            Character letter = Character.toLowerCase(letters[i]);
             if(keyboard.containsKey(letter)) {
-                result[i] = keyboard.get(letter);
+                convertedLetters[i] = keyboard.get(letter);
             }
             else{
                 return string;
             }
         }
-        return new String(result);
+        return new String(convertedLetters);
     }
 
     /**

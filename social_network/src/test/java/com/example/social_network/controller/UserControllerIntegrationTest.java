@@ -3,7 +3,7 @@ package com.example.social_network.controller;
 import com.example.social_network.domain.City;
 import com.example.social_network.domain.User;
 import com.example.social_network.dto.UserEditDto;
-import com.example.social_network.dto.UserRegisterDto;
+import com.example.social_network.dto.UserRegistrationDto;
 import com.example.social_network.utils.Genders;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.core.Is;
@@ -48,7 +48,7 @@ public class UserControllerIntegrationTest {
     @Test
     @DisplayName("Создание учетной записи пользователя. Возвращает статус 201")
     public void createPage_ReturnOk() throws Exception {
-        UserRegisterDto userDto = UserRegisterDto.builder()
+        UserRegistrationDto userDto = UserRegistrationDto.builder()
                 .name("Name")
                 .surname("Surname")
                 .dateOfBDay(LocalDate.of(1990, 3, 3))
@@ -69,7 +69,7 @@ public class UserControllerIntegrationTest {
     @Test
     @DisplayName("Создание учетной записи пользователя.Сохраняет пользователя в базе данных")
     void createPage_InValidName_ThrowException() throws Exception {
-        UserRegisterDto userDto = UserRegisterDto.builder()
+        UserRegistrationDto userDto = UserRegistrationDto.builder()
                 .name("")
                 .surname("surname")
                 .build();

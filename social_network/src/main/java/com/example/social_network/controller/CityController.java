@@ -9,31 +9,36 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.List;
-
 /**
  * Контроллер для работы с сущностью City
  */
 @RestController
-@RequestMapping("/cities")
 @AllArgsConstructor
 @Slf4j
+@RequestMapping("/cities")
 @Api(description = "Контроллер для работы с сущностью City")
 public class CityController {
 
     private final CityService cityService;
 
+    /**
+     * Получение списка городов
+     *
+     * @param name название города (или часть названия)
+     * @param pageable настройки пагинации
+     * @return страница с городами, отсортированными по количеству жителей в городе.
+     *      * Первыми выводятся города, где больше всего жителей.
+     */
     @GetMapping
     @ApiOperation("Получение списка городов")
-    public Page<CityOnUserPageDto> getCities(@RequestParam(required = false) String name,
+    public Page<CityOnUserPageDto> findAll(@RequestParam(required = false) String name,
                                              @ApiIgnore @PageableDefault(size = 10) Pageable pageable) {
-        return cityService.findCityByName(name, pageable);
+        return cityService.findAll(name, pageable);
     }
 }

@@ -3,7 +3,7 @@ package com.example.social_network.controller;
 import com.example.social_network.dto.UserByListDto;
 import com.example.social_network.dto.UserEditDto;
 import com.example.social_network.dto.UserPageDto;
-import com.example.social_network.dto.UserRegisterDto;
+import com.example.social_network.dto.UserRegistrationDto;
 import com.example.social_network.service.UserService;
 import com.example.social_network.service.filters.FriendFilter;
 import com.example.social_network.service.filters.UserFilter;
@@ -11,7 +11,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -47,7 +46,7 @@ public class UserController {
      */
     @PostMapping
     @ApiOperation("Создание учетной записи пользователя. Сохраняет пользователя в базе данных")
-    public ResponseEntity createPage(@RequestBody @Valid UserRegisterDto userDto) throws Exception {
+    public ResponseEntity registration(@RequestBody @Valid UserRegistrationDto userDto) throws Exception {
 
         Long id = userService.save(userDto);
         log.info("Register new user={}", userDto.toString());
@@ -68,7 +67,7 @@ public class UserController {
     @GetMapping()
     @ApiOperation("Поиск пользователей с помощью фильтра")
     public ResponseEntity getUsers(UserFilter filter,
-                                        @ApiIgnore @PageableDefault(size = 5) Pageable pageable) {
+                                   @ApiIgnore @PageableDefault(size = 5) Pageable pageable) {
 
         Page<UserByListDto> page = userService.findAll(filter, pageable);
         log.info("Get list of users");
@@ -87,7 +86,7 @@ public class UserController {
     public ResponseEntity getPage(@PathVariable Long id) {
 
         log.info("Get page of user with id={}", id);
-        UserPageDto userDto = userService.getUser(id);
+        UserPageDto userDto = userService.getUserById(id);
 
         return new ResponseEntity(userDto, HttpStatus.OK);
     }

@@ -1,10 +1,9 @@
 package com.example.social_network.controller;
 
-import com.example.social_network.domain.User;
 import com.example.social_network.dto.UserByListDto;
 import com.example.social_network.dto.UserEditDto;
 import com.example.social_network.dto.UserPageDto;
-import com.example.social_network.dto.UserRegisterDto;
+import com.example.social_network.dto.UserRegistrationDto;
 import com.example.social_network.service.UserService;
 import com.example.social_network.service.filters.FriendFilter;
 import com.example.social_network.service.filters.UserFilter;
@@ -40,15 +39,15 @@ class UserControllerUnitTest {
 
     @Test
     @DisplayName("Создание учетной записи пользователя. Сохраняет пользователя в базе данных")
-    void createPage_Ok() throws Exception {
+    void registration_Ok() throws Exception {
 
-        Mockito.when(userService.save(Mockito.any(UserRegisterDto.class))).thenReturn(1L);
-        ResponseEntity answer =  userController.createPage(new UserRegisterDto());
+        Mockito.when(userService.save(Mockito.any(UserRegistrationDto.class))).thenReturn(1L);
+        ResponseEntity answer =  userController.registration(new UserRegistrationDto());
 
         Assertions.assertEquals(201, answer.getStatusCodeValue());
         Assertions.assertEquals("User with id = 1 created", answer.getBody());
 
-        Mockito.verify(userService, Mockito.times(1)).save(Mockito.any(UserRegisterDto.class));
+        Mockito.verify(userService, Mockito.times(1)).save(Mockito.any(UserRegistrationDto.class));
         Mockito.verifyNoMoreInteractions(userService);
     }
 
@@ -83,13 +82,13 @@ class UserControllerUnitTest {
         UserPageDto userDto = UserPageDto.builder()
                 .fio("Test test")
                 .build();
-        Mockito.when(userService.getUser(Mockito.anyLong())).thenReturn(userDto);
+        Mockito.when(userService.getUserById(Mockito.anyLong())).thenReturn(userDto);
         ResponseEntity answer = userController.getPage(1L);
 
         Assertions.assertEquals(200, answer.getStatusCodeValue());
         Assertions.assertEquals(userDto, answer.getBody());
 
-        Mockito.verify(userService, Mockito.times(1)).getUser(Mockito.anyLong());
+        Mockito.verify(userService, Mockito.times(1)).getUserById(Mockito.anyLong());
         Mockito.verifyNoMoreInteractions(userService);
     }
 

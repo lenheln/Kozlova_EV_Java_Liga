@@ -31,26 +31,23 @@ public class CityService {
 
     /**
      * Поиск городов по вхождению строки в название города
-     * Выполняется сортировка по количеству жителей в городе. Сначала - города, где больше жителей
      *
-     * @param name поисковая строка
+     * @param name название города (или часть названия)
      * @param pageable настройки пагинации
-     * @return страница с городами
+     * @return страница с городами, отсортированными по количеству жителей в городе.
+     * Первыми выводятся города, где больше всего жителей.
      */
-    public Page<CityOnUserPageDto> findCityByName(String name, Pageable pageable) {
+    public Page<CityOnUserPageDto> findAll(String name, Pageable pageable) {
 
         Specification<City> specification = (root, query, cb) -> {
-
                 Join<City, User> joinUsers = root.join("users", JoinType.LEFT);
                 query.multiselect(joinUsers)
                         .groupBy(root.get("id"))
                         .orderBy(cb.desc(cb.count(joinUsers.get("id"))));
-
                 return (name == null)
                         ? null
                         : cb.like(cb.lower(root.get("name")), cb.lower(cb.literal("%" + name + "%")));
         };
-
         return cityRepository.findAll(specification, pageable)
                              .map(this::convertToCityOnPageDto);
     }

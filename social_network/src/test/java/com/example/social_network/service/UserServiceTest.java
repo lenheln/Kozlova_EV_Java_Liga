@@ -66,7 +66,7 @@ class UserServiceTest {
     @DisplayName("Создание учетной записи пользователя. Сохраняет пользователя в базе данных")
     void save_ReturnId() throws Exception {
         Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(user);
-        Assertions.assertEquals(user.getId(), userService.save(new UserRegisterDto()));
+        Assertions.assertEquals(user.getId(), userService.save(new UserRegistrationDto()));
 
         Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any(User.class));
         Mockito.verifyNoMoreInteractions(userRepository);
@@ -97,7 +97,7 @@ class UserServiceTest {
                 cityService.convertToCityOnPageDto(Mockito.any(City.class))
         ).thenReturn(cityDto);
 
-        Assertions.assertEquals(userDto, userService.getUser(1L));
+        Assertions.assertEquals(userDto, userService.getUserById(1L));
 
         Mockito.verify(userRepository, Mockito.times(1)).findById(Mockito.anyLong());
         Mockito.verifyNoMoreInteractions(userRepository);
@@ -233,7 +233,7 @@ class UserServiceTest {
                         .name("г Москва")
                         .build();
 
-        UserRegisterDto userDto = UserRegisterDto.builder()
+        UserRegistrationDto userDto = UserRegistrationDto.builder()
                 .name("Name")
                 .surname("Surname")
                 .dateOfBDay(LocalDate.of(1987, 7, 21))

@@ -20,7 +20,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRegisterDto {
+public class UserRegistrationDto {
 
     @NotNull
     @Length(min = 1, max = 45)

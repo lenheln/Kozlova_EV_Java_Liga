@@ -4,7 +4,7 @@ import com.example.social_network.domain.User;
 import com.example.social_network.dto.UserByListDto;
 import com.example.social_network.dto.UserEditDto;
 import com.example.social_network.dto.UserPageDto;
-import com.example.social_network.dto.UserRegisterDto;
+import com.example.social_network.dto.UserRegistrationDto;
 import com.example.social_network.repository.UserRepository;
 import com.example.social_network.service.filters.FriendFilter;
 import com.example.social_network.service.filters.UserFilter;
@@ -14,11 +14,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -39,19 +37,19 @@ public class UserService {
      * @param userDto
      * @return id пользователя
      */
-    public Long save(UserRegisterDto userDto) throws Exception {
+    public Long save(UserRegistrationDto userDto) throws Exception {
         User user = converterUserRegisterDtoToUser(userDto);
         user = userRepository.save(user);
         return user.getId();
     }
 
     /**
-     * Получение данных пользователя по его id
+     * Получение страницы пользователя по его id
      *
-     * @param id
-     * @return страницу пользователя
+     * @param id идентификатор пользователя
+     * @return страница пользователя
      */
-    public UserPageDto getUser(Long id) {
+    public UserPageDto getUserById(Long id) {
         User user = userRepository.findById(id).get();
         return convertToUserPageDto(user);
     }
@@ -59,8 +57,8 @@ public class UserService {
     /**
      * Обновление полей пользователя
      *
-     * @param userDto
-     * @param id
+     * @param userDto поля для обновления
+     * @param id идентификатор пользователя
      * @return id пользователя с обновленными полями
      */
 
@@ -136,7 +134,7 @@ public class UserService {
      * @param userDto
      * @return User
      */
-    public User converterUserRegisterDtoToUser(UserRegisterDto userDto) throws Exception {
+    public User converterUserRegisterDtoToUser(UserRegistrationDto userDto) throws Exception {
         return User.builder()
                 .name(userDto.getName())
                 .surname(userDto.getSurname())
