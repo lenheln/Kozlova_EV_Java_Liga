@@ -39,13 +39,13 @@ public class UserController {
     private final UserService userService;
 
     /**
-     * Создание учетной записи пользователя. Сохраняет пользователя в базе данных
+     * Регистрация пользователя. Сохраняет пользователя в базе данных
      *
      * @param userDto данные пользователя в виде Dto
      * @return Сообщение - результат операции и статус ответа
      */
     @PostMapping
-    @ApiOperation("Создание учетной записи пользователя. Сохраняет пользователя в базе данных")
+    @ApiOperation("Регистрация пользователя. Сохраняет пользователя в базе данных")
     public ResponseEntity registration(@RequestBody @Valid UserRegistrationDto userDto) throws Exception {
 
         Long id = userService.save(userDto);

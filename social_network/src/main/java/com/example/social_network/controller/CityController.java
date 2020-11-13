@@ -2,18 +2,21 @@ package com.example.social_network.controller;
 
 import com.example.social_network.dto.CityOnUserPageDto;
 import com.example.social_network.service.CityService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
+import io.swagger.models.Response;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
+import springfox.documentation.builders.ResponseBuilder;
+
+import javax.websocket.server.PathParam;
+import java.util.List;
 
 /**
  * Контроллер для работы с сущностью City
@@ -29,16 +32,31 @@ public class CityController {
 
     /**
      * Получение списка городов
+     * Первыми выводятся города, где больше всего жителей.
      *
      * @param name название города (или часть названия)
      * @param pageable настройки пагинации
      * @return страница с городами, отсортированными по количеству жителей в городе.
-     *      * Первыми выводятся города, где больше всего жителей.
+     *
      */
+
     @GetMapping
-    @ApiOperation("Получение списка городов")
-    public Page<CityOnUserPageDto> findAll(@RequestParam(required = false) String name,
-                                             @ApiIgnore @PageableDefault(size = 10) Pageable pageable) {
-        return cityService.findAll(name, pageable);
+    @ApiOperation(value = "Получение списка городов",
+            notes = "Метод позволяет получить список городов. " +
+                    "В качестве параметра можно указать название города или часть названия." +
+                    "Список городов отсортирован по количеству жителей. " +
+                    "Первыми выводятся города с максимальным количеством жителей.",
+            produces = "application/json")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Список городов")
+    })
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "name", value = "Название города")
+    })
+    public ResponseEntity<List<CityOnUserPageDto>> findAll(
+            @RequestParam(required = false) String name,
+            @ApiIgnore @PageableDefault(size = 10) Pageable pageable) {
+        Page<CityOnUserPageDto> cities = cityService.findAll(name, pageable);
+        return new ResponseEntity(cities, HttpStatus.OK);
     }
 }
