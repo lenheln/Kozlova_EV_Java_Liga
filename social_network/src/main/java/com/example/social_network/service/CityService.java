@@ -6,6 +6,7 @@ import com.example.social_network.domain.User;
 import com.example.social_network.dto.CityOnUserPageDto;
 import com.example.social_network.repository.CityRepository;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -20,14 +21,12 @@ import javax.persistence.criteria.*;
  * Сервисный слой для работы с сущностью City
  */
 @Service
-@AllArgsConstructor
-@Transactional
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CityService {
 
     private final CityRepository cityRepository;
 
-    @PersistenceContext
-    private EntityManager entityManager;
 
     /**
      * Поиск городов по вхождению строки в название города

@@ -29,9 +29,10 @@ public class City {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "regionid")
+    @JoinColumn(name = "region_id")
     private Region region;
 
+    //TODO убрать если не будем считать по количеству жителей города
     @OneToMany(mappedBy = "city")
     private List<User> users = new ArrayList<>();
 

@@ -116,9 +116,10 @@ public class BaseSpecification {
     public static Specification<User> isFriend(Long id){
         return (root, query , cb) -> {
 
-            Join<User, User> joinFriends = root.join("myFriends", JoinType.LEFT);
-            Join<User, User> joinFriendsOfMine = root.join("friendsOfMine", JoinType.LEFT);
-            return cb.or(cb.equal(joinFriends.get("id"), id), cb.equal(joinFriendsOfMine.get("id"), id));
+            Join<User, User> joinFriends = root.join("iduser", JoinType.LEFT);
+//            Join<User, User> joinFriendsOfMine = root.join("friendsOfMine", JoinType.LEFT);
+//            return cb.or(cb.equal(joinFriends.get("id"), id), cb.equal(joinFriendsOfMine.get("id"), id));
+            return cb.or(cb.equal(joinFriends.get("id"), id), cb.equal(joinFriends.get("idfriend"), id));
         };
     }
 }

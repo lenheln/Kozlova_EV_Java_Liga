@@ -7,8 +7,7 @@ import com.example.social_network.dto.UserRegistrationDto;
 import com.example.social_network.service.UserService;
 import com.example.social_network.service.filters.FriendFilter;
 import com.example.social_network.service.filters.UserFilter;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -45,7 +44,14 @@ public class UserController {
      * @return Сообщение - результат операции и статус ответа
      */
     @PostMapping
-    @ApiOperation("Регистрация пользователя. Сохраняет пользователя в базе данных")
+    @ApiOperation(value = "Регистрация нового пользователя",
+                consumes = "application/json",
+                produces = "application/json")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Пользователь зарегистрирован",
+                    response = String.class,
+                    examples = @Example(value = @ExampleProperty(value = "User with id = 1 created", mediaType = "application/json")))
+    })
     public ResponseEntity registration(@RequestBody @Valid UserRegistrationDto userDto) throws Exception {
 
         Long id = userService.save(userDto);
@@ -64,7 +70,7 @@ public class UserController {
      * @param pageable настройки пагинации
      * @return список пользователей удовлетворяющих условиям фильтра и статус ответа
      */
-    @GetMapping()
+    @GetMapping
     @ApiOperation("Поиск пользователей с помощью фильтра")
     public ResponseEntity getUsers(UserFilter filter,
                                    @ApiIgnore @PageableDefault(size = 5) Pageable pageable) {
@@ -83,7 +89,7 @@ public class UserController {
      */
     @GetMapping("{id}")
     @ApiOperation("Получение страницы пользователя по его id")
-    public ResponseEntity getPage(@PathVariable Long id) {
+    public ResponseEntity getPage(@PathVariable Long id) throws Exception {
 
         log.info("Get page of user with id={}", id);
         UserPageDto userDto = userService.getUserById(id);

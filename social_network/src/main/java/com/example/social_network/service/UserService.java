@@ -49,8 +49,8 @@ public class UserService {
      * @param id идентификатор пользователя
      * @return страница пользователя
      */
-    public UserPageDto getUserById(Long id) {
-        User user = userRepository.findById(id).get();
+    public UserPageDto getUserById(Long id) throws Exception {
+        User user = userRepository.findById(id).orElseThrow(() -> new Exception("User not found"));
         return convertToUserPageDto(user);
     }
 
@@ -160,8 +160,9 @@ public class UserService {
                 .interests(user.getInterests())
                 .city(cityService.convertToCityOnPageDto(user.getCity()))
                 .friends(Stream.concat(
+                        //TODO тут надо как-то вынуть всех друзей (через репозиторий например а там скрипт на jpql например)
                         user.getMyFriends().stream(),
-                        user.getFriendsOfMine().stream()
+                        user.getMyFriends().stream()
                 )
                         .collect(Collectors.toList())
                         .stream()

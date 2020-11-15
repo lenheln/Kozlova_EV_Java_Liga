@@ -27,44 +27,52 @@ import java.util.*;
 @Table(name = "users")
 public class User {
 
+    // Идентификатор пользователя
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    //Имя пользователя
     @NotNull
     @Length(min = 1, max = 45)
     @Column(name = "name")
     private String name;
 
+    //Фамилия пользователя
     @NotNull
     @Length(min = 1, max = 45)
     @Column(name = "surname")
     private String surname;
 
-    @Column(name = "dateofbday")
+    //Дата рождения
+    @Column(name = "date_of_birth")
     private LocalDate dateOfBDay;
 
+    //Пол
     @Enumerated(EnumType.STRING)
     @Column(name = "gender")
     private Genders gender;
 
+    //Интересы пользователя
     @Length(max = 512)
     @Column(name = "interests")
     private String interests;
 
+    //Город
     @ManyToOne
-    @JoinColumn(name="cityid")
+    @JoinColumn(name="city_id")
     private City city;
 
+    //Друзья пользователя
     @ManyToMany(cascade={CascadeType.PERSIST}, fetch = FetchType.LAZY)
     @JoinTable(name="friendship",
-            joinColumns={@JoinColumn(name="iduser")},
-            inverseJoinColumns={@JoinColumn(name="idfriend")})
+            joinColumns={@JoinColumn(name="id_user")},
+            inverseJoinColumns={@JoinColumn(name="id_friend")})
     private List<User> myFriends = new ArrayList<>();
 
-    @ManyToMany(cascade={CascadeType.PERSIST}, mappedBy = "myFriends", fetch = FetchType.LAZY)
-    private List<User> friendsOfMine = new ArrayList<>();
+//    @ManyToMany(cascade={CascadeType.PERSIST}, mappedBy = "myFriends", fetch = FetchType.LAZY)
+//    private List<User> friendsOfMine = new ArrayList<>();
 
     @Override
     public String toString(){
