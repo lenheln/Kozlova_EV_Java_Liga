@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 2020-11-15 21:59:21.413  INFO 12768 --- [restartedMain] c.e.s.SocialNetworkApplication           : Starting SocialNetworkApplication on DESKTOP-NI26ENS with PID 12768 (C:\Users\ïîëüçîâàòåëü\IdeaProjects\LDE-Git\social_network\build\classes\java\main started by ïîëüçîâàòåëü in C:\Users\ïîëüçîâàòåëü\IdeaProjects\LDE-Git\social_network)
 2020-11-15 21:59:21.476  INFO 12768 --- [restartedMain] c.e.s.SocialNetworkApplication           : No active profile set, falling back to default profiles: default
 2020-11-15 21:59:21.784  INFO 12768 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
@@ -294,3 +295,7 @@ java.lang.IllegalArgumentException: Unable to locate Attribute  with the the giv
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) ~[tomcat-embed-core-9.0.38.jar:9.0.38]
 	at java.base/java.lang.Thread.run(Thread.java:834) ~[na:na]
 
+=======
+2020-11-16 10:58:49.299  WARN 19200 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=12h23m11s665ms743µs200ns).
+2020-11-16 10:59:34.606  WARN 19200 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=46s246ms502µs200ns).
+>>>>>>> feature
