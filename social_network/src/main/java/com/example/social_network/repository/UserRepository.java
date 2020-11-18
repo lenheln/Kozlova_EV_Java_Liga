@@ -28,7 +28,8 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
      * @return количество измененных в БД строк
      */
     @Modifying
-    @Query(value = "INSERT INTO friendship (iduser, idfriend) VALUES (:user, :friend)", nativeQuery = true)
+//    @Query(value = "INSERT INTO friendship (iduser, idfriend) VALUES (:user, :friend)", nativeQuery = true)
+    @Query(value = "INSERT INTO users ")
     int addFriend(@Param("user") Long idUser,
                   @Param("friend") Long idFriend);
 
